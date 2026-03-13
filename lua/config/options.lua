@@ -81,15 +81,18 @@ vim.g.markdown_recommended_style = 0
 vim.filetype.add({
   extension = {
     env = "sh",
-    -- cls = "apexcode",
-    -- apex = "apexcode",
-    -- page = "visualforce",
+    apex = "apexcode",
+    cls = "apexcode",
+    trigger = "apexcode",
+    page = "visualforce",
+    component = "visualforce",
   },
   filename = {
     [".env"] = "sh",
   },
   pattern = {
     ["%.env%.[%w_.-]+"] = "sh",
+    ["%.cls"] = "apexcode",
   },
 })
 
