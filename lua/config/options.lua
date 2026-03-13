@@ -45,7 +45,7 @@ opt.pumblend = 10 -- Popup blend
 opt.pumheight = 10 -- Maximum number of entries in a popup
 opt.swapfile = false
 opt.relativenumber = true -- Relative line numbers
-opt.ruler = false -- Disable the default ruler
+opt.ruler = true -- Disable the default ruler
 opt.scrolloff = 4 -- Lines of context
 --vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
 opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "help", "globals", "skiprtp", "folds" }
@@ -81,9 +81,9 @@ vim.g.markdown_recommended_style = 0
 vim.filetype.add({
   extension = {
     env = "sh",
-    cls = "apexcode",
-    apex = "apexcode",
-    page = "visualforce",
+    -- cls = "apexcode",
+    -- apex = "apexcode",
+    -- page = "visualforce",
   },
   filename = {
     [".env"] = "sh",

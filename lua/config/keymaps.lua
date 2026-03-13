@@ -3,8 +3,27 @@
 -- Add any additional keymaps here
 --
 --
-vim.keymap.set("n", "#", "gcc", { remap = true })
-vim.keymap.set("v", "#", "gc", { remap = true })
+local map = vim.keymap.set
+
+map("n", "#", "gcc", { remap = true })
+map("v", "#", "gc", { remap = true })
+
+-- """ Copy relative path
+-- nnoremap <leader>; :let @+ = fnamemodify(expand('%'), ':.')<CR>:echo 'Copied: ' . fnamemodify(expand('%'), ':.')<CR>
+-- nnoremap <leader>' :let @+ = expand('%:p')<CR>:echo 'Copied: ' . expand('%:p')<CR>
+map(
+  "n",
+  "<leader>;",
+  "<cmd>let @+ = fnamemodify(expand('%'), ':.')<CR><cmd>echo 'Copied: ' . fnamemodify(expand('%'), ':.')<CR>",
+  { desc = "copy relative path" }
+)
+map(
+  "n",
+  "<leader>'",
+  "<cmd>let @+ = expand('%:p')<CR><cmd>echo 'Copied: ' . expand('%:p')<CR>",
+  { desc = "copy absolute path" }
+)
+
 vim.cmd([[
 nnoremap <C-j> :m +1<CR>
 nnoremap <C-k> :m -2<CR>
@@ -69,11 +88,5 @@ nnoremap <leader>r :registers<CR>
 nnoremap <leader>j :jumps<CR>
 nnoremap <leader>m :marks<CR>
 
-""" Copy relative path
-"nnoremap <leader>c :let @+ = expand('%')<CR>:echo 'Copied: ' . expand('%')<CR>
-nnoremap <leader>'c :let @+ = fnamemodify(expand('%'), ':.')<CR>:echo 'Copied: ' . fnamemodify(expand('%'), ':.')<CR>
-
-""" Copy absolute path
-nnoremap <leader>'C :let @+ = expand('%:p')<CR>:echo 'Copied: ' . expand('%:p')<CR>
 
 ]])

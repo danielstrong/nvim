@@ -40,7 +40,7 @@ return {
         api.config.mappings.default_on_attach(bufnr)
 
         -- Override <leader>c to copy relative path of selected node
-        vim.keymap.set("n", "<leader>'c", function()
+        vim.keymap.set("n", "<leader>;", function()
           local node = api.tree.get_node_under_cursor()
           if node and node.absolute_path then
             local rel = vim.fn.fnamemodify(node.absolute_path, ":.")
@@ -50,7 +50,7 @@ return {
         end, { buffer = bufnr, noremap = true, silent = true, desc = "NvimTree copy relative path" })
 
         -- Override <leader>C to copy absolute path of selected node
-        vim.keymap.set("n", "<leader>'C", function()
+        vim.keymap.set("n", "<leader>'", function()
           local node = api.tree.get_node_under_cursor()
           if node and node.absolute_path then
             vim.fn.setreg("+", node.absolute_path)
