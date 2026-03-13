@@ -11,7 +11,7 @@ return {
     keys = {
       -- Keymap to toggle the NvimTree
       {
-        "<leader>e",
+        "<leader>E",
         function()
           local view = require("nvim-tree.view")
           if view.is_visible() and view.get_winnr() == vim.api.nvim_get_current_win() then
@@ -23,7 +23,18 @@ return {
         desc = "Focus or close NvimTree",
       },
       -- Keymap to open NvimTree to the current file's location
-      { "<leader>E", ":NvimTreeFindFileToggle<CR>", desc = "Toggle NvimTree on current file" },
+      {
+        "<leader>e",
+        function()
+          local view = require("nvim-tree.view")
+          if view.is_visible() and view.get_winnr() == vim.api.nvim_get_current_win() then
+            require("nvim-tree.api").tree.close()
+          else
+            require("nvim-tree.api").tree.find_file({ open = true, focus = true })
+          end
+        end,
+        desc = "Focus or close NvimTree on current file",
+      },
     },
     -- actions = {
     -- open_file = {
