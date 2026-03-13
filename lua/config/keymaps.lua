@@ -71,9 +71,9 @@ nnoremap <leader>m :marks<CR>
 
 """ Copy relative path
 "nnoremap <leader>c :let @+ = expand('%')<CR>:echo 'Copied: ' . expand('%')<CR>
-nnoremap <leader>c :let @+ = fnamemodify(expand('%'), ':.')<CR>:echo 'Copied: ' . fnamemodify(expand('%'), ':.')<CR>
+nnoremap <leader>'c :let @+ = fnamemodify(expand('%'), ':.')<CR>:echo 'Copied: ' . fnamemodify(expand('%'), ':.')<CR>
 
 """ Copy absolute path
-nnoremap <leader>C :let @+ = expand('%:p')<CR>:echo 'Copied: ' . expand('%:p')<CR>
+nnoremap <leader>'C :let @+ = expand('%:p')<CR>:echo 'Copied: ' . expand('%:p')<CR>
 
 ]])
