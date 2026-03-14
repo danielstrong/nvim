@@ -7,7 +7,6 @@ local map = vim.keymap.set
 
 map("n", "#", "gcc", { remap = true, desc = "toggle line comment" })
 map("v", "#", "gc", { remap = true, desc = "toggle comment" })
-
 map(
     "n",
     "<localleader>c",

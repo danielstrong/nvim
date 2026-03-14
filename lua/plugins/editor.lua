@@ -48,7 +48,6 @@ return {
 
             completion = {
                 accept = {
-                    -- experimental auto-brackets support
                     auto_brackets = {
                         enabled = false,
                     },
@@ -85,19 +84,25 @@ return {
                     ["<Left>"] = false,
                 },
                 completion = {
-                    list = { selection = { preselect = false } },
+                    list = { selection = { preselect = true } },
                     menu = {
-                        auto_show = function(ctx)
-                            return vim.fn.getcmdtype() == ":"
-                        end,
+                        auto_show = false,
+                        -- auto_show = function(ctx)
+                        --     return vim.fn.getcmdtype() == ":"
+                        -- end,
                     },
                     ghost_text = { enabled = false },
                 },
             },
 
             keymap = {
-                preset = "enter",
-                ["<C-y>"] = { "select_and_accept" },
+                preset = "default",
+                -- ["<Tab>"] = { "show", "show_documentation", "hide_documentation" },
+                -- ["<C-y>"] = { "select_and_accept" },
+                -- ["<Tab>"] = { "select_next", "fallback" },
+                -- ["<S-Tab>"] = { "select_prev", "fallback" },
+                -- ["<Up>"] = { "fallback" },
+                -- ["<Down>"] = { "fallback" },
             },
         },
         ---@param opts blink.cmp.Config | { sources: { compat: string[] } }
