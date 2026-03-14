@@ -50,6 +50,17 @@ return {
                 -- Preserve all default nvim-tree keymaps
                 api.config.mappings.default_on_attach(bufnr)
 
+                vim.keymap.set("n", "<CR>", function()
+                    local node = api.tree.get_node_under_cursor()
+                    if not node then return end
+                    if node.type == "directory" then
+                        api.node.open.edit()
+                    else
+                        api.node.open.edit()
+                        api.tree.close()
+                    end
+                end, { buffer = bufnr, noremap = true, silent = true, desc = "Open file and close tree" })
+
                 vim.keymap.set("n", "<localleader>c", function()
                     local node = api.tree.get_node_under_cursor()
                     if node and node.absolute_path then
