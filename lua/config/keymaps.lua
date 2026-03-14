@@ -31,52 +31,39 @@ map("n", "<localleader>m", "<cmd>marks<cr>", { desc = "Marks" })
 -- map("n", "<localleader>D", "<cmd>Ex<cr>", { desc = "Explore" })
 -- map("n", "<localleader>d", "<cmd>Lexplore<cr>", { desc = "Explore Bar" })
 
-vim.cmd([[
-nnoremap <C-j> :m +1<CR>
-nnoremap <C-k> :m -2<CR>
-inoremap <C-j> <Esc>:m +1<CR>gi
-inoremap <C-k> <Esc>:m -2<CR>gi
+map("n", "<C-j>", "<cmd>m +1<CR>", { desc = "Move line down" })
+map("n", "<C-k>", "<cmd>m -2<CR>", { desc = "Move line up" })
+map("i", "<C-j>", "<Esc><cmd>m +1<CR>gi", { desc = "Move line down" })
+map("i", "<C-k>", "<Esc><cmd>m -2<CR>gi", { desc = "Move line up" })
+map("n", "<C-down>", "<cmd>m +1<CR>", { desc = "Move line down" })
+map("n", "<C-up>", "<cmd>m -2<CR>", { desc = "Move line up" })
+map("i", "<C-down>", "<Esc><cmd>m +1<CR>gi", { desc = "Move line down" })
+map("i", "<C-up>", "<Esc><cmd>m -2<CR>gi", { desc = "Move line up" })
 
-nnoremap <C-down> :m +1<CR>
-nnoremap <C-up> :m -2<CR>
-inoremap <C-down> <Esc>:m +1<CR>gi
-inoremap <C-up> <Esc>:m -2<CR>gi
+map("n", "<CR>", "O<Esc>j", { desc = "Insert blank line above" })
+map("v", "<CR>", "y", { desc = "Yank selection" })
 
-nnoremap <Cr> O<Esc>j
-vnoremap <Cr> y
+map("n", "<Space>", "i<Space><ESC>l", { desc = "Insert space" })
+map("n", "<BS>", "i<BS><Esc>l", { desc = "Delete character before cursor" })
 
-nnoremap <Space> i<Space><ESC>l
-nnoremap <BS> i<BS><esc>l
+map("i", "<Insert>", "<Esc><Right>", { desc = "Exit insert mode (disable replace)" })
 
-""" Keep replace mode from being activated
+map("n", "<C-w>e", "<cmd>wincmd p<CR>", { silent = true, desc = "Previous window split" })
 
-inoremap <Insert> <Esc><Right>
+map("n", "<F12>", function()
+    if vim.g.original_signcolumn == nil then
+        vim.g.original_signcolumn = vim.wo.signcolumn
+    end
 
-""" Move to previous window split
-nnoremap <silent> <c-w>e :wincmd p<CR>
-
-
-""" Toggle line numbering
-nnoremap <F12> :call ChangeLineNumbering()<CR> 
-function! ChangeLineNumbering()
-	if !exists('g:original_signcolumn')
-		let g:original_signcolumn = &signcolumn
-	endif
-
-	if &number || &relativenumber
-		set nonumber
-		set norelativenumber
-		set signcolumn=no
-		set mouse=
-	else
-		set number
-		set relativenumber
-		set mouse=a
-		execute 'set signcolumn='.g:original_signcolumn
-	endif
-endfunction
-
-
-
-
-]])
+    if vim.wo.number or vim.wo.relativenumber then
+        vim.wo.number = false
+        vim.wo.relativenumber = false
+        vim.wo.signcolumn = "no"
+        vim.o.mouse = ""
+    else
+        vim.wo.number = true
+        vim.wo.relativenumber = true
+        vim.o.mouse = "a"
+        vim.wo.signcolumn = vim.g.original_signcolumn
+    end
+end, { desc = "Toggle line numbering" })
