@@ -121,16 +121,16 @@ return {
         },
         keys = {
             {
-                "<localleader>fe",
+                "'fe",
                 function()
                     require("fzf-lua").files({ cmd = "fd --type f --no-ignore --exclude node_modules" })
                 end,
                 desc = "Fzf all files (excl. node_modules)",
             },
-            { "<localleader>fE", "<cmd>FzfLua files<cr>", desc = "Fzf files" },
-            { "<localleader>fD", "<cmd>FzfLua git_diff<cr>", desc = "Fzf git diff" },
+            { "'fE", "<cmd>FzfLua files<cr>", desc = "Fzf files" },
+            { "'fD", "<cmd>FzfLua git_diff<cr>", desc = "Fzf git diff" },
             {
-                "<localleader>fd",
+                "'fd",
                 function()
                     require("fzf-lua").fzf_exec(
                         "git diff --name-only && git ls-files --deleted --others --killed --exclude-standard",
@@ -139,16 +139,16 @@ return {
                 end,
                 desc = "Fzf unstaged git files",
             },
-            { "<localleader>fs", "<cmd>FzfLua git_status<cr>", desc = "Fzf git status" },
-            { "<localleader>fc", "<cmd>FzfLua git_hunks<cr>", desc = "Fzf git hunks" },
-            { "<localleader>fC", "<cmd>FzfLua changes<cr>", desc = "Fzf changes" },
-            { "<localleader>fr", "<cmd>FzfLua oldfiles<cr>", desc = "Fzf oldfiles" },
-            { "<localleader>fG", "<cmd>FzfLua grep<cr>", desc = "Fzf grep" },
-            { "<localleader>fg", "<cmd>FzfLua live_grep<cr>", desc = "Fzf live_grep" },
-            { "<localleader>fb", "<cmd>FzfLua buffers<cr>", desc = "Fzf buffers" },
-            { "<localleader>fj", "<cmd>FzfLua jumps<cr>", desc = "Fzf jumps" },
-            { "<localleader>fo", "<cmd>FzfLua commands<cr>", desc = "Fzf commands" },
-            { "<localleader>fp", "<cmd>FzfLua builtin<cr>", desc = "Fzf builtin" },
+            { "'fs", "<cmd>FzfLua git_status<cr>", desc = "Fzf git status" },
+            { "'fc", "<cmd>FzfLua git_hunks<cr>", desc = "Fzf git hunks" },
+            { "'fC", "<cmd>FzfLua changes<cr>", desc = "Fzf changes" },
+            { "'fr", "<cmd>FzfLua oldfiles<cr>", desc = "Fzf oldfiles" },
+            { "'fG", "<cmd>FzfLua grep<cr>", desc = "Fzf grep" },
+            { "'fg", "<cmd>FzfLua live_grep<cr>", desc = "Fzf live_grep" },
+            { "'fb", "<cmd>FzfLua buffers<cr>", desc = "Fzf buffers" },
+            { "'fj", "<cmd>FzfLua jumps<cr>", desc = "Fzf jumps" },
+            { "'fo", "<cmd>FzfLua commands<cr>", desc = "Fzf commands" },
+            { "'fp", "<cmd>FzfLua builtin<cr>", desc = "Fzf builtin" },
         },
     },
     -- {

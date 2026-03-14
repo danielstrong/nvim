@@ -73,11 +73,8 @@ return {
                 },
             })
 
-            vim.keymap.set("n", "<localleader>Qq", "<cmd>qa<cr>", { desc = "Quit all" })
-            vim.keymap.set("n", "<localleader>QQ", "<cmd>wqa<cr>", { desc = "Save Quit all" })
-            vim.keymap.set("n", "<localleader>Qw", ":AutoSession save<CR><cmd>qa<cr>", { desc = "Quit all + Save Session" })
-            vim.keymap.set("n", "<localleader>QW", ":AutoSession save<CR><cmd>wqa<cr>", { desc = "Save Quit all + Save Session" })
-            vim.keymap.set("n", "<localleader>sQ", "<cmd>AutoSession save<CR><cmd>wqa<cr>", { desc = "Save Quit all Save Session" })
+            vim.keymap.set("n", "<localleader>sQA", "<cmd>AutoSession save<CR><cmd>qa<cr>", { desc = "Save Session + Quit all" })
+            vim.keymap.set("n", "<localleader>sQW", "<cmd>AutoSession save<CR><cmd>wqa<cr>", { desc = "Save Session + Save Quit all" })
             vim.keymap.set("n", "<localleader>sw", "<cmd>AutoSession save<CR>", { desc = "Save Session" })
             vim.keymap.set("n", "<localleader>sW", "<cmd>AutoSession save ", { desc = "Save Session with name" })
             vim.keymap.set("n", "<localleader>sr", "<cmd>AutoSession restore<CR>", { desc = "Restore Session" })

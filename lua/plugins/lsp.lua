@@ -1,10 +1,10 @@
 return {
     -- this fixes "vim" not being detected in lua config files
     -- { "folke/neodev.nvim", opts = {} },
-    {
-        "folke/lazydev.nvim",
-        enabled = false,
-    },
+    -- {
+    -- "folke/lazydev.nvim",
+    -- enabled = false,
+    -- },
     {
         "neovim/nvim-lspconfig",
         opts = {
