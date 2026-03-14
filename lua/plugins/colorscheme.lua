@@ -57,13 +57,19 @@ return {
             },
         },
     },
+    { "bluz71/vim-nightfly-colors", name = "nightfly", lazy = true, priority = 1000 },
+    { "EdenEast/nightfox.nvim", name = "nightfox", lazy = true },
+    { "rebelot/kanagawa.nvim", name = "kanagawa", lazy = true },
     {
         "LazyVim/LazyVim",
         opts = {
             -- colorscheme = "hybrid",
             -- colorscheme = "gruvbox",
             -- colorscheme = "catppuccin",
-            colorscheme = "tokyonight",
+            -- colorscheme = "tokyonight",
+            -- colorscheme = "kanagawa-dragon",
+            -- colorscheme = "carbonfox",
+            colorscheme = "nightfly",
         },
     },
     {
