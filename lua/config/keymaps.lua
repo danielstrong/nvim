@@ -17,10 +17,13 @@ map("n", "<localleader>C", "<cmd>let @+ = expand('%:p')<CR><cmd>echo 'Copied: ' 
 
 map("n", "<localleader>v", "<C-v>", { desc = "enter visual block mode" })
 
+map("n", "<localleader>WQQ", "<cmd>wq<cr>", { desc = "Save Quit" })
+map("n", "<localleader>WQA", "<cmd>wqa<cr>", { desc = "Save Quit all" })
+map("n", "<localleader>WW", "<cmd>w<cr>", { desc = "Save" })
+map("n", "<localleader>WA", "<cmd>wa<cr>", { desc = "Save all" })
 map("n", "<localleader>QA", "<cmd>qa<cr>", { desc = "Quit all" })
-map("n", "<localleader>QW", "<cmd>wqa<cr>", { desc = "Save Quit all" })
-map("n", "<localleader>QQ", "<cmd>q<cr>", { desc = "close buffer" })
-map("v", "<localleader>QQ", "<cmd>q<cr>", { desc = "close buffer" })
+map("n", "<localleader>QQ", "<cmd>q<cr>", { desc = "Quit buffer" })
+map("v", "<localleader>QQ", "<cmd>q<cr>", { desc = "Quit buffer" })
 map("n", "<localleader>w", "<cmd>w<cr>", { desc = "save file" })
 map("v", "<localleader>w", "<cmd>w<cr>", { desc = "save file" })
 map("n", "<localleader>l", "<cmd>e<cr>", { desc = "load file" })
