@@ -1,13 +1,13 @@
 return {
 
-    {
-        "hrsh7th/nvim-cmp",
-        opts = {
-            experimental = {
-                ghost_text = false,
-            },
-        },
-    },
+    -- {
+    --     "hrsh7th/nvim-cmp",
+    --     opts = {
+    --         experimental = {
+    --             ghost_text = false,
+    --         },
+    --     },
+    -- },
     {
         "saghen/blink.cmp",
         version = not vim.g.lazyvim_blink_main and "*",

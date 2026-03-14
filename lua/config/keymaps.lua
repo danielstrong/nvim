@@ -21,6 +21,8 @@ map("n", "<localleader>q", "<cmd>q<cr>", { desc = "close buffer" })
 map("v", "<localleader>q", "<cmd>q<cr>", { desc = "close buffer" })
 map("n", "<localleader>w", "<cmd>w<cr>", { desc = "save file" })
 map("v", "<localleader>w", "<cmd>w<cr>", { desc = "save file" })
+map("n", "<localleader>l", "<cmd>e<cr>", { desc = "load file" })
+map("v", "<localleader>l", "<cmd>e<cr>", { desc = "load file" })
 
 map("n", "<localleader>n", "<cmd>messages<cr>", { desc = "Messages" })
 map("n", "<localleader>r", "<cmd>registers<cr>", { desc = "Registers" })

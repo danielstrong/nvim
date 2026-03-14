@@ -121,16 +121,16 @@ return {
         },
         keys = {
             {
-                "'fe",
+                "<localleader>fe",
                 function()
                     require("fzf-lua").files({ cmd = "fd --type f --no-ignore --exclude node_modules" })
                 end,
                 desc = "Fzf all files (excl. node_modules)",
             },
-            { "'fE", "<cmd>FzfLua files<cr>", desc = "Fzf files" },
-            { "'fD", "<cmd>FzfLua git_diff<cr>", desc = "Fzf git diff" },
+            { "<localleader>fE", "<cmd>FzfLua files<cr>", desc = "Fzf files" },
+            { "<localleader>fD", "<cmd>FzfLua git_diff<cr>", desc = "Fzf git diff" },
             {
-                "'fd",
+                "<localleader>fd",
                 function()
                     require("fzf-lua").fzf_exec(
                         "git diff --name-only && git ls-files --deleted --others --killed --exclude-standard",
