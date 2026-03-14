@@ -50,11 +50,9 @@ opt.relativenumber = true -- Relative line numbers
 opt.ruler = true -- Disable the default ruler
 opt.scrolloff = 4 -- Lines of context
 -- opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "help", "globals", "skiprtp", "folds" }
+opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "winpos", "help", "globals", "skiprtp", "folds" }
 --vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
-opt.sessionoptions =
-  { "blank", "buffers", "curdir", "folds", "help", "tabpages", "winsize", "winpos", "terminal", "localoptions" }
-opt.shiftround = true -- Round indent
-opt.shiftwidth = 2 -- Size of an indent
+-- opt.sessionoptions = { "blank", "buffers", "curdir", "folds", "help", "tabpages", "winsize", "winpos", "terminal", "localoptions" }
 opt.shortmess:append({ S = false, W = true, I = true, c = true, C = true })
 opt.showmode = false -- Dont show mode since we have a statusline
 opt.sidescrolloff = 8 -- Columns of context
@@ -69,6 +67,9 @@ opt.splitright = true -- Put new windows right of current
 opt.statuscolumn = [[%!v:lua.LazyVim.statuscolumn()]]
 opt.tabstop = 4 -- Number of spaces tabs count for
 opt.softtabstop = 4 -- Number of spaces tabs count for
+opt.shiftwidth = 4 -- Size of an indent
+opt.shiftround = true -- Round indent
+opt.breakindent = true -- default for lazyvim was false
 opt.termguicolors = true -- True color support
 opt.timeoutlen = vim.g.vscode and 1000 or 300 -- Lower than default (1000) to quickly trigger which-key
 opt.undofile = true
@@ -99,30 +100,6 @@ vim.filetype.add({
     ["%.cls"] = "apexcode",
   },
 })
-
--- vim.api.nvim_set_hl(0, "StatusLine", { fg = "#090909", bg = "#cccccc" })
--- vim.api.nvim_set_hl(0, "StatusLineNC", { fg = "#090909", bg = "#cccccc" })
--- vim.api.nvim_set_hl(0, "Conceal", { fg = "#090909", bg = "#cccccc" })
--- vim.api.nvim_set_hl(0, "StatusLineSection", { fg = "#090909", bg = "#cccccc" })
--- vim.api.nvim_set_hl(0, "StatusLineSectionV", { fg = "#090909", bg = "#f4bf75" })
--- vim.api.nvim_set_hl(0, "StatusLineSectionI", { fg = "#090909", bg = "#90a959" })
--- vim.api.nvim_set_hl(0, "StatusLineSectionC", { fg = "#090909", bg = "#6a9fb5" })
--- vim.api.nvim_set_hl(0, "StatusLineSectionR", { fg = "#090909", bg = "#aac474" })
-
--- vim.cmd([[
---
--- 		colorscheme hybrid
--- 		"colorscheme codedark
--- 		hi StatusLine         ctermbg=darkgray ctermfg=black guibg=#cccccc guifg=#090909
--- 		hi StatusLineNC       ctermbg=black ctermfg=darkgray guibg=#cccccc guifg=#090909
--- 		hi StatusLineSection  ctermbg=darkgray ctermfg=black guibg=#cccccc guifg=#090909
--- 		hi StatusLineSectionV ctermbg=darkyellow ctermfg=black guibg=#f4bf75 guifg=#090909
--- 		hi StatusLineSectionI ctermbg=darkgreen ctermfg=black guibg=#90a959 guifg=#090909
--- 		hi StatusLineSectionC ctermbg=darkblue ctermfg=black guibg=#6a9fb5 guifg=#090909
--- 		hi StatusLineSectionR ctermbg=green ctermfg=black guibg=#aac474 guifg=#090909
--- 		hi Conceal cterm=underline ctermbg=black ctermfg=lightgray term=underline guibg=#090909 guifg=#cccccc
---  ]])
---
 
 vim.cmd([[
 
