@@ -104,8 +104,8 @@ return {
                 -- ["<C-y>"] = { "select_and_accept" },
                 -- ["<Tab>"] = { "select_next", "fallback" },
                 -- ["<S-Tab>"] = { "select_prev", "fallback" },
-                -- ["<Up>"] = { "fallback" },
-                -- ["<Down>"] = { "fallback" },
+                ["<Up>"] = { "fallback" },
+                ["<Down>"] = { "fallback" },
             },
         },
         ---@param opts blink.cmp.Config | { sources: { compat: string[] } }
