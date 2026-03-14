@@ -5,24 +5,26 @@
 --
 local map = vim.keymap.set
 
-map("n", "#", "gcc", { remap = true })
-map("v", "#", "gc", { remap = true })
+map("n", "#", "gcc", { remap = true, desc = "toggle line comment" })
+map("v", "#", "gc", { remap = true, desc = "toggle comment" })
 
--- """ Copy relative path
--- nnoremap <leader>; :let @+ = fnamemodify(expand('%'), ':.')<CR>:echo 'Copied: ' . fnamemodify(expand('%'), ':.')<CR>
--- nnoremap <leader>' :let @+ = expand('%:p')<CR>:echo 'Copied: ' . expand('%:p')<CR>
 map(
   "n",
-  "<leader>;",
+  "<localleader>c",
   "<cmd>let @+ = fnamemodify(expand('%'), ':.')<CR><cmd>echo 'Copied: ' . fnamemodify(expand('%'), ':.')<CR>",
   { desc = "copy relative path" }
 )
 map(
   "n",
-  "<leader>'",
+  "<localleader>C",
   "<cmd>let @+ = expand('%:p')<CR><cmd>echo 'Copied: ' . expand('%:p')<CR>",
   { desc = "copy absolute path" }
 )
+
+map("n", "<localleader>v", "<C-v>", { desc = "enter visual block mode" })
+
+-- """ alternate way to enter visual block mode to deal with terminal emulators
+-- nnoremap <localleader>v <C-v>
 
 vim.cmd([[
 nnoremap <C-j> :m +1<CR>
@@ -45,19 +47,17 @@ nnoremap <BS> i<BS><esc>l
 
 inoremap <Insert> <Esc><Right>
 
-""" alternate way to enter visual block mode to deal with terminal emulators
-nnoremap <leader>v <C-v>
 
 """ Save File
-nnoremap <leader>ws :w<CR>
-vnoremap <leader>ws :w<CR>
+nnoremap <localleader>w :w<CR>
+vnoremap <localleader>w :w<CR>
 
 """ Move to previous window split
 nnoremap <silent> <c-w>e :wincmd p<CR>
 
 """ Open Explorer
-nnoremap <leader>D :Ex<CR>
-nnoremap <leader>d :Lexplore<CR>
+nnoremap <localleader>D :Ex<CR>
+nnoremap <localleader>d :Lexplore<CR>
 
 
 """ Toggle line numbering
@@ -82,11 +82,10 @@ endfunction
 
 
 
-nnoremap <leader>m :messages<CR>
-nnoremap <leader>r :registers<CR>
-"nnoremap <leader>b :buffers<CR>
-nnoremap <leader>j :jumps<CR>
-nnoremap <leader>m :marks<CR>
+nnoremap <localleader>m :messages<CR>
+nnoremap <localleader>r :registers<CR>
+nnoremap <localleader>j :jumps<CR>
+nnoremap <localleader>m :marks<CR>
 
 
 ]])

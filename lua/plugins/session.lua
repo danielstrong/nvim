@@ -73,26 +73,26 @@ return {
         },
       })
 
-      vim.keymap.set("n", "<leader>Qq", "<cmd>qa<cr>", { desc = "Quit all" })
-      vim.keymap.set("n", "<leader>QQ", ":AutoSession save<CR><cmd>qa<cr>", { desc = "Quit all Save Session" })
-      vim.keymap.set("n", "<leader>Qw", "<cmd>wqa<cr>", { desc = "Save Quit all" })
+      vim.keymap.set("n", "<localleader>Qq", "<cmd>qa<cr>", { desc = "Quit all" })
+      vim.keymap.set("n", "<localleader>QQ", "<cmd>wqa<cr>", { desc = "Save Quit all" })
+      vim.keymap.set("n", "<localleader>sq", ":AutoSession save<CR><cmd>qa<cr>", { desc = "Quit all Save Session" })
       vim.keymap.set(
         "n",
-        "<leader>QW",
+        "<localleader>sQ",
         "<cmd>AutoSession save<CR><cmd>wqa<cr>",
         { desc = "Save Quit all Save Session" }
       )
-      vim.keymap.set("n", "<leader>Qs", "<cmd>AutoSession save<CR>", { desc = "Save Session" })
-      vim.keymap.set("n", "<leader>QS", "<cmd>AutoSession save ", { desc = "Save Session with name" })
-      vim.keymap.set("n", "<leader>Qr", "<cmd>AutoSession restore<CR>", { desc = "Restore Session" })
-      vim.keymap.set("n", "<leader>QR", "<cmd>AutoSession restore ", { desc = "Restore Session with name" })
-      vim.keymap.set("n", "<leader>Qe", "<cmd>AutoSession search<CR>", { desc = "Search Session" })
-      vim.keymap.set("n", "<leader>Qd", "<cmd>AutoSession deletePicker<CR>", { desc = "Delete Session Picker" })
-      vim.keymap.set("n", "<leader>Qx", "<cmd>AutoSession delete<CR>", { desc = "Delete Session" })
-      vim.keymap.set("n", "<leader>QX", "<cmd>AutoSession delete ", { desc = "Delete Session with name" })
-      vim.keymap.set("n", "<leader>QD", "<cmd>AutoSession purgeOrphaned<CR>", { desc = "Purge Orphaned Session" })
-      vim.keymap.set("n", "<leader>Qt", "<cmd>AutoSession enable<CR>", { desc = "Enable Autosave Session" })
-      vim.keymap.set("n", "<leader>QT", "<cmd>AutoSession disable<CR>", { desc = "Disable Autosave Session" })
+      vim.keymap.set("n", "<localleader>sw", "<cmd>AutoSession save<CR>", { desc = "Save Session" })
+      vim.keymap.set("n", "<localleader>sW", "<cmd>AutoSession save ", { desc = "Save Session with name" })
+      vim.keymap.set("n", "<localleader>sr", "<cmd>AutoSession restore<CR>", { desc = "Restore Session" })
+      vim.keymap.set("n", "<localleader>sR", "<cmd>AutoSession restore ", { desc = "Restore Session with name" })
+      vim.keymap.set("n", "<localleader>se", "<cmd>AutoSession search<CR>", { desc = "Search Session" })
+      vim.keymap.set("n", "<localleader>sd", "<cmd>AutoSession deletePicker<CR>", { desc = "Delete Session Picker" })
+      vim.keymap.set("n", "<localleader>sx", "<cmd>AutoSession delete<CR>", { desc = "Delete Session" })
+      vim.keymap.set("n", "<localleader>sX", "<cmd>AutoSession delete ", { desc = "Delete Session with name" })
+      vim.keymap.set("n", "<localleader>sD", "<cmd>AutoSession purgeOrphaned<CR>", { desc = "Purge Orphaned Session" })
+      vim.keymap.set("n", "<localleader>st", "<cmd>AutoSession enable<CR>", { desc = "Enable Autosave Session" })
+      vim.keymap.set("n", "<localleader>sT", "<cmd>AutoSession disable<CR>", { desc = "Disable Autosave Session" })
     end,
   },
 }

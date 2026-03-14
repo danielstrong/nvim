@@ -11,7 +11,7 @@ return {
     keys = {
       -- Keymap to toggle the NvimTree
       {
-        "<leader>E",
+        "<localleader>E",
         function()
           local view = require("nvim-tree.view")
           if view.is_visible() and view.get_winnr() == vim.api.nvim_get_current_win() then
@@ -24,7 +24,7 @@ return {
       },
       -- Keymap to open NvimTree to the current file's location
       {
-        "<leader>e",
+        "<localleader>e",
         function()
           local view = require("nvim-tree.view")
           if view.is_visible() and view.get_winnr() == vim.api.nvim_get_current_win() then
@@ -50,8 +50,7 @@ return {
         -- Preserve all default nvim-tree keymaps
         api.config.mappings.default_on_attach(bufnr)
 
-        -- Override <leader>c to copy relative path of selected node
-        vim.keymap.set("n", "<leader>;", function()
+        vim.keymap.set("n", "<localleader>c", function()
           local node = api.tree.get_node_under_cursor()
           if node and node.absolute_path then
             local rel = vim.fn.fnamemodify(node.absolute_path, ":.")
@@ -60,8 +59,7 @@ return {
           end
         end, { buffer = bufnr, noremap = true, silent = true, desc = "NvimTree copy relative path" })
 
-        -- Override <leader>C to copy absolute path of selected node
-        vim.keymap.set("n", "<leader>'", function()
+        vim.keymap.set("n", "<localleader>C", function()
           local node = api.tree.get_node_under_cursor()
           if node and node.absolute_path then
             vim.fn.setreg("+", node.absolute_path)

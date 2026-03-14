@@ -1,8 +1,8 @@
 -- Options are automatically loaded before lazy.nvim startup
 -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
 -- Add any additional options here
-vim.g.mapleader = "\\"
-vim.g.maplocalleader = " "
+vim.g.mapleader = "|"
+vim.g.maplocalleader = "\\"
 
 vim.g.snacks_animate = false
 
@@ -67,8 +67,8 @@ opt.splitbelow = true -- Put new windows below current
 opt.splitkeep = "screen"
 opt.splitright = true -- Put new windows right of current
 opt.statuscolumn = [[%!v:lua.LazyVim.statuscolumn()]]
-opt.tabstop = 2 -- Number of spaces tabs count for
-opt.softtabstop = 2 -- Number of spaces tabs count for
+opt.tabstop = 4 -- Number of spaces tabs count for
+opt.softtabstop = 4 -- Number of spaces tabs count for
 opt.termguicolors = true -- True color support
 opt.timeoutlen = vim.g.vscode and 1000 or 300 -- Lower than default (1000) to quickly trigger which-key
 opt.undofile = true

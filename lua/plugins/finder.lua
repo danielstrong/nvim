@@ -149,7 +149,7 @@ return {
       { "'fj", "<cmd>FzfLua jumps<cr>", desc = "Fzf jumps" },
       { "'fo", "<cmd>FzfLua commands<cr>", desc = "Fzf commands" },
       { "'fp", "<cmd>FzfLua builtin<cr>", desc = "Fzf builtin" },
-      { "<leader>b", "<cmd>FzfLua buffers<cr>", desc = "Fzf buffers" },
+      { "<localleader>b", "<cmd>FzfLua buffers<cr>", desc = "Fzf buffers" },
     },
   },
   -- {
