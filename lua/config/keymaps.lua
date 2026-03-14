@@ -7,29 +7,32 @@ local map = vim.keymap.set
 
 map("n", "#", "gcc", { remap = true, desc = "toggle line comment" })
 map("v", "#", "gc", { remap = true, desc = "toggle comment" })
-map(
-    "n",
-    "<localleader>c",
-    "<cmd>let @+ = fnamemodify(expand('%'), ':.')<CR><cmd>echo 'Copied: ' . fnamemodify(expand('%'), ':.')<CR>",
-    { desc = "copy relative path" }
-)
-map("n", "<localleader>C", "<cmd>let @+ = expand('%:p')<CR><cmd>echo 'Copied: ' . expand('%:p')<CR>", { desc = "copy absolute path" })
-
-map("n", "<localleader>v", "<C-v>", { desc = "enter visual block mode" })
 
 map({ "n", "v" }, "x", '"_x')
 map({ "n", "v" }, "X", '"_X')
-map("x", "<localleader>p", '"_dP', { desc = "Paste without yank" })
+map("n", "<localleader>v", "<C-v>", { desc = "enter visual block mode" })
 
 map({ "n", "v" }, "<localleader>WQQ", "<cmd>wq<cr>", { desc = "Save Quit" })
-map({ "n", "v" }, "<localleader>WQA", "<cmd>wqa<cr>", { desc = "Save Quit all" })
+map({ "n", "v" }, "<localleader>WQA", "<cmd>AutoSession save<CR><cmd>wqa<cr>", { desc = "Save Quit all + Save Session" })
 map({ "n", "v" }, "<localleader>WW", "<cmd>w<cr>", { desc = "Save" })
-map({ "n", "v" }, "<localleader>WA", "<cmd>wa<cr>", { desc = "Save all" })
-map({ "n", "v" }, "<localleader>QA", "<cmd>qa<cr>", { desc = "Quit all" })
+map({ "n", "v" }, "<localleader>WA", "<cmd>AutoSession save<CR><cmd>wa<cr>", { desc = "Save all + Save Session" })
+map({ "n", "v" }, "<localleader>QA", "<cmd>qa!<cr>", { desc = "Quit all" })
 map({ "n", "v" }, "<localleader>QQ", "<cmd>q<cr>", { desc = "Quit" })
-map({ "n", "v" }, "<localleader>q", "<cmd>bd<cr>", { desc = "Quit buffer" })
+map({ "n", "v" }, "<localleader>q", "<cmd>bn | bd #<cr>", { desc = "Quit buffer" })
 map({ "n", "v" }, "<localleader>w", "<cmd>w<cr>", { desc = "save file" })
 map({ "n", "v" }, "<localleader>l", "<cmd>e<cr>", { desc = "load file" })
+
+map({ "n", "v" }, "<localleader>sw", "<cmd>AutoSession save<CR>", { desc = "Save Session" })
+map({ "n", "v" }, "<localleader>sW", "<cmd>AutoSession save ", { desc = "Save Session with name" })
+map({ "n", "v" }, "<localleader>sr", "<cmd>AutoSession restore<CR>", { desc = "Restore Session" })
+map({ "n", "v" }, "<localleader>sR", "<cmd>AutoSession restore ", { desc = "Restore Session with name" })
+map({ "n", "v" }, "<localleader>se", "<cmd>AutoSession search<CR>", { desc = "Search Session" })
+map({ "n", "v" }, "<localleader>sd", "<cmd>AutoSession deletePicker<CR>", { desc = "Delete Session Picker" })
+map({ "n", "v" }, "<localleader>sx", "<cmd>AutoSession delete<CR>", { desc = "Delete Session" })
+map({ "n", "v" }, "<localleader>sX", "<cmd>AutoSession delete ", { desc = "Delete Session with name" })
+map({ "n", "v" }, "<localleader>sD", "<cmd>AutoSession purgeOrphaned<CR>", { desc = "Purge Orphaned Session" })
+map({ "n", "v" }, "<localleader>st", "<cmd>AutoSession enable<CR>", { desc = "Enable Autosave Session" })
+map({ "n", "v" }, "<localleader>sT", "<cmd>AutoSession disable<CR>", { desc = "Disable Autosave Session" })
 
 map("n", "<localleader>n", "<cmd>messages<cr>", { desc = "Messages" })
 map("n", "<localleader>r", "<cmd>registers<cr>", { desc = "Registers" })
@@ -43,6 +46,7 @@ map("n", "<C-j>", "<cmd>m +1<CR>", { desc = "Move line down" })
 map("n", "<C-k>", "<cmd>m -2<CR>", { desc = "Move line up" })
 map("i", "<C-j>", "<Esc><cmd>m +1<CR>gi", { desc = "Move line down" })
 map("i", "<C-k>", "<Esc><cmd>m -2<CR>gi", { desc = "Move line up" })
+
 map("n", "<C-down>", "<cmd>m +1<CR>", { desc = "Move line down" })
 map("n", "<C-up>", "<cmd>m -2<CR>", { desc = "Move line up" })
 map("i", "<C-down>", "<Esc><cmd>m +1<CR>gi", { desc = "Move line down" })
@@ -50,6 +54,7 @@ map("i", "<C-up>", "<Esc><cmd>m -2<CR>gi", { desc = "Move line up" })
 
 map("n", "<CR>", "O<Esc>j", { desc = "Insert blank line above" })
 map("v", "<CR>", "y", { desc = "Yank selection" })
+map("x", "<localleader>p", '"_dP', { desc = "Paste without yank" })
 
 map("n", "<Space>", "i<Space><ESC>l", { desc = "Insert space" })
 map("n", "<BS>", "i<BS><Esc>l", { desc = "Delete character before cursor" })
@@ -57,6 +62,9 @@ map("n", "<BS>", "i<BS><Esc>l", { desc = "Delete character before cursor" })
 map("i", "<Insert>", "<Esc><Right>", { desc = "Exit insert mode (disable replace)" })
 
 map("n", "<C-w>e", "<cmd>wincmd p<CR>", { silent = true, desc = "Previous window split" })
+
+map("n", "<localleader>c", "<cmd>let @+ = fnamemodify(expand('%'), ':.')<CR><cmd>echo 'Copied: ' . fnamemodify(expand('%'), ':.')<CR>", { desc = "copy relative path" })
+map("n", "<localleader>C", "<cmd>let @+ = expand('%:p')<CR><cmd>echo 'Copied: ' . expand('%:p')<CR>", { desc = "copy absolute path" })
 
 map("n", "<F12>", function()
     if vim.g.original_signcolumn == nil then

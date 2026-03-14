@@ -73,15 +73,16 @@ return {
                 pattern = "*",
                 callback = function()
                     vim.cmd([[
-            hi StatusLine         ctermbg=darkgray ctermfg=black guibg=#cccccc guifg=#090909
-            hi StatusLineNC       ctermbg=black ctermfg=darkgray guibg=#cccccc guifg=#090909
-            hi StatusLineSection  ctermbg=darkgray ctermfg=black guibg=#cccccc guifg=#090909
-            hi StatusLineSectionV ctermbg=darkyellow ctermfg=black guibg=#f4bf75 guifg=#090909
-            hi StatusLineSectionI ctermbg=darkgreen ctermfg=black guibg=#90a959 guifg=#090909
-            hi StatusLineSectionC ctermbg=darkblue ctermfg=black guibg=#6a9fb5 guifg=#090909
-            hi StatusLineSectionR ctermbg=green ctermfg=black guibg=#aac474 guifg=#090909
-            hi Conceal cterm=underline ctermbg=black ctermfg=lightgray term=underline guibg=#090909 guifg=#cccccc
-          ]])
+                        hi StatusLine         ctermbg=darkgray ctermfg=black guibg=#cccccc guifg=#090909
+                        hi StatusLineNC       ctermbg=black ctermfg=darkgray guibg=#cccccc guifg=#090909
+                        hi StatusLineSection  ctermbg=darkgray ctermfg=black guibg=#cccccc guifg=#090909
+                        hi StatusLineSectionV ctermbg=darkyellow ctermfg=black guibg=#f4bf75 guifg=#090909
+                        hi StatusLineSectionI ctermbg=darkgreen ctermfg=black guibg=#90a959 guifg=#090909
+                        hi StatusLineSectionC ctermbg=darkblue ctermfg=black guibg=#6a9fb5 guifg=#090909
+                        hi StatusLineSectionR ctermbg=green ctermfg=black guibg=#aac474 guifg=#090909
+                        hi Conceal            cterm=underline ctermbg=black ctermfg=lightgray term=underline guibg=#090909 guifg=#cccccc
+                    ]])
+                    vim.api.nvim_set_hl(0, "BlinkCmpGhostText", { fg = "#6a9fb5", bold = false })
                 end,
             })
         end,

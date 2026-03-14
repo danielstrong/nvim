@@ -56,16 +56,17 @@ return {
                     },
                 },
                 menu = {
+                    auto_show = false,
                     draw = {
                         treesitter = { "lsp" },
                     },
                 },
                 documentation = {
-                    auto_show = false,
-                    auto_show_delay_ms = 200,
+                    auto_show = true,
+                    auto_show_delay_ms = 100,
                 },
                 ghost_text = {
-                    enabled = false,
+                    enabled = true,
                 },
             },
 
@@ -94,16 +95,16 @@ return {
                         --     return vim.fn.getcmdtype() == ":"
                         -- end,
                     },
-                    ghost_text = { enabled = false },
+                    ghost_text = { enabled = true },
                 },
             },
 
             keymap = {
-                preset = "default",
-                -- ["<Tab>"] = { "show", "show_documentation", "hide_documentation" },
+                preset = "enter",
+                ["<C-y>"] = { "show", "show_documentation", "hide_documentation", "fallback" },
                 -- ["<C-y>"] = { "select_and_accept" },
-                -- ["<Tab>"] = { "select_next", "fallback" },
-                -- ["<S-Tab>"] = { "select_prev", "fallback" },
+                ["<Tab>"] = { "select_next", "fallback" },
+                ["<S-Tab>"] = { "select_prev", "fallback" },
                 ["<Up>"] = { "fallback" },
                 ["<Down>"] = { "fallback" },
             },
@@ -116,8 +117,7 @@ return {
             -- setup compat sources
             local enabled = opts.sources.default
             for _, source in ipairs(opts.sources.compat or {}) do
-                opts.sources.providers[source] =
-                    vim.tbl_deep_extend("force", { name = source, module = "blink.compat.source" }, opts.sources.providers[source] or {})
+                opts.sources.providers[source] = vim.tbl_deep_extend("force", { name = source, module = "blink.compat.source" }, opts.sources.providers[source] or {})
                 if type(enabled) == "table" and not vim.tbl_contains(enabled, source) then
                     table.insert(enabled, source)
                 end

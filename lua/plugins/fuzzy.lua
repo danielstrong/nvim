@@ -132,10 +132,7 @@ return {
             {
                 "'fd",
                 function()
-                    require("fzf-lua").fzf_exec(
-                        "git diff --name-only && git ls-files --deleted --others --killed --exclude-standard",
-                        { actions = require("fzf-lua").defaults.actions.files, previewer = "builtin" }
-                    )
+                    require("fzf-lua").fzf_exec("git diff --name-only && git ls-files --deleted --others --killed --exclude-standard", { actions = require("fzf-lua").defaults.actions.files, previewer = "builtin" })
                 end,
                 desc = "Fzf Git Changes",
             },
@@ -145,8 +142,8 @@ return {
             { "'fr", "<cmd>FzfLua oldfiles<cr>", desc = "Fzf Oldfiles" },
             { "'fG", "<cmd>FzfLua grep<cr>", desc = "Fzf Grep" },
             { "'fg", "<cmd>FzfLua live_grep<cr>", desc = "Fzf Live Grep" },
-            { "'fb", "<cmd>FzfLua buffers<cr>", desc = "Fzf Buffers" },
-            { "'fj", "<cmd>FzfLua jumps<cr>", desc = "Fzf Jumps" },
+            { "<localleader>fb", "<cmd>FzfLua buffers<cr>", desc = "Fzf Buffers" },
+            { "<localleader>fj", "<cmd>FzfLua jumps<cr>", desc = "Fzf Jumps" },
             { "<localleader>fo", "<cmd>FzfLua commands<cr>", desc = "Fzf Commands" },
             { "<localleader>fp", "<cmd>FzfLua builtin<cr>", desc = "Fzf Builtin" },
             { "<localleader>f?", "<cmd>FzfLua keymaps<cr>", desc = "Fzf Keymaps" },
