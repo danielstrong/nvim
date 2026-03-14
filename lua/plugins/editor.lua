@@ -66,7 +66,9 @@ return {
                     auto_show_delay_ms = 100,
                 },
                 ghost_text = {
-                    enabled = true,
+                    enabled = function()
+                        return not vim.tbl_contains({ "text", "plaintex", "typst", "gitcommit", "markdown" }, vim.bo.filetype)
+                    end,
                 },
             },
 
@@ -88,12 +90,12 @@ return {
                     ["<Left>"] = false,
                 },
                 completion = {
-                    list = { selection = { preselect = true } },
+                    list = { selection = { preselect = false } },
                     menu = {
-                        auto_show = false,
-                        -- auto_show = function(ctx)
-                        --     return vim.fn.getcmdtype() == ":"
-                        -- end,
+                        -- auto_show = false,
+                        auto_show = function(ctx)
+                            return vim.fn.getcmdtype() == ":"
+                        end,
                     },
                     ghost_text = { enabled = true },
                 },

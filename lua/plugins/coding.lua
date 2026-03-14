@@ -42,8 +42,8 @@ return {
                 prefix = "s",
             },
             exchange = { prefix = "gx" }, -- Exchange with register
-            multiply = { prefix = "gm" }, -- Multiply
-            sort = { prefix = "gS" }, -- Sort
+            multiply = { prefix = "gm" },
+            sort = { prefix = "gS" },
         },
     },
 }

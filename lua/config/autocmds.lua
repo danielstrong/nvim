@@ -13,7 +13,8 @@ local function augroup(name)
     return vim.api.nvim_create_augroup("custom_" .. name, { clear = true })
 end
 
-vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
+vim.api.nvim_del_augroup_by_name("lazyvim_checktime")
+-- vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
 vim.api.nvim_del_augroup_by_name("lazyvim_highlight_yank")
 vim.api.nvim_create_autocmd("TextYankPost", {
     group = augroup("highlight_yank"),
