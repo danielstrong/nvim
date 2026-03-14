@@ -103,7 +103,7 @@ return {
                 preset = "enter",
                 ["<C-y>"] = { "show", "show_documentation", "hide_documentation", "fallback" },
                 -- ["<C-y>"] = { "select_and_accept" },
-                ["<Tab>"] = { "select_next", "fallback" },
+                ["<Tab>"] = { "select_next", "select_and_accept", "fallback" },
                 ["<S-Tab>"] = { "select_prev", "fallback" },
                 ["<Up>"] = { "fallback" },
                 ["<Down>"] = { "fallback" },
