@@ -19,12 +19,12 @@ opt.cursorline = true -- Enable highlighting of the current line
 opt.expandtab = true -- Use spaces instead of tabs
 opt.autoread = false
 opt.fillchars = {
-  foldopen = "",
-  foldclose = "",
-  fold = " ",
-  foldsep = " ",
-  diff = "╱",
-  eob = " ",
+    foldopen = "",
+    foldclose = "",
+    fold = " ",
+    foldsep = " ",
+    diff = "╱",
+    eob = " ",
 }
 opt.foldlevel = 99
 opt.backup = false
@@ -50,7 +50,7 @@ opt.relativenumber = true -- Relative line numbers
 opt.ruler = true -- Disable the default ruler
 opt.scrolloff = 4 -- Lines of context
 -- opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "help", "globals", "skiprtp", "folds" }
-opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "winpos", "help", "globals", "skiprtp", "folds" }
+opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "winpos", "help", "globals", "skiprtp", "folds", "localoptions" }
 --vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
 -- opt.sessionoptions = { "blank", "buffers", "curdir", "folds", "help", "tabpages", "winsize", "winpos", "terminal", "localoptions" }
 opt.shortmess:append({ S = false, W = true, I = true, c = true, C = true })
@@ -84,64 +84,73 @@ opt.wrap = false -- Disable line wrap
 vim.g.markdown_recommended_style = 0
 
 vim.filetype.add({
-  extension = {
-    env = "sh",
-    apex = "apexcode",
-    cls = "apexcode",
-    trigger = "apexcode",
-    page = "visualforce",
-    component = "visualforce",
-  },
-  filename = {
-    [".env"] = "sh",
-  },
-  pattern = {
-    ["%.env%.[%w_.-]+"] = "sh",
-    ["%.cls"] = "apexcode",
-  },
+    extension = {
+        env = "sh",
+        apex = "apexcode",
+        cls = "apexcode",
+        trigger = "apexcode",
+        page = "visualforce",
+        component = "visualforce",
+    },
+    filename = {
+        [".env"] = "sh",
+    },
+    pattern = {
+        ["%.env%.[%w_.-]+"] = "sh",
+        ["%.cls"] = "apexcode",
+    },
 })
 
-vim.cmd([[
+vim.g.mode_colors = {
+    n = "StatusLineSection",
+    v = "StatusLineSectionV",
+    ["^V"] = "StatusLineSectionV", -- ^V (visual block)
+    i = "StatusLineSectionI",
+    c = "StatusLineSectionC",
+    r = "StatusLineSectionR",
+}
 
-let g:mode_colors = {'n':'StatusLineSection', 'v':'StatusLineSectionV', '^V': 'StatusLineSectionV', 'i':  'StatusLineSectionI', 'c':  'StatusLineSectionC', 'r':  'StatusLineSectionR'}
+vim.g.statusline_left = "[%n]%#StatusLine# %<%f%r%h%m%w"
+vim.g.statusline_extra_right = ""
 
-"let g:statusline_left = '%f %h%m%r'
-let g:statusline_left = '[%n]%#StatusLine# %<%f%r%h%m%w'
-" let g:statusline_right = ' [%{&ff}] [%{&fileencoding}] %y %=%-14.(%l,%c%V%)%P '
-let g:statusline_extra_right = ''
+function StatusLineRenderer()
+    local m = vim.fn.mode():lower()
+    local hl = "%#" .. (vim.g.mode_colors[m] or vim.g.mode_colors.n) .. "#"
+    return hl .. vim.g.statusline_left .. " %=" .. vim.g.statusline_extra_right .. " %y %-14.(%l,%c%V%)%P "
+end
 
-function! StatusLineRenderer()
-	let hl = '%#' . get(g:mode_colors, tolower(mode()), g:mode_colors.n) . '#'
-	return  hl.g:statusline_left .' %='. g:statusline_extra_right.' %y %-14.(%l,%c%V%)%P '
-endfunction
+-- only set default statusline once on initial startup
+if vim.fn.has("vim_starting") == 1 then
+    vim.o.statusline = vim.g.statusline_left
+end
 
-" only set default statusline once on initial startup. ignored on subsequent 'so $MYVIMRC' calls to prevent active buffer statusline from being 'blurred'.
-if has('vim_starting')
-	let &statusline = g:statusline_left
-endif
+local statusline_group = vim.api.nvim_create_augroup("statusline_update", { clear = true })
 
-augroup statusline_update
-	au!
-	" show focussed buffer statusline
-	au FocusGained,VimEnter,WinEnter,BufWinEnter * setlocal statusline=%!StatusLineRenderer()
+-- show focussed buffer statusline
+vim.api.nvim_create_autocmd({ "FocusGained", "VimEnter", "WinEnter", "BufWinEnter" }, {
+    group = statusline_group,
+    callback = function()
+        vim.wo.statusline = "%!v:lua.StatusLineRenderer()"
+    end,
+})
 
-	" show blurred buffer statusline
-	au FocusLost,VimLeave,WinLeave * setlocal statusline&
-	"au FocusLost,VimLeave,WinLeave,BufWinLeave * setlocal statusline=%!StatusLineRenderer()
+-- show blurred buffer statusline
+vim.api.nvim_create_autocmd({ "FocusLost", "VimLeave", "WinLeave" }, {
+    group = statusline_group,
+    callback = function()
+        vim.wo.statusline = ""
+    end,
+})
 
-augroup END
+-- Toggle laststatus between 1 and 2
+local function toggle_laststatus()
+    if vim.o.laststatus == 2 then
+        vim.o.laststatus = 1
+    else
+        vim.o.laststatus = 2
+    end
+end
 
-
-""" Toggle laststatus between 1 and 2
-function! <SID>ToggleLastStatus()
-	if &laststatus == 2
-		set laststatus=1
-	else
-		set laststatus=2
-	endif
-endfunction
-nnoremap <silent> <F9> :<C-u>call <SID>ToggleLastStatus()<CR>
-vnoremap <silent> <F9> <Esc>:call <SID>ToggleLastStatus()<CR>v
-inoremap <silent> <F9> <Esc>:call <SID>ToggleLastStatus()<CR>i<Right>
-
-]])
+vim.keymap.set("n", "<F9>", toggle_laststatus, { silent = true })
+vim.keymap.set("v", "<F9>", toggle_laststatus, { silent = true })
+vim.keymap.set("i", "<F9>", toggle_laststatus, { silent = true })
