@@ -1,5 +1,26 @@
 return {
     {
+        "stevearc/conform.nvim",
+        opts = {
+            formatters_by_ft = {
+                apexcode = { "prettier" },
+            },
+            formatters = {
+                prettier = {
+                    condition = function(self, ctx)
+                        local ft = vim.bo[ctx.buf].filetype
+                        if ft == "apexcode" then
+                            return true
+                        end
+                        -- fall back to LazyVim's default condition
+                        local prettier_extra = require("lazyvim.plugins.extras.formatting.prettier")
+                        return prettier_extra.has_parser(ctx)
+                    end,
+                },
+            },
+        },
+    },
+    {
         "nvim-mini/mini.pairs",
         enabled = false,
     },

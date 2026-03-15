@@ -10,6 +10,7 @@ vim.g.lazyvim_picker = "fzf"
 vim.g.lazyvim_cmp = "blink.cmp"
 vim.g.lazyvim_mini_snippets_in_completion = false
 vim.g.deprecation_warnings = true
+vim.g.lazyvim_prettier_needs_config = true
 -- vim.opt_local.spell = true
 
 local opt = vim.opt

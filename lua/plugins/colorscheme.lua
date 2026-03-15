@@ -66,10 +66,10 @@ return {
             -- colorscheme = "hybrid",
             -- colorscheme = "gruvbox",
             -- colorscheme = "catppuccin",
-            -- colorscheme = "tokyonight",
+            colorscheme = "tokyonight",
             -- colorscheme = "kanagawa-dragon",
             -- colorscheme = "carbonfox",
-            colorscheme = "nightfly",
+            -- colorscheme = "nightfly",
         },
     },
     {
