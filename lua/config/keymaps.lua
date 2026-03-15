@@ -64,6 +64,17 @@ map("n", "<C-w>e", "<cmd>wincmd p<CR>", { silent = true, desc = "Previous window
 map("n", "<localleader>c", "<cmd>let @+ = fnamemodify(expand('%'), ':.')<CR><cmd>echo 'Copied: ' . fnamemodify(expand('%'), ':.')<CR>", { desc = "copy relative path" })
 map("n", "<localleader>C", "<cmd>let @+ = expand('%:p')<CR><cmd>echo 'Copied: ' . expand('%:p')<CR>", { desc = "copy absolute path" })
 
+map("n", "<localleader>ul", function()
+    local clients = vim.lsp.get_clients({ name = "eslint", bufnr = 0 })
+    if #clients > 0 then
+        vim.lsp.stop_client(clients)
+        vim.notify("ESLint disabled", vim.log.levels.INFO)
+    else
+        vim.cmd("LspStart eslint")
+        vim.notify("ESLint enabled", vim.log.levels.INFO)
+    end
+end, { desc = "Toggle ESLint" })
+
 map("n", "<F12>", function()
     if vim.g.original_signcolumn == nil then
         vim.g.original_signcolumn = vim.wo.signcolumn
