@@ -67,7 +67,17 @@ return {
                 },
                 ghost_text = {
                     enabled = function()
-                        return not vim.tbl_contains({ "text", "plaintex", "typst", "gitcommit", "markdown" }, vim.bo.filetype)
+                        if vim.tbl_contains({ "text", "plaintex", "typst", "gitcommit", "markdown" }, vim.bo.filetype) then
+                            return false
+                        end
+                        local node = vim.treesitter.get_node()
+                        if node then
+                            local t = node:type()
+                            if t == "string" or t == "string_content" or t == "string_fragment" or t == "template_string" or t == "comment" or t == "comment_content" or t == "line_comment" or t == "block_comment" then
+                                return false
+                            end
+                        end
+                        return true
                     end,
                 },
             },
