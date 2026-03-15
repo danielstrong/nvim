@@ -55,8 +55,15 @@ return {
                         enabled = true,
                     },
                 },
+                list = {
+                    selection = {
+                        preselect = true,
+                        auto_insert = true,
+                    },
+                    cycle = { from_top = true, from_bottom = true },
+                },
                 menu = {
-                    auto_show = true,
+                    auto_show = false,
                     draw = {
                         treesitter = { "lsp" },
                     },
@@ -66,19 +73,20 @@ return {
                     auto_show_delay_ms = 100,
                 },
                 ghost_text = {
-                    enabled = function()
-                        if vim.tbl_contains({ "text", "plaintex", "typst", "gitcommit", "markdown" }, vim.bo.filetype) then
-                            return false
-                        end
-                        local node = vim.treesitter.get_node()
-                        if node then
-                            local t = node:type()
-                            if t == "string" or t == "string_content" or t == "string_fragment" or t == "template_string" or t == "comment" or t == "comment_content" or t == "line_comment" or t == "block_comment" then
-                                return false
-                            end
-                        end
-                        return true
-                    end,
+                    enabled = false,
+                    -- enabled = function()
+                    --     if vim.tbl_contains({ "text", "plaintex", "typst", "gitcommit", "markdown" }, vim.bo.filetype) then
+                    --         return false
+                    --     end
+                    --     local node = vim.treesitter.get_node()
+                    --     if node then
+                    --         local t = node:type()
+                    --         if t == "string" or t == "string_content" or t == "string_fragment" or t == "template_string" or t == "comment" or t == "comment_content" or t == "line_comment" or t == "block_comment" then
+                    --             return false
+                    --         end
+                    --     end
+                    --     return true
+                    -- end,
                 },
             },
 
@@ -119,6 +127,7 @@ return {
                 ["<S-Tab>"] = { "select_prev", "fallback" },
                 ["<Up>"] = { "fallback" },
                 ["<Down>"] = { "fallback" },
+                ["<Esc>"] = { "cancel", "fallback" },
             },
         },
         ---@param opts blink.cmp.Config | { sources: { compat: string[] } }
