@@ -23,10 +23,10 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     end,
 })
 
-vim.api.nvim_del_augroup_by_name("lazyvim_last_loc")
-vim.api.nvim_create_autocmd("BufReadPost", {
-    group = augroup("remember-cursor-position"),
-    desc = "return cursor to where it was last time closing the file",
-    pattern = "*",
-    command = 'silent! normal! g`"zv',
-})
+-- vim.api.nvim_del_augroup_by_name("lazyvim_last_loc")
+-- vim.api.nvim_create_autocmd("BufReadPost", {
+--     group = augroup("remember-cursor-position"),
+--     desc = "return cursor to where it was last time closing the file",
+--     pattern = "*",
+--     command = 'silent! normal! g`"zv',
+-- })
