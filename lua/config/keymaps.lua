@@ -64,19 +64,31 @@ map("n", "<C-w>e", "<cmd>wincmd p<CR>", { silent = true, desc = "Previous window
 map("n", "<localleader>c", "<cmd>let @+ = fnamemodify(expand('%'), ':.')<CR><cmd>echo 'Copied: ' . fnamemodify(expand('%'), ':.')<CR>", { desc = "copy relative path" })
 map("n", "<localleader>C", "<cmd>let @+ = expand('%:p')<CR><cmd>echo 'Copied: ' . expand('%:p')<CR>", { desc = "copy absolute path" })
 
-Snacks.toggle.new({
-    name = "ESLint",
-    get = function()
-        return #vim.lsp.get_clients({ name = "eslint", bufnr = 0 }) > 0
-    end,
-    set = function(state)
-        if state then
-            vim.cmd("LspStart eslint")
-        else
-            vim.lsp.stop_client(vim.lsp.get_clients({ name = "eslint", bufnr = 0 }))
-        end
-    end,
-}):map("<localleader>ul")
+map("n", "<localleader>gb", "<cmd>FzfLua git_blame<cr>", { desc = "Git Blame" })
+map("n", "<localleader>gs", "<cmd>FzfLua git_status<cr>", { desc = "Git Status" })
+
+map("n", "<localleader>gB", function()
+    Snacks.picker.git_log_line()
+end, { desc = "Git Blame Line" })
+map("n", "<localleader>gS", function()
+    Snacks.picker.git_status()
+end, { desc = "Git Status" })
+
+Snacks.toggle
+    .new({
+        name = "ESLint",
+        get = function()
+            return #vim.lsp.get_clients({ name = "eslint", bufnr = 0 }) > 0
+        end,
+        set = function(state)
+            if state then
+                vim.cmd("LspStart eslint")
+            else
+                vim.lsp.stop_client(vim.lsp.get_clients({ name = "eslint", bufnr = 0 }))
+            end
+        end,
+    })
+    :map("<localleader>ul")
 
 map("n", "<F12>", function()
     if vim.g.original_signcolumn == nil then
