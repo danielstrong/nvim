@@ -66,6 +66,12 @@ map("n", "<localleader>C", "<cmd>let @+ = expand('%:p')<CR><cmd>echo 'Copied: ' 
 
 -- https://github.com/ibhagwan/fzf-lua
 map("n", "z=", "<cmd>FzfLua spell_suggest<cr>", { desc = "Spell Suggest" })
+map("n", "<localleader>gG", function()
+    Snacks.lazygit()
+end, { desc = "Lazygit" })
+map("n", "<localleader>gg", function()
+    Snacks.terminal("gitui")
+end, { desc = "GitUI" })
 map("n", "<localleader>gb", "<cmd>FzfLua git_blame<cr>", { desc = "Git Blame" })
 map("n", "<localleader>gc", "<cmd>FzfLua git_commits<cr>", { desc = "Git Commits" })
 map("n", "<localleader>gC", "<cmd>FzfLua git_bcommits<cr>", { desc = "Git Commits (buffer)" })
