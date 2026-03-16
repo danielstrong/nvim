@@ -52,7 +52,9 @@ return {
 
                 vim.keymap.set("n", "<CR>", function()
                     local node = api.tree.get_node_under_cursor()
-                    if not node then return end
+                    if not node then
+                        return
+                    end
                     if node.type == "directory" then
                         api.node.open.edit()
                     else
@@ -79,7 +81,16 @@ return {
                 end, { buffer = bufnr, noremap = true, silent = true, desc = "NvimTree copy absolute path" })
             end
 
-            require("nvim-tree").setup({ on_attach = on_attach })
+            require("nvim-tree").setup({
+                on_attach = on_attach,
+                view = {
+                    width = 32,
+                },
+                filters = {
+                    -- https://github.com/nvim-tree/nvim-tree.lua/blob/master/doc/nvim-tree-lua.txt#L2172
+                    git_ignored = false,
+                },
+            })
         end,
     },
 }
