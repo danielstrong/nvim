@@ -5,7 +5,7 @@ return {
             fzf_bin = "sk",
             winopts = {
                 height = 0.85,
-                width = 0.80,
+                width = 0.85,
                 row = 0.35,
                 col = 0.50,
                 border = "rounded",
@@ -21,7 +21,7 @@ return {
                     hidden = false,
                     vertical = "down:45%",
                     horizontal = "right:60%",
-                    layout = "vertical",
+                    layout = "horizontal",
                     flip_columns = 250,
                     title = true,
                     title_pos = "center",
@@ -43,10 +43,11 @@ return {
             },
             defaults = {
                 header = false,
+                formatter = "path.filename_first",
             },
             fzf_opts = {
                 ["--ansi"] = true,
-                ["--info"] = "inline-right",
+                ["--info"] = "default",
                 ["--height"] = "100%",
                 ["--layout"] = "reverse",
                 ["--border"] = "none",
