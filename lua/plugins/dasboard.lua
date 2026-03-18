@@ -12,6 +12,7 @@ return {
             -- statuscolumn = { enabled = false },
             terminal = { enabled = false },
             input = { enabled = false },
+            explorer = { enabled = false },
         },
     },
     {
