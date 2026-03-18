@@ -12,6 +12,8 @@ vim.g.lazyvim_mini_snippets_in_completion = false
 vim.g.deprecation_warnings = true
 vim.g.lazyvim_prettier_needs_config = true
 vim.g.lazyvim_eslint_auto_format = false
+vim.g.lazyvim_ruby_lsp = "ruby_lsp"
+vim.g.lazyvim_ruby_formatter = "rubocop"
 -- vim.opt_local.spell = true
 
 local opt = vim.opt
@@ -54,7 +56,7 @@ opt.number = true -- Print line number
 opt.pumblend = 10 -- Popup blend
 opt.pumheight = 10 -- Maximum number of entries in a popup
 opt.swapfile = false
-opt.relativenumber = true -- Relative line numbers
+opt.relativenumber = false -- Relative line numbers
 opt.ruler = true -- Disable the default ruler
 opt.scrolloff = 4 -- Lines of context
 -- opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "help", "globals", "skiprtp", "folds" }

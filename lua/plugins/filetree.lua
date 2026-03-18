@@ -84,7 +84,7 @@ return {
             require("nvim-tree").setup({
                 on_attach = on_attach,
                 view = {
-                    width = 32,
+                    width = 48,
                 },
                 filters = {
                     -- https://github.com/nvim-tree/nvim-tree.lua/blob/master/doc/nvim-tree-lua.txt#L2172

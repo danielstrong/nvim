@@ -14,10 +14,11 @@ map("n", "<localleader>v", "<C-v>", { desc = "enter visual block mode" })
 
 map({ "n", "v" }, "<localleader>q", "<cmd>q<cr>", { desc = "quit" })
 map({ "n", "v" }, "<localleader>QQ", "<cmd>qa<cr>", { desc = "quit all" })
-map({ "n", "v" }, "<localleader>QW", "<cmd>AutoSession save<CR><cmd>wqa<cr>", { desc = "quit all" })
+map({ "n", "v" }, "<localleader>QW", "<cmd>AutoSession save<CR><cmd>wqa<cr>", { desc = "quit all + save session" })
 map({ "n", "v" }, "<localleader>x", "<cmd>bn | bd #<cr>", { desc = "kill buffer" })
 map({ "n", "v" }, "<localleader>w", "<cmd>w<cr>", { desc = "save" })
-map({ "n", "v" }, "<localleader>W", "<cmd>AutoSession save<CR><cmd>wa<cr>", { desc = "save all" })
+map({ "n", "v" }, "<localleader>We", "<cmd>noautocmd w<cr>", { desc = "save without formatting" })
+map({ "n", "v" }, "<localleader>Ww", "<cmd>AutoSession save<CR><cmd>wa<cr>", { desc = "save all + save session" })
 map({ "n", "v" }, "<localleader>l", "<cmd>e<cr>", { desc = "load file" })
 
 map({ "n", "v" }, "<localleader>sw", "<cmd>AutoSession save<CR>", { desc = "Save Session" })
@@ -107,6 +108,7 @@ Snacks.toggle
 map("n", "<F12>", function()
     if vim.g.original_signcolumn == nil then
         vim.g.original_signcolumn = vim.wo.signcolumn
+        vim.g.original_relativenumber = vim.wo.relativenumber
     end
 
     if vim.wo.number or vim.wo.relativenumber then
@@ -116,7 +118,7 @@ map("n", "<F12>", function()
         vim.o.mouse = ""
     else
         vim.wo.number = true
-        vim.wo.relativenumber = true
+        vim.wo.relativenumber = vim.g.original_relativenumber
         vim.o.mouse = "a"
         vim.wo.signcolumn = vim.g.original_signcolumn
     end

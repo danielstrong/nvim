@@ -51,6 +51,9 @@ return {
                 ["--layout"] = "reverse",
                 ["--border"] = "none",
                 ["--highlight-line"] = true,
+                ["--algo"] = "skim_v2",
+                ["--typos"] = "2",
+                ["--case"] = "ignore",
             },
             previewers = {
                 cat = { cmd = "cat", args = "-n" },

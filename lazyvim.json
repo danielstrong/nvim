@@ -2,7 +2,9 @@
   "extras": [
     "lazyvim.plugins.extras.coding.mini-surround",
     "lazyvim.plugins.extras.editor.fzf",
+    "lazyvim.plugins.extras.editor.mini-diff",
     "lazyvim.plugins.extras.formatting.prettier",
+    "lazyvim.plugins.extras.lang.ruby",
     "lazyvim.plugins.extras.lang.typescript",
     "lazyvim.plugins.extras.linting.eslint",
     "lazyvim.plugins.extras.util.gitui"

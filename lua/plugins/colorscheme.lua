@@ -1,5 +1,6 @@
 return {
     { "ellisonleao/gruvbox.nvim", lazy = true },
+    { "Shatur/neovim-ayu", name = "ayu", lazy = true },
     {
         "folke/tokyonight.nvim",
         lazy = true,
@@ -63,10 +64,10 @@ return {
     {
         "LazyVim/LazyVim",
         opts = {
-            -- colorscheme = "hybrid",
+            colorscheme = "hybrid",
             -- colorscheme = "gruvbox",
             -- colorscheme = "catppuccin",
-            colorscheme = "tokyonight",
+            -- colorscheme = "tokyonight",
             -- colorscheme = "kanagawa-dragon",
             -- colorscheme = "carbonfox",
             -- colorscheme = "nightfly",
