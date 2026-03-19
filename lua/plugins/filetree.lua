@@ -80,6 +80,15 @@ return {
                     vim.cmd("vertical diffsplit " .. vim.fn.fnameescape(files[2]))
                 end, { buffer = bufnr, noremap = true, silent = true, desc = "Diff marked files" })
 
+                vim.keymap.set("n", "i", function()
+                    local node = api.tree.get_node_under_cursor()
+                    if not node or node.type == "directory" then
+                        return
+                    end
+                    api.node.open.edit()
+                    api.tree.focus()
+                end, { buffer = bufnr, noremap = true, silent = true, desc = "Preview file (keep focus in tree)" })
+
                 vim.keymap.set("n", "<localleader>c", function()
                     local node = api.tree.get_node_under_cursor()
                     if node and node.absolute_path then
