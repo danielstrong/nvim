@@ -48,7 +48,8 @@ return {
                 local api = require("nvim-tree.api")
 
                 -- Preserve all default nvim-tree keymaps
-                api.config.mappings.default_on_attach(bufnr)
+                -- api.config.mappings.default_on_attach(bufnr)
+                api.map.on_attach.default(bufnr)
 
                 vim.keymap.set("n", "<CR>", function()
                     local node = api.tree.get_node_under_cursor()
@@ -62,6 +63,9 @@ return {
                         api.tree.close()
                     end
                 end, { buffer = bufnr, noremap = true, silent = true, desc = "Open file and close tree" })
+
+                vim.keymap.set("n", "i", api.node.open.preview,
+                    { buffer = bufnr, noremap = true, silent = true, desc = "Preview file (keep tree focused)" })
 
                 vim.keymap.set("n", "O", function()
                     local marks = api.marks.list()
@@ -79,15 +83,6 @@ return {
                     vim.cmd("edit " .. vim.fn.fnameescape(files[1]))
                     vim.cmd("vertical diffsplit " .. vim.fn.fnameescape(files[2]))
                 end, { buffer = bufnr, noremap = true, silent = true, desc = "Diff marked files" })
-
-                vim.keymap.set("n", "i", function()
-                    local node = api.tree.get_node_under_cursor()
-                    if not node or node.type == "directory" then
-                        return
-                    end
-                    api.node.open.edit()
-                    api.tree.focus()
-                end, { buffer = bufnr, noremap = true, silent = true, desc = "Preview file (keep focus in tree)" })
 
                 vim.keymap.set("n", "<localleader>c", function()
                     local node = api.tree.get_node_under_cursor()
