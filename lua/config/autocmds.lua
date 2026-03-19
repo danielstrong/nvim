@@ -16,14 +16,14 @@ end
 vim.api.nvim_del_augroup_by_name("lazyvim_checktime")
 
 vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
-vim.api.nvim_create_autocmd("FileType", {
-    group = augroup("wrap_spell"),
-    pattern = { "plaintex", "typst", "gitcommit", "markdown" },
-    callback = function()
-        vim.opt_local.wrap = true
-        vim.opt_local.spell = true
-    end,
-})
+-- vim.api.nvim_create_autocmd("FileType", {
+--     group = augroup("wrap_spell"),
+--     pattern = { "plaintex", "typst", "gitcommit", "markdown" },
+--     callback = function()
+--         vim.opt_local.wrap = true
+--         vim.opt_local.spell = true
+--     end,
+-- })
 
 vim.api.nvim_del_augroup_by_name("lazyvim_highlight_yank")
 vim.api.nvim_create_autocmd("TextYankPost", {
