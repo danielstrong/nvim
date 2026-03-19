@@ -63,6 +63,23 @@ return {
                     end
                 end, { buffer = bufnr, noremap = true, silent = true, desc = "Open file and close tree" })
 
+                vim.keymap.set("n", "O", function()
+                    local marks = api.marks.list()
+                    local files = {}
+                    for _, node in ipairs(marks) do
+                        if node.type == "file" then
+                            table.insert(files, node.absolute_path)
+                        end
+                    end
+                    if #files ~= 2 then
+                        vim.notify("Mark exactly 2 files with 'm' to diff", vim.log.levels.WARN)
+                        return
+                    end
+                    api.tree.close()
+                    vim.cmd("edit " .. vim.fn.fnameescape(files[1]))
+                    vim.cmd("vertical diffsplit " .. vim.fn.fnameescape(files[2]))
+                end, { buffer = bufnr, noremap = true, silent = true, desc = "Diff marked files" })
+
                 vim.keymap.set("n", "<localleader>c", function()
                     local node = api.tree.get_node_under_cursor()
                     if node and node.absolute_path then
