@@ -64,8 +64,7 @@ return {
                     end
                 end, { buffer = bufnr, noremap = true, silent = true, desc = "Open file and close tree" })
 
-                vim.keymap.set("n", "i", api.node.open.preview,
-                    { buffer = bufnr, noremap = true, silent = true, desc = "Preview file (keep tree focused)" })
+                vim.keymap.set("n", "i", api.node.open.preview, { buffer = bufnr, noremap = true, silent = true, desc = "Preview file (keep tree focused)" })
 
                 vim.keymap.set("n", "O", function()
                     local marks = api.marks.list()
