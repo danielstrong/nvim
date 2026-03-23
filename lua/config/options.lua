@@ -64,7 +64,7 @@ opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "winpos", "he
 --vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
 -- opt.sessionoptions = { "blank", "buffers", "curdir", "folds", "help", "tabpages", "winsize", "winpos", "terminal", "localoptions" }
 opt.shortmess:append({ S = false, W = true, I = true, c = true, C = true })
-opt.showmode = false -- Dont show mode since we have a statusline
+opt.showmode = false -- Dont show mode, use colors in statusline instead
 opt.sidescrolloff = 8 -- Columns of context
 opt.signcolumn = "yes" -- Always show the signcolumn, otherwise it would shift the text each time
 opt.smartcase = true -- Don't ignore case with capitals
