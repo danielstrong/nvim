@@ -89,6 +89,8 @@ map("n", "<localleader>gS", function()
     Snacks.picker.git_status()
 end, { desc = "Git Status" })
 
+map("n", "<localleader>ub", "<cmd>Gitsigns toggle_current_line_blame<cr>", { desc = "Toggle Inline Blame" })
+
 Snacks.toggle
     .new({
         name = "ESLint",

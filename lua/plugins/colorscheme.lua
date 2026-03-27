@@ -71,6 +71,8 @@ return {
             -- colorscheme = "kanagawa-dragon",
             -- colorscheme = "carbonfox",
             -- colorscheme = "nightfly",
+            -- colorscheme = "ayu",
+            -- colorscheme = "ayu-dark",
         },
     },
     {
