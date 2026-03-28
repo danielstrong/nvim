@@ -57,7 +57,29 @@ return {
       map("n", "<localleader>dR", gs.reset_buffer, "Reset Buffer")
       map("n", "<localleader>hh", gs.preview_hunk_inline, "Preview Hunk Inline")
       map("n", "<localleader>hb", function() gs.blame_line({ full = true }) end, "Blame Line")
-      map("n", "<localleader>uB", function() gs.blame() end, "Blame Buffer")
+      Snacks.toggle
+        .new({
+          name = "Blame Buffer",
+          get = function()
+            for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+              local name = vim.api.nvim_buf_get_name(buf)
+              if name:match("^gitsigns%-blame:") then return true end
+            end
+            return false
+          end,
+          set = function(state)
+            if state then
+              gs.blame()
+            else
+              for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+                if vim.api.nvim_buf_get_name(buf):match("^gitsigns%-blame:") then
+                  vim.api.nvim_buf_delete(buf, { force = true })
+                end
+              end
+            end
+          end,
+        })
+        :map("<localleader>uB")
       Snacks.toggle
         .new({
           name = "Inline Blame",
