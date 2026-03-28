@@ -58,7 +58,13 @@ return {
       map("n", "<localleader>ghp", gs.preview_hunk_inline, "Preview Hunk Inline")
       map("n", "<localleader>ghb", function() gs.blame_line({ full = true }) end, "Blame Line")
       map("n", "<localleader>ghB", function() gs.blame() end, "Blame Buffer")
-      map("n", "<localleader>ub", "<cmd>Gitsigns toggle_current_line_blame<cr>", "Toggle Inline Blame")
+      Snacks.toggle
+        .new({
+          name = "Inline Blame",
+          get = function() return require("gitsigns.config").config.current_line_blame end,
+          set = function() gs.toggle_current_line_blame() end,
+        })
+        :map("<localleader>ub")
       map("n", "<localleader>ghd", gs.diffthis, "Diff This")
       map("n", "<localleader>ghD", function() gs.diffthis("~") end, "Diff This ~")
       map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
