@@ -101,6 +101,7 @@ return {
                     vim.api.nvim_set_hl(0, "StatusLineSectionC", { fg = "#6a9fb5", bg = "#090909" })
                     vim.api.nvim_set_hl(0, "StatusLineSectionR", { fg = "#aac474", bg = "#090909" })
                     vim.api.nvim_set_hl(0, "BlinkCmpGhostText", { fg = "#6a9fb5" })
+                    vim.api.nvim_set_hl(0, "GitSignsCurrentLineBlame", { fg = "#cccccc", italic = true })
                 end,
             })
         end,

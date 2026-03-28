@@ -7,6 +7,10 @@ return {
         "lewis6991/gitsigns.nvim",
         event = "LazyFile",
         opts = {
+            current_line_blame = false,
+            current_line_blame_opts = {
+                delay = 0,
+            },
             signs = {
                 add = { text = "▎" },
                 change = { text = "▎" },
@@ -54,7 +58,7 @@ return {
       map("n", "<localleader>ghp", gs.preview_hunk_inline, "Preview Hunk Inline")
       map("n", "<localleader>ghb", function() gs.blame_line({ full = true }) end, "Blame Line")
       map("n", "<localleader>ghB", function() gs.blame() end, "Blame Buffer")
-      map("n", "<localleader>ub", "<cmd>Gitsigns toggle_current_line_blame<cr>", { desc = "Toggle Inline Blame" })
+      map("n", "<localleader>ub", "<cmd>Gitsigns toggle_current_line_blame<cr>", "Toggle Inline Blame")
       map("n", "<localleader>ghd", gs.diffthis, "Diff This")
       map("n", "<localleader>ghD", function() gs.diffthis("~") end, "Diff This ~")
       map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
