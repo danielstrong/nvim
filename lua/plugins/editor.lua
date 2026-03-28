@@ -50,14 +50,14 @@ return {
       end, "Prev Hunk")
       map("n", "]H", function() gs.nav_hunk("last") end, "Last Hunk")
       map("n", "[H", function() gs.nav_hunk("first") end, "First Hunk")
-      map({ "n", "x" }, "<localleader>ghs", ":Gitsigns stage_hunk<CR>", "Stage Hunk")
-      map({ "n", "x" }, "<localleader>ghr", ":Gitsigns reset_hunk<CR>", "Reset Hunk")
-      map("n", "<localleader>ghS", gs.stage_buffer, "Stage Buffer")
-      map("n", "<localleader>ghu", gs.undo_stage_hunk, "Undo Stage Hunk")
-      map("n", "<localleader>ghR", gs.reset_buffer, "Reset Buffer")
-      map("n", "<localleader>ghp", gs.preview_hunk_inline, "Preview Hunk Inline")
-      map("n", "<localleader>ghb", function() gs.blame_line({ full = true }) end, "Blame Line")
-      map("n", "<localleader>ghB", function() gs.blame() end, "Blame Buffer")
+      map({ "n", "x" }, "<localleader>ds", ":Gitsigns stage_hunk<CR>", "Stage Hunk")
+      map({ "n", "x" }, "<localleader>dr", ":Gitsigns reset_hunk<CR>", "Reset Hunk")
+      map("n", "<localleader>dS", gs.stage_buffer, "Stage Buffer")
+      map("n", "<localleader>du", gs.undo_stage_hunk, "Undo Stage Hunk")
+      map("n", "<localleader>dR", gs.reset_buffer, "Reset Buffer")
+      map("n", "<localleader>hh", gs.preview_hunk_inline, "Preview Hunk Inline")
+      map("n", "<localleader>hb", function() gs.blame_line({ full = true }) end, "Blame Line")
+      map("n", "<localleader>uB", function() gs.blame() end, "Blame Buffer")
       Snacks.toggle
         .new({
           name = "Inline Blame",
@@ -65,8 +65,8 @@ return {
           set = function() gs.toggle_current_line_blame() end,
         })
         :map("<localleader>ub")
-      map("n", "<localleader>ghd", gs.diffthis, "Diff This")
-      map("n", "<localleader>ghD", function() gs.diffthis("~") end, "Diff This ~")
+      map("n", "<localleader>dd", gs.diffthis, "Diff This")
+      map("n", "<localleader>dD", function() gs.diffthis("~") end, "Diff This ~")
       map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
             end,
         },
