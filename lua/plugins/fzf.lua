@@ -53,7 +53,7 @@ return {
                 ["--border"] = "none",
                 ["--highlight-line"] = true,
                 ["--algo"] = "skim_v2",
-                ["--typos"] = "2",
+                ["--typos"] = "3",
                 ["--case"] = "ignore",
             },
             previewers = {
@@ -131,8 +131,8 @@ return {
                 require("fzf-lua").fzf_exec("git diff --name-only && git ls-files --deleted --others --killed --exclude-standard", { actions = require("fzf-lua").defaults.actions.files, previewer = "builtin" })
             end
             return {
-                { "'fe", fzf_files, desc = "Fzf Files" },
-                { "'fE", "<cmd>FzfLua files<cr>", desc = "Fzf All files" },
+                { "'fE", fzf_files, desc = "Fzf Files" },
+                { "'fe", "<cmd>FzfLua files<cr>", desc = "Fzf All files" },
                 { "'fD", "<cmd>FzfLua git_diff<cr>", desc = "Fzf Git Diff" },
                 { "'fd", fzf_git_changes, desc = "Fzf Git Changes" },
                 { "'fs", "<cmd>FzfLua git_status<cr>", desc = "Fzf Git Status" },

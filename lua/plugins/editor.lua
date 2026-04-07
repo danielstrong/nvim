@@ -87,6 +87,8 @@ return {
           set = function() gs.toggle_current_line_blame() end,
         })
         :map("<localleader>ub")
+      map("n", "<localleader>de", gs.preview_hunk_inline, "Diff Inline")
+      map("n", "<localleader>dh", gs.preview_hunk, "Diff Hover")
       map("n", "<localleader>dd", gs.diffthis, "Diff This")
       map("n", "<localleader>dD", function() gs.diffthis("~") end, "Diff This ~")
       map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
@@ -213,7 +215,7 @@ return {
                 preset = "enter",
                 ["<C-y>"] = { "show", "show_documentation", "hide_documentation", "fallback" },
                 -- ["<C-y>"] = { "select_and_accept" },
-                ["<Tab>"] = { "select_next", "select_and_accept", "fallback" },
+                ["<Tab>"] = { "select_next", "show", "select_and_accept", "fallback" },
                 ["<S-Tab>"] = { "select_prev", "fallback" },
                 ["<Up>"] = { "fallback" },
                 ["<Down>"] = { "fallback" },

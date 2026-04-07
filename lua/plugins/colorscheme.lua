@@ -68,6 +68,8 @@ return {
             -- colorscheme = "gruvbox",
             -- colorscheme = "catppuccin",
             -- colorscheme = "tokyonight",
+            -- colorscheme = "tomorrow-night",
+            -- colorscheme = "nightfox",
             -- colorscheme = "kanagawa-dragon",
             -- colorscheme = "carbonfox",
             -- colorscheme = "nightfly",
