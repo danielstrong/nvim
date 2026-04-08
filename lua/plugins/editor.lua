@@ -6,15 +6,21 @@ return {
     {
         "nvim-mini/mini.diff",
         event = "VeryLazy",
-        keys = {
-            {
-                "<localleader>ud",
-                function()
-                    require("mini.diff").toggle_overlay(0)
-                end,
-                desc = "Toggle mini.diff overlay",
-            },
-        },
+        config = function(_, opts)
+            require("mini.diff").setup(opts)
+            Snacks.toggle
+                .new({
+                    name = "Mini Diff Overlay",
+                    get = function()
+                        local data = require("mini.diff").get_buf_data(0)
+                        return data ~= nil and data.overlay == true
+                    end,
+                    set = function()
+                        require("mini.diff").toggle_overlay(0)
+                    end,
+                })
+                :map("<localleader>ud")
+        end,
         opts = {
             view = {
                 style = "sign",
