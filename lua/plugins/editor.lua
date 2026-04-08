@@ -4,6 +4,39 @@ return {
         enabled = false,
     },
     {
+        "nvim-mini/mini.diff",
+        event = "VeryLazy",
+        keys = {
+            {
+                "<localleader>dE",
+                function()
+                    require("mini.diff").toggle_overlay(0)
+                end,
+                desc = "Toggle mini.diff overlay",
+            },
+        },
+        opts = {
+            view = {
+                style = "sign",
+                signs = {
+                    add = "▎",
+                    change = "▎",
+                    delete = "",
+                },
+            },
+
+            mappings = {
+                apply = "",
+                reset = "",
+                textobject = "",
+                goto_first = "",
+                goto_prev = "",
+                goto_next = "",
+                goto_last = "",
+            },
+        },
+    },
+    {
         "lewis6991/gitsigns.nvim",
         event = "LazyFile",
         opts = {
@@ -87,6 +120,7 @@ return {
           set = function() gs.toggle_current_line_blame() end,
         })
         :map("<localleader>ub")
+
       map("n", "<localleader>de", gs.preview_hunk_inline, "Diff Inline")
       map("n", "<localleader>dh", gs.preview_hunk, "Diff Hover")
       map("n", "<localleader>dd", gs.diffthis, "Diff This")
@@ -215,7 +249,7 @@ return {
                 preset = "enter",
                 ["<C-y>"] = { "show", "show_documentation", "hide_documentation", "fallback" },
                 -- ["<C-y>"] = { "select_and_accept" },
-                ["<Tab>"] = { "select_next", "show", "select_and_accept", "fallback" },
+                ["<Tab>"] = { "select_next", "show", "select_and_accept", "fallback" }, -- overridden in config() using vim.g.blink_tab_show
                 ["<S-Tab>"] = { "select_prev", "fallback" },
                 ["<Up>"] = { "fallback" },
                 ["<Down>"] = { "fallback" },
@@ -284,7 +318,33 @@ return {
                 end
             end
 
+            -- Replace <Tab> with a function keymap so the toggle takes effect at runtime.
+            -- (Functions are allowed by blink's keymap handler but not by opts validation,
+            -- so we set this here after validation has already run via opts merging.)
+            vim.g.blink_tab_show = true
+            opts.keymap["<Tab>"] = {
+                function(cmp)
+                    if not vim.g.blink_tab_show then
+                        return cmp.select_next() or cmp.select_and_accept()
+                    end
+                    return cmp.select_next() or cmp.show() or cmp.select_and_accept()
+                end,
+                "fallback",
+            }
+
             require("blink.cmp").setup(opts)
+
+            Snacks.toggle
+                .new({
+                    name = "Tab Show Completion",
+                    get = function()
+                        return vim.g.blink_tab_show == true
+                    end,
+                    set = function(state)
+                        vim.g.blink_tab_show = state
+                    end,
+                })
+                :map("<localleader>u<Tab>")
         end,
     },
 }

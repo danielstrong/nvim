@@ -36,6 +36,10 @@ require("lazy").setup({
         enabled = true, -- check for plugin updates periodically
         notify = false, -- notify on update
     }, -- automatically check for plugin updates
+    change_detection = {
+        enabled = false, -- dont try to automaticaly reload config on nvim instantly already running
+        notify = false, -- dont notify of reloading config when above is enabled
+    },
     performance = {
         rtp = {
             -- disable some rtp plugins

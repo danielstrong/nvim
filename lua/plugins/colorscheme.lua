@@ -64,13 +64,13 @@ return {
     {
         "LazyVim/LazyVim",
         opts = {
-            colorscheme = "hybrid",
+            -- colorscheme = "hybrid",
             -- colorscheme = "gruvbox",
             -- colorscheme = "catppuccin",
-            -- colorscheme = "tokyonight",
+            -- colorscheme = "tokyonight-night",
             -- colorscheme = "tomorrow-night",
             -- colorscheme = "nightfox",
-            -- colorscheme = "kanagawa-dragon",
+            colorscheme = "kanagawa-dragon",
             -- colorscheme = "carbonfox",
             -- colorscheme = "nightfly",
             -- colorscheme = "ayu",
