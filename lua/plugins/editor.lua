@@ -122,8 +122,39 @@ return {
         })
         :map("<localleader>ub")
 
-      map("n", "<localleader>gd", gs.diffthis, "Diff This Vertical")
-      map("n", "<localleader>gD", function() gs.diffthis("~") end, "Diff This ~ Vertical")
+      map("n", "<localleader>gd", function()
+        if vim.wo.diff then
+          vim.cmd("diffoff!")
+          for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+            local buf = vim.api.nvim_win_get_buf(win)
+            local name = vim.api.nvim_buf_get_name(buf)
+            if name:match("^gitsigns://") then
+              vim.api.nvim_win_close(win, true)
+              break
+            end
+          end
+        else
+          gs.diffthis()
+        end
+      end, "Diff This Vertical")
+
+
+      map("n", "<localleader>gD", function()
+        if vim.wo.diff then
+          vim.cmd("diffoff!")
+          for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+            local buf = vim.api.nvim_win_get_buf(win)
+            local name = vim.api.nvim_buf_get_name(buf)
+            if name:match("^gitsigns://") then
+              vim.api.nvim_win_close(win, true)
+              break
+            end
+          end
+        else
+          gs.diffthis("~")
+        end
+      end, "Diff This ~ Vertical")
+
       map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
             end,
         },
