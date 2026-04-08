@@ -122,38 +122,51 @@ return {
         })
         :map("<localleader>ub")
 
-      map("n", "<localleader>gd", function()
-        if vim.wo.diff then
-          vim.cmd("diffoff!")
-          for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-            local buf = vim.api.nvim_win_get_buf(win)
-            local name = vim.api.nvim_buf_get_name(buf)
-            if name:match("^gitsigns://") then
-              vim.api.nvim_win_close(win, true)
-              break
-            end
+      local function close_gitsigns_diff()
+        vim.cmd("diffoff!")
+        for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+          local name = vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(win))
+          if name:match("^gitsigns://") then
+            vim.api.nvim_win_close(win, true)
+            break
           end
+        end
+      end
+
+      local function gitsigns_diff_mode()
+        for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+          local name = vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(win))
+          if name:match("^gitsigns://") then
+            -- "~" diffs have the ref after the last colon, e.g. gitsigns://…:~1:filename
+            return name:match("HEAD~") and "tilde" or "head"
+          end
+        end
+        return nil
+      end
+
+      map("n", "<localleader>gd", function()
+        local mode = gitsigns_diff_mode()
+        if mode == "head" then
+          close_gitsigns_diff()
+        elseif mode == "tilde" then
+          close_gitsigns_diff()
+          vim.schedule(function() gs.diffthis() end)
         else
           gs.diffthis()
         end
-      end, "Diff This Vertical")
-
+      end, "Diff This (against staged)")
 
       map("n", "<localleader>gD", function()
-        if vim.wo.diff then
-          vim.cmd("diffoff!")
-          for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-            local buf = vim.api.nvim_win_get_buf(win)
-            local name = vim.api.nvim_buf_get_name(buf)
-            if name:match("^gitsigns://") then
-              vim.api.nvim_win_close(win, true)
-              break
-            end
-          end
+        local mode = gitsigns_diff_mode()
+        if mode == "tilde" then
+          close_gitsigns_diff()
+        elseif mode == "head" then
+          close_gitsigns_diff()
+          vim.schedule(function() gs.diffthis("~") end)
         else
           gs.diffthis("~")
         end
-      end, "Diff This ~ Vertical")
+      end, "Diff This (against last commit)")
 
       map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
             end,
