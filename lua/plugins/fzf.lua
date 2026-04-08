@@ -130,17 +130,24 @@ return {
             local function fzf_git_changes()
                 require("fzf-lua").fzf_exec("git diff --name-only && git ls-files --deleted --others --killed --exclude-standard", { actions = require("fzf-lua").defaults.actions.files, previewer = "builtin" })
             end
+            local function fzf_text_search_live_grep()
+                require("fzf-lua").live_grep({ rg_opts = "--fixed-strings --color=always --no-heading --with-filename --line-number --column", prompt = "Text> " })
+            end
+            local function fzf_text_search_grep()
+                require("fzf-lua").grep({ rg_opts = "--fixed-strings --color=always --no-heading --with-filename --line-number --column", prompt = "Text> " })
+            end
             return {
                 { "'fE", fzf_files, desc = "Fzf Files" },
                 { "'fe", "<cmd>FzfLua files<cr>", desc = "Fzf All files" },
                 { "'fD", "<cmd>FzfLua git_diff<cr>", desc = "Fzf Git Diff" },
                 { "'fd", fzf_git_changes, desc = "Fzf Git Changes" },
-                { "'fs", "<cmd>FzfLua git_status<cr>", desc = "Fzf Git Status" },
+                { "'fs", fzf_text_search_live_grep, desc = "Fzf Live Text Search" },
+                { "'fS", fzf_text_search_grep, desc = "Fzf Text Search" },
                 { "'fc", "<cmd>FzfLua git_hunks<cr>", desc = "Fzf Git Hunks" },
                 { "'fC", "<cmd>FzfLua changes<cr>", desc = "Fzf Changes" },
                 { "'fr", "<cmd>FzfLua oldfiles<cr>", desc = "Fzf Oldfiles" },
-                { "'fG", "<cmd>FzfLua grep<cr>", desc = "Fzf Grep" },
                 { "'fg", "<cmd>FzfLua live_grep<cr>", desc = "Fzf Live Grep" },
+                { "'fG", "<cmd>FzfLua grep<cr>", desc = "Fzf Grep" },
                 { "<localleader>fb", "<cmd>FzfLua buffers<cr>", desc = "Fzf Buffers" },
                 { "<localleader>fj", "<cmd>FzfLua jumps<cr>", desc = "Fzf Jumps" },
                 { "<localleader>fo", "<cmd>FzfLua commands<cr>", desc = "Fzf Commands" },
