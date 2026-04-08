@@ -127,6 +127,9 @@ return {
             local function fzf_files()
                 require("fzf-lua").files({ cmd = "fd --type f --no-ignore --exclude node_modules --exclude .git" })
             end
+            local function fzf_files_path()
+                require("fzf-lua").files({ formatter = false })
+            end
             local function fzf_git_changes()
                 require("fzf-lua").fzf_exec("git diff --name-only && git ls-files --deleted --others --killed --exclude-standard", { actions = require("fzf-lua").defaults.actions.files, previewer = "builtin" })
             end
@@ -139,6 +142,7 @@ return {
             return {
                 { "'fE", fzf_files, desc = "Fzf Files" },
                 { "'fe", "<cmd>FzfLua files<cr>", desc = "Fzf All files" },
+                { "'fp", fzf_files_path, desc = "Fzf files (path search)" },
                 { "'fD", "<cmd>FzfLua git_diff<cr>", desc = "Fzf Git Diff" },
                 { "'fd", fzf_git_changes, desc = "Fzf Git Changes" },
                 { "'fs", fzf_text_search_live_grep, desc = "Fzf Live Text Search" },

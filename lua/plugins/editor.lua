@@ -8,7 +8,7 @@ return {
         event = "VeryLazy",
         keys = {
             {
-                "<localleader>dE",
+                "<localleader>ud",
                 function()
                     require("mini.diff").toggle_overlay(0)
                 end,
@@ -83,12 +83,13 @@ return {
       end, "Prev Hunk")
       map("n", "]H", function() gs.nav_hunk("last") end, "Last Hunk")
       map("n", "[H", function() gs.nav_hunk("first") end, "First Hunk")
-      map({ "n", "x" }, "<localleader>ds", ":Gitsigns stage_hunk<CR>", "Stage Hunk")
-      map({ "n", "x" }, "<localleader>dr", ":Gitsigns reset_hunk<CR>", "Reset Hunk")
-      map("n", "<localleader>dS", gs.stage_buffer, "Stage Buffer")
-      map("n", "<localleader>du", gs.undo_stage_hunk, "Undo Stage Hunk")
-      map("n", "<localleader>dR", gs.reset_buffer, "Reset Buffer")
-      map("n", "<localleader>hh", gs.preview_hunk_inline, "Preview Hunk Inline")
+      map({ "n", "x" }, "<localleader>hs", ":Gitsigns stage_hunk<CR>", "Stage Hunk")
+      map({ "n", "x" }, "<localleader>hr", ":Gitsigns reset_hunk<CR>", "Reset Hunk")
+      map("n", "<localleader>hS", gs.stage_buffer, "Stage Buffer")
+      map("n", "<localleader>hu", gs.undo_stage_hunk, "Undo Stage Hunk")
+      map("n", "<localleader>hR", gs.reset_buffer, "Reset Buffer")
+      map("n", "<localleader>he", gs.preview_hunk_inline, "Hunk Diff Preview Inline")
+      map("n", "<localleader>hh", gs.preview_hunk, "Hunk Diff Hover")
       map("n", "<localleader>hb", function() gs.blame_line({ full = true }) end, "Blame Line")
       Snacks.toggle
         .new({
@@ -121,10 +122,8 @@ return {
         })
         :map("<localleader>ub")
 
-      map("n", "<localleader>de", gs.preview_hunk_inline, "Diff Inline")
-      map("n", "<localleader>dh", gs.preview_hunk, "Diff Hover")
-      map("n", "<localleader>dd", gs.diffthis, "Diff This")
-      map("n", "<localleader>dD", function() gs.diffthis("~") end, "Diff This ~")
+      map("n", "<localleader>gd", gs.diffthis, "Diff This Vertical")
+      map("n", "<localleader>gD", function() gs.diffthis("~") end, "Diff This ~ Vertical")
       map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
             end,
         },
