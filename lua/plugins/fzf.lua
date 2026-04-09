@@ -135,24 +135,20 @@ return {
                 require("fzf-lua").fzf_exec("git diff --name-only && git ls-files --deleted --others --killed --exclude-standard", { actions = require("fzf-lua").defaults.actions.files, previewer = "builtin" })
             end
             local rg_base = "--fixed-strings --color=always --no-heading --with-filename --line-number --column"
-            local function fzf_text_search_live_grep()
+            local function text_search(case_insensitive, query)
+                local toggle = function(_, opts)
+                    text_search(not case_insensitive, opts.last_query)
+                end
                 require("fzf-lua").live_grep({
-                    rg_opts = "--ignore-case " .. rg_base,
-                    prompt = "Text (case-insensitive)> ",
-                    actions = {
-                        ["ctrl-l"] = function()
-                            require("fzf-lua").live_grep({
-                                rg_opts = rg_base,
-                                prompt = "Text (case-sensitive)> ",
-                                actions = {
-                                    ["ctrl-l"] = function()
-                                        fzf_text_search_live_grep()
-                                    end,
-                                },
-                            })
-                        end,
-                    },
+                    rg_opts = case_insensitive and ("--ignore-case " .. rg_base) or rg_base,
+                    prompt = case_insensitive and "Text (case-insensitive)> " or "Text (case-sensitive)> ",
+                    search = query or "",
+                    no_esc = query ~= nil,
+                    actions = { ["ctrl-l"] = toggle },
                 })
+            end
+            local function fzf_text_search_live_grep()
+                text_search(true)
             end
             local function fzf_text_search_grep()
                 require("fzf-lua").grep({ rg_opts = "--fixed-strings --color=always --no-heading --with-filename --line-number --column", prompt = "Text> " })
