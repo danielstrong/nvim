@@ -96,7 +96,7 @@ return {
                     ["<C-z>"] = "toggle-fullscreen",
                     -- ["<C-w>"] = "toggle-preview-wrap",
                     ["<C-p>"] = "toggle-preview",
-                    ["<C-o>"] = "toggle-preview-cw",
+                    ["<C-x>"] = "toggle-preview-cw",
                     -- ["<C-W>"] = "toggle-preview-behavior",
                     -- ["<C-w>"] = "toggle-preview-ts-ctx",
                     -- ["<C-w>"] = "preview-ts-ctx-dec",
