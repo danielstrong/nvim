@@ -128,13 +128,31 @@ return {
                 require("fzf-lua").files({ cmd = "fd --type f --no-ignore --exclude node_modules --exclude .git" })
             end
             local function fzf_files_path()
+                ---@diagnostic disable-next-line: assign-type-mismatch
                 require("fzf-lua").files({ formatter = false })
             end
             local function fzf_git_changes()
                 require("fzf-lua").fzf_exec("git diff --name-only && git ls-files --deleted --others --killed --exclude-standard", { actions = require("fzf-lua").defaults.actions.files, previewer = "builtin" })
             end
+            local rg_base = "--fixed-strings --color=always --no-heading --with-filename --line-number --column"
             local function fzf_text_search_live_grep()
-                require("fzf-lua").live_grep({ rg_opts = "--fixed-strings --color=always --no-heading --with-filename --line-number --column", prompt = "Text> " })
+                require("fzf-lua").live_grep({
+                    rg_opts = "--ignore-case " .. rg_base,
+                    prompt = "Text (case-insensitive)> ",
+                    actions = {
+                        ["ctrl-l"] = function()
+                            require("fzf-lua").live_grep({
+                                rg_opts = rg_base,
+                                prompt = "Text (case-sensitive)> ",
+                                actions = {
+                                    ["ctrl-l"] = function()
+                                        fzf_text_search_live_grep()
+                                    end,
+                                },
+                            })
+                        end,
+                    },
+                })
             end
             local function fzf_text_search_grep()
                 require("fzf-lua").grep({ rg_opts = "--fixed-strings --color=always --no-heading --with-filename --line-number --column", prompt = "Text> " })
