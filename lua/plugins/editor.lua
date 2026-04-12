@@ -6,6 +6,7 @@ return {
     {
         "nvim-mini/mini.diff",
         event = "VeryLazy",
+        enabled = true,
         config = function(_, opts)
             require("mini.diff").setup(opts)
             Snacks.toggle
@@ -238,7 +239,9 @@ return {
                     cycle = { from_top = true, from_bottom = true },
                 },
                 menu = {
-                    auto_show = false,
+                    auto_show = function()
+                        return vim.g.blink_auto_show
+                    end,
                     draw = {
                         treesitter = { "lsp" },
                     },
@@ -298,7 +301,7 @@ return {
                 preset = "enter",
                 ["<C-y>"] = { "show", "show_documentation", "hide_documentation", "fallback" },
                 -- ["<C-y>"] = { "select_and_accept" },
-                ["<Tab>"] = { "select_next", "show", "select_and_accept", "fallback" }, -- overridden in config() using vim.g.blink_tab_show
+                ["<Tab>"] = { "select_next", "select_and_accept", "fallback" }, -- overridden in config() using vim.g.blink_tab_show
                 ["<S-Tab>"] = { "select_prev", "fallback" },
                 ["<Up>"] = { "fallback" },
                 ["<Down>"] = { "fallback" },
@@ -367,10 +370,8 @@ return {
                 end
             end
 
-            -- Replace <Tab> with a function keymap so the toggle takes effect at runtime.
-            -- (Functions are allowed by blink's keymap handler but not by opts validation,
-            -- so we set this here after validation has already run via opts merging.)
-            vim.g.blink_tab_show = true
+            vim.g.blink_tab_show = false
+            vim.g.blink_auto_show = true
             opts.keymap["<Tab>"] = {
                 function(cmp)
                     if not vim.g.blink_tab_show then
@@ -380,12 +381,11 @@ return {
                 end,
                 "fallback",
             }
-
             require("blink.cmp").setup(opts)
 
             Snacks.toggle
                 .new({
-                    name = "Tab Show Completion",
+                    name = "Tab Show Blink Completion Menu",
                     get = function()
                         return vim.g.blink_tab_show == true
                     end,
@@ -394,6 +394,17 @@ return {
                     end,
                 })
                 :map("<localleader>u<Tab>")
+            Snacks.toggle
+                .new({
+                    name = "Auto Show Blink Completion Menu",
+                    get = function()
+                        return vim.g.blink_auto_show == true
+                    end,
+                    set = function(state)
+                        vim.g.blink_auto_show = state
+                    end,
+                })
+                :map("<localleader>uy")
         end,
     },
 }

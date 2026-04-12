@@ -5,6 +5,22 @@
 
 local map = vim.keymap.set
 
+-- Search and Replace
+-- to use: yank the replacement text, search the target text, then use this keymap
+map("n", "s/", ':%s//\\=@"/gc<CR>', { noremap = true, desc = "Find and replace search incremental" })
+
+-- Incremental Rename
+-- to use: put cursor over target word, use this keymap, then type in replacement text
+map("n", "srn", 'byiw:%s!<C-r>"!!gc<left><left><left>', { noremap = true, desc = "Find and replace word incremental" })
+-- to use: visually select the target word, use this keymap, the type in replacement text
+map("v", "srn", '"hy:%s!<C-r>h!!gc<left><left><left>', { noremap = true, desc = "Find and replace visually incremental" })
+
+-- Rename All
+-- to use: put cursor over target word, use this keymap, then type in replacement text
+map("n", "sra", 'byiw:%s!<C-r>"!!g<left><left>', { noremap = true, desc = "Find and replace word all" })
+-- to use: visually select the target word, use this keymap, the type in replacement text
+map("v", "sra", '"hy:%s!<C-r>h!!g<left><left>', { noremap = true, desc = "Find and replace visually all" })
+
 map("n", "#", "gcc", { remap = true, desc = "toggle line comment" })
 map("v", "#", "gc", { remap = true, desc = "toggle comment" })
 
@@ -55,6 +71,17 @@ map("n", "<CR>", "O<Esc>j", { desc = "Insert blank line above" })
 map("v", "<CR>", "y", { desc = "Yank selection" })
 map("x", "<localleader>p", '"_dP', { desc = "Paste without yank" })
 
+map("n", "<Home>", "^", { remap = true, desc = "Go to beginning of line" })
+-- map("n", "<Home>", function()
+--     local cur_col = vim.fn.col(".")
+--     vim.cmd("normal! ^")
+--     local first_non_blank_col = vim.fn.col(".")
+--
+--     if cur_col == first_non_blank_col then
+--         vim.cmd("normal! 0")
+--     end
+-- end, { desc = "Go to beginning of line (smart home)" })
+
 map("n", "S", "s$", { remap = true, desc = "Replace to end of line" })
 
 map("n", "yiy", function()
@@ -84,6 +111,9 @@ map("n", "<localleader>C", "<cmd>let @+ = expand('%:p')<CR><cmd>echo 'Copied: ' 
 
 -- https://github.com/ibhagwan/fzf-lua
 map("n", "z=", "<cmd>FzfLua spell_suggest<cr>", { desc = "Spell Suggest" })
+
+map("n", "<localleader>dd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
+
 map("n", "<localleader>gG", function()
     Snacks.lazygit()
 end, { desc = "Lazygit" })
