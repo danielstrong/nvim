@@ -305,7 +305,17 @@ return {
                 ["<S-Tab>"] = { "select_prev", "fallback" },
                 ["<Up>"] = { "fallback" },
                 ["<Down>"] = { "fallback" },
-                ["<Esc>"] = { "cancel", "fallback" },
+                -- ["<Esc>"] = { "cancel", "fallback" },
+                ["<Esc>"] = {
+                    function(cmp)
+                        if cmp.is_visible() then
+                            cmp.hide()
+                            vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
+                            return true
+                        end
+                    end,
+                    "fallback",
+                },
             },
         },
         ---@param opts blink.cmp.Config | { sources: { compat: string[] } }
