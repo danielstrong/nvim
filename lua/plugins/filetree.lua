@@ -7,11 +7,18 @@ return {
         keys = {
 
             {
-                "<localleader>E",
+                "<localleader>fE",
                 function()
                     require("neo-tree.command").execute({ toggle = true, dir = LazyVim.root() })
                 end,
                 desc = "Explorer NeoTree (Root Dir)",
+            },
+            {
+                "<localleader>fe",
+                function()
+                    require("neo-tree.command").execute({ toggle = true, dir = vim.uv.cwd() })
+                end,
+                desc = "Explorer NeoTree (cwd)",
             },
             {
                 "<localleader>e",
