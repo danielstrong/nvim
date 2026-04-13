@@ -110,7 +110,7 @@ return {
                     -- https://github.com/nvim-tree/nvim-tree.lua/blob/master/doc/nvim-tree-lua.txt#L2172
                     dotfiles = false,
                     -- git_ignored = true,
-                    git_ignored = false,
+                    git_ignored = true,
                     -- custom = { "^node_modules$" },
                     custom = { "^node_modules$" },
                 },

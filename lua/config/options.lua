@@ -104,6 +104,7 @@ vim.filetype.add({
         trigger = "apexcode",
         page = "visualforce",
         component = "visualforce",
+        godpowers = "xml",
     },
     filename = {
         [".env"] = "sh",
