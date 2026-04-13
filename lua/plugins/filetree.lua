@@ -71,35 +71,35 @@ return {
         keys = {
 
             {
-                "<localleader>fE",
+                "<leader>fE",
                 function()
                     neotree_switch("filesystem", LazyVim.root())
                 end,
                 desc = "Explorer NeoTree (Root Dir)",
             },
             {
-                "<localleader>fe",
+                "<leader>fe",
                 function()
                     neotree_switch("filesystem", vim.uv.cwd())
                 end,
                 desc = "Explorer NeoTree (cwd)",
             },
             {
-                "<localleader>ge",
+                "<leader>ge",
                 function()
                     neotree_switch("git_status", nil)
                 end,
                 desc = "Git Explorer",
             },
             {
-                "<localleader>be",
+                "<leader>be",
                 function()
                     neotree_switch("buffers", nil)
                 end,
                 desc = "Buffer Explorer",
             },
             {
-                "<localleader>e",
+                "<leader>e",
                 function()
                     local is_focused, _ = neotree_is_focused()
                     local is_open, _ = neotree_is_open()
@@ -177,7 +177,7 @@ return {
         keys = {
             -- Keymap to toggle the NvimTree
             {
-                "<localleader>R",
+                "<localleader>E",
                 function()
                     local view = require("nvim-tree.view")
                     if view.is_visible() and view.get_winnr() == vim.api.nvim_get_current_win() then
@@ -190,7 +190,7 @@ return {
             },
             -- Keymap to open NvimTree to the current file's location
             {
-                "<localleader>r",
+                "<localleader>e",
                 function()
                     local view = require("nvim-tree.view")
                     if view.is_visible() and view.get_winnr() == vim.api.nvim_get_current_win() then
