@@ -83,10 +83,10 @@ map({ "n", "v" }, "<localleader>sD", "<cmd>AutoSession purgeOrphaned<CR>", { des
 map({ "n", "v" }, "<localleader>st", "<cmd>AutoSession enable<CR>", { desc = "Enable Autosave Session" })
 map({ "n", "v" }, "<localleader>sT", "<cmd>AutoSession disable<CR>", { desc = "Disable Autosave Session" })
 
-map("n", "<localleader>n", "<cmd>messages<cr>", { desc = "Messages" })
-map("n", "<localleader>r", "<cmd>registers<cr>", { desc = "Registers" })
-map("n", "<localleader>j", "<cmd>jumps<cr>", { desc = "Jumps" })
-map("n", "<localleader>m", "<cmd>marks<cr>", { desc = "Marks" })
+map("n", "<localleader>nn", "<cmd>messages<cr>", { desc = "Messages" })
+map("n", "<localleader>nr", "<cmd>registers<cr>", { desc = "Registers" })
+map("n", "<localleader>nj", "<cmd>jumps<cr>", { desc = "Jumps" })
+map("n", "<localleader>nm", "<cmd>marks<cr>", { desc = "Marks" })
 
 -- map("n", "<localleader>D", "<cmd>Ex<cr>", { desc = "Explore" })
 -- map("n", "<localleader>d", "<cmd>Lexplore<cr>", { desc = "Explore Bar" })

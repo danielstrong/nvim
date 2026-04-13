@@ -7,6 +7,7 @@ vim.g.maplocalleader = "\\"
 vim.g.snacks_animate = false
 -- vim.g.lazyvim_ui_statuscolumn = false
 vim.g.lazyvim_picker = "fzf"
+vim.g.lazyvim_explorer = "neo-tree"
 vim.g.lazyvim_cmp = "blink.cmp"
 vim.g.lazyvim_mini_snippets_in_completion = false
 vim.g.deprecation_warnings = true

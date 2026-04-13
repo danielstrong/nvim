@@ -1,5 +1,39 @@
 return {
-    { "nvim-neo-tree/neo-tree.nvim", enabled = false },
+    {
+        "nvim-neo-tree/neo-tree.nvim",
+        enabled = true,
+        keys = {
+
+            {
+                "<localleader>EE",
+                function()
+                    require("neo-tree.command").execute({ toggle = true, dir = LazyVim.root() })
+                end,
+                desc = "Explorer NeoTree (Root Dir)",
+            },
+            {
+                "<localleader>e",
+                function()
+                    require("neo-tree.command").execute({ toggle = true, dir = vim.uv.cwd() })
+                end,
+                desc = "Explorer NeoTree (cwd)",
+            },
+            {
+                "<localleader>Eg",
+                function()
+                    require("neo-tree.command").execute({ source = "git_status", toggle = true })
+                end,
+                desc = "Git Explorer",
+            },
+            {
+                "<localleader>Eb",
+                function()
+                    require("neo-tree.command").execute({ source = "buffers", toggle = true })
+                end,
+                desc = "Buffer Explorer",
+            },
+        },
+    },
     {
         "nvim-tree/nvim-tree.lua",
         enabled = true,
@@ -11,7 +45,7 @@ return {
         keys = {
             -- Keymap to toggle the NvimTree
             {
-                "<localleader>E",
+                "<localleader>R",
                 function()
                     local view = require("nvim-tree.view")
                     if view.is_visible() and view.get_winnr() == vim.api.nvim_get_current_win() then
@@ -24,7 +58,7 @@ return {
             },
             -- Keymap to open NvimTree to the current file's location
             {
-                "<localleader>e",
+                "<localleader>r",
                 function()
                     local view = require("nvim-tree.view")
                     if view.is_visible() and view.get_winnr() == vim.api.nvim_get_current_win() then
