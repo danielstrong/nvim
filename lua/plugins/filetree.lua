@@ -50,11 +50,7 @@ local function neotree_switch(source, dir)
 
     if is_open then
         -- Already on this exact source+dir and focused → close
-        if is_focused
-            and focused_state
-            and focused_state.name == source
-            and focused_state.path == dir
-        then
+        if is_focused and focused_state and focused_state.name == source and (dir == nil or focused_state.path == dir) then
             cmd.execute({ action = "close" })
             return
         end
@@ -76,13 +72,31 @@ return {
 
             {
                 "<localleader>fE",
-                function() neotree_switch("filesystem", LazyVim.root()) end,
+                function()
+                    neotree_switch("filesystem", LazyVim.root())
+                end,
                 desc = "Explorer NeoTree (Root Dir)",
             },
             {
                 "<localleader>fe",
-                function() neotree_switch("filesystem", vim.uv.cwd()) end,
+                function()
+                    neotree_switch("filesystem", vim.uv.cwd())
+                end,
                 desc = "Explorer NeoTree (cwd)",
+            },
+            {
+                "<localleader>ge",
+                function()
+                    neotree_switch("git_status", nil)
+                end,
+                desc = "Git Explorer",
+            },
+            {
+                "<localleader>be",
+                function()
+                    neotree_switch("buffers", nil)
+                end,
+                desc = "Buffer Explorer",
             },
             {
                 "<localleader>e",
@@ -106,16 +120,6 @@ return {
                     end
                 end,
                 desc = "Toggle NeoTree (smart)",
-            },
-            {
-                "<localleader>ge",
-                function() neotree_switch("git_status", nil) end,
-                desc = "Git Explorer",
-            },
-            {
-                "<localleader>be",
-                function() neotree_switch("buffers", nil) end,
-                desc = "Buffer Explorer",
             },
         },
         opts = {
