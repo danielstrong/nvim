@@ -64,6 +64,23 @@ return {
                         end
                     end,
                     ["O"] = "open",
+                    ["Y"] = function(state)
+                        local path = state.tree:get_node().path
+                        local name = vim.fn.fnamemodify(path, ":t")
+                        vim.fn.setreg("+", name)
+                        vim.notify("Copied: " .. name)
+                    end,
+                    ["<localleader>c"] = function(state)
+                        local path = state.tree:get_node().path
+                        local rel = vim.fn.fnamemodify(path, ":.")
+                        vim.fn.setreg("+", rel)
+                        vim.notify("Copied: " .. rel)
+                    end,
+                    ["<localleader>C"] = function(state)
+                        local path = state.tree:get_node().path
+                        vim.fn.setreg("+", path)
+                        vim.notify("Copied: " .. path)
+                    end,
                     ["W"] = {
                         function(state)
                             require("lazy.util").open(state.tree:get_node().path, { system = true })
