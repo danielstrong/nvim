@@ -65,7 +65,7 @@ map({ "n", "v" }, "<localleader>tm$", "<cmd>tabmove $<cr>", { desc = "move tab t
 map({ "n", "v" }, "<localleader>tm#", "<cmd>tabmove #<cr>", { desc = "move tab after last accessed" })
 
 map({ "n", "v" }, "<localleader>x", "<cmd>bn | bd #<cr>", { desc = "kill buffer" })
-map({ "n", "v" }, "<localleader>x", "<cmd>bn | e# #<cr>", { desc = "kill other buffers" })
+map({ "n", "v" }, "<localleader>X", "<cmd>%bd |e# | bd#<cr>", { desc = "kill other buffers" })
 map({ "n", "v" }, "<localleader>w", "<cmd>w<cr>", { desc = "save" })
 map({ "n", "v" }, "<localleader>We", "<cmd>noautocmd w<cr>", { desc = "save without formatting" })
 map({ "n", "v" }, "<localleader>Ww", "<cmd>AutoSession save<CR><cmd>wa<cr>", { desc = "save all + save session" })
@@ -147,7 +147,9 @@ map("n", "<localleader>C", "<cmd>let @+ = expand('%:p')<CR><cmd>echo 'Copied: ' 
 map("n", "z=", "<cmd>FzfLua spell_suggest<cr>", { desc = "Spell Suggest" })
 
 map("n", "<localleader>dd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
-
+map("n", "<localleader>fB", function()
+    Snacks.picker.buffers()
+end, { desc = "Buffers" })
 map("n", "<localleader>gG", function()
     Snacks.lazygit()
 end, { desc = "Lazygit" })
@@ -159,7 +161,7 @@ map("n", "<localleader>gc", "<cmd>FzfLua git_commits<cr>", { desc = "Git Commits
 map("n", "<localleader>gC", "<cmd>FzfLua git_bcommits<cr>", { desc = "Git Commits (buffer)" })
 map("n", "<localleader>gs", "<cmd>FzfLua git_status<cr>", { desc = "Git Status" })
 map("n", "<localleader>gw", "<cmd>FzfLua git_worktrees<cr>", { desc = "Git Worktrees" })
-map("n", "<localleader>ge", "<cmd>FzfLua git_branches<cr>", { desc = "Git Branches" })
+map("n", "<localleader>gn", "<cmd>FzfLua git_branches<cr>", { desc = "Git Branches" })
 map("n", "<localleader>gr", "<cmd>FzfLua git_stash<cr>", { desc = "Git Stash" })
 map("n", "<localleader>gt", "<cmd>FzfLua git_tags<cr>", { desc = "Git Tags" })
 
