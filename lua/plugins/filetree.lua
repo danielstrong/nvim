@@ -1,3 +1,5 @@
+local neotree_was_in_preview = false
+
 return {
     {
         "nvim-neo-tree/neo-tree.nvim",
@@ -5,7 +7,7 @@ return {
         keys = {
 
             {
-                "<localleader>EE",
+                "<localleader>E",
                 function()
                     require("neo-tree.command").execute({ toggle = true, dir = LazyVim.root() })
                 end,
@@ -14,23 +16,61 @@ return {
             {
                 "<localleader>e",
                 function()
-                    require("neo-tree.command").execute({ toggle = true, dir = vim.uv.cwd() })
+                    local manager = require("neo-tree.sources.manager")
+                    local renderer = require("neo-tree.ui.renderer")
+                    local state = manager.get_state("filesystem")
+                    if renderer.window_exists(state) and state.winid == vim.api.nvim_get_current_win() then
+                        require("neo-tree.command").execute({ action = "close" })
+                    else
+                        require("neo-tree.command").execute({ action = "focus", dir = vim.uv.cwd() })
+                        if neotree_was_in_preview then
+                            vim.schedule(function()
+                                require("neo-tree.sources.common.commands").toggle_preview(require("neo-tree.sources.manager").get_state("filesystem"))
+                            end)
+                        end
+                    end
                 end,
                 desc = "Explorer NeoTree (cwd)",
             },
             {
-                "<localleader>Eg",
+                "<localleader>ge",
                 function()
                     require("neo-tree.command").execute({ source = "git_status", toggle = true })
                 end,
                 desc = "Git Explorer",
             },
             {
-                "<localleader>Eb",
+                "<localleader>be",
                 function()
                     require("neo-tree.command").execute({ source = "buffers", toggle = true })
                 end,
                 desc = "Buffer Explorer",
+            },
+        },
+        opts = {
+            window = {
+                mappings = {
+                    ["<cr>"] = function(state)
+                        local node = state.tree:get_node()
+                        if node.type == "file" then
+                            local in_preview = require("neo-tree.sources.common.preview").is_active()
+                            neotree_was_in_preview = in_preview
+                            require("neo-tree.sources.filesystem.commands").open(state)
+                            if not in_preview then
+                                require("neo-tree.command").execute({ action = "close" })
+                            end
+                        else
+                            require("neo-tree.sources.filesystem.commands").open(state)
+                        end
+                    end,
+                    ["O"] = "open",
+                    ["W"] = {
+                        function(state)
+                            require("lazy.util").open(state.tree:get_node().path, { system = true })
+                        end,
+                        desc = "Open with System Application",
+                    },
+                },
             },
         },
     },
