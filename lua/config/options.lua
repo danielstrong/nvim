@@ -24,9 +24,20 @@ opt.autoread = false
 -- only set clipboard if not in ssh, to make sure the OSC 52
 -- integration works automatically.
 
-if vim.loop.os_uname().sysname == "Darwin" then
-    opt.clipboard = vim.env.SSH_CONNECTION and "" or "unnamedplus" -- Sync with system clipboard
+if vim.env.SSH_CONNECTION then
+    vim.g.clipboard = {
+        name = "OSC 52",
+        copy = {
+            ["+"] = require("vim.ui.clipboard.osc52").copy("+"),
+            ["*"] = require("vim.ui.clipboard.osc52").copy("*"),
+        },
+        paste = {
+            ["+"] = require("vim.ui.clipboard.osc52").paste("+"),
+            ["*"] = require("vim.ui.clipboard.osc52").paste("*"),
+        },
+    }
 end
+opt.clipboard = "unnamedplus"
 opt.completeopt = "menu,menuone,noselect"
 opt.conceallevel = 0 -- disable concealing markup in markdown files and similiar
 opt.confirm = true -- Confirm to save changes before exiting modified buffer
