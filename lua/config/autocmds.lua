@@ -14,15 +14,6 @@ local function augroup(name)
 end
 
 vim.api.nvim_del_augroup_by_name("lazyvim_checktime")
-vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
-    group = augroup("checktime"),
-    pattern = { "*" },
-    callback = function()
-        if vim.fn.mode() ~= "c" then
-            vim.cmd("checktime")
-        end
-    end,
-})
 
 vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
 -- vim.api.nvim_create_autocmd("FileType", {

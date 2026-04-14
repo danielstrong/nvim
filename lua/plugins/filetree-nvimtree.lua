@@ -99,6 +99,11 @@ return {
                     end
                 end, { buffer = bufnr, noremap = true, silent = true, desc = "NvimTree copy absolute path" })
 
+                vim.keymap.set("n", "gf", api.tree.search_node, { buffer = bufnr, noremap = true, silent = true, desc = "Search" })
+                vim.keymap.set("n", "<C-s>", api.node.run.system, { buffer = bufnr, noremap = true, silent = true, desc = "Run System" })
+                vim.keymap.set("n", "s", api.node.open.horizontal, { buffer = bufnr, noremap = true, silent = true, desc = "Open: Horizontal Split" })
+                vim.keymap.set("n", "S", api.node.open.vertical, { buffer = bufnr, noremap = true, silent = true, desc = "Open: Vertical Split" })
+
                 -- vim.keymap.set("n", "C", function()
                 --     api.filter.git.clean.toggle()
                 --     api.tree.expand_all()

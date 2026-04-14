@@ -97,6 +97,7 @@ return {
       map("n", "<localleader>hR", gs.reset_buffer, "Reset Buffer")
       map("n", "<localleader>he", gs.preview_hunk_inline, "Hunk Diff Preview Inline")
       map("n", "<localleader>hh", gs.preview_hunk, "Hunk Diff Hover")
+      map("n", "<localleader>hB", function() Snacks.git.blame_line() end, "Snacks Blame Line")
       map("n", "<localleader>hb", function() gs.blame_line({ full = true }) end, "Blame Line")
       Snacks.toggle
         .new({
