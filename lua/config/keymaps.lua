@@ -70,6 +70,13 @@ map({ "n", "v" }, "<localleader>w", "<cmd>w<cr>", { desc = "save" })
 map({ "n", "v" }, "<localleader>We", "<cmd>noautocmd w<cr>", { desc = "save without formatting" })
 map({ "n", "v" }, "<localleader>Ww", "<cmd>AutoSession save<CR><cmd>wa<cr>", { desc = "save all + save session" })
 map({ "n", "v" }, "<localleader>l", "<cmd>e<cr>", { desc = "load file" })
+map({ "n", "v" }, "<localleader>L", function()
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].buftype == "" and vim.api.nvim_buf_get_name(buf) ~= "" then
+            vim.api.nvim_buf_call(buf, function() vim.cmd("e") end)
+        end
+    end
+end, { desc = "reload all buffers" })
 
 map({ "n", "v" }, "<localleader>sw", "<cmd>AutoSession save<CR>", { desc = "Save Session" })
 map({ "n", "v" }, "<localleader>sW", ":AutoSession save ", { desc = "Save Session with name" })

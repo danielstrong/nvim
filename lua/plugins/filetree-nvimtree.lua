@@ -99,23 +99,24 @@ return {
                     end
                 end, { buffer = bufnr, noremap = true, silent = true, desc = "NvimTree copy absolute path" })
 
-                vim.keymap.set("n", "C", function()
-                    api.filter.git.clean.toggle()
-                    api.tree.expand_all()
-                end, { buffer = bufnr, noremap = true, silent = true, desc = "Toggle git clean filter + expand all" })
+                -- vim.keymap.set("n", "C", function()
+                --     api.filter.git.clean.toggle()
+                --     api.tree.expand_all()
+                -- end, { buffer = bufnr, noremap = true, silent = true, desc = "Toggle git clean filter + expand all" })
             end
 
             require("nvim-tree").setup({
                 on_attach = on_attach,
                 view = {
+                    float = {
+                        enable = false,
+                    },
                     width = 48,
                 },
                 filters = {
                     -- https://github.com/nvim-tree/nvim-tree.lua/blob/master/doc/nvim-tree-lua.txt#L2172
                     dotfiles = false,
-                    -- git_ignored = true,
                     git_ignored = true,
-                    -- custom = { "^node_modules$" },
                     custom = { "^node_modules$" },
                 },
             })

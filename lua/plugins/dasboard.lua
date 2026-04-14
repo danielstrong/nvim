@@ -13,6 +13,7 @@ return {
             terminal = { enabled = false },
             input = { enabled = false },
             explorer = { enabled = false },
+            bigfile = { enabled = true, notify = false },
         },
     },
     {
