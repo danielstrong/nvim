@@ -232,21 +232,29 @@ Snacks.toggle
     })
     :map("<localleader>uf")
 
-map("n", "<F12>", function()
-    if vim.g.original_signcolumn == nil then
-        vim.g.original_signcolumn = vim.wo.signcolumn
-        vim.g.original_relativenumber = vim.wo.relativenumber
-    end
+Snacks.toggle
+    .new({
+        name = "Mouse",
+        get = function()
+            return vim.wo.number or vim.wo.relativenumber
+        end,
+        set = function(state)
+            if vim.g.original_signcolumn == nil then
+                vim.g.original_signcolumn = vim.wo.signcolumn
+                vim.g.original_relativenumber = vim.wo.relativenumber
+            end
 
-    if vim.wo.number or vim.wo.relativenumber then
-        vim.wo.number = false
-        vim.wo.relativenumber = false
-        vim.wo.signcolumn = "no"
-        vim.o.mouse = ""
-    else
-        vim.wo.number = true
-        vim.wo.relativenumber = vim.g.original_relativenumber
-        vim.o.mouse = "a"
-        vim.wo.signcolumn = vim.g.original_signcolumn
-    end
-end, { desc = "Toggle line numbering" })
+            if state then
+                vim.wo.number = true
+                vim.wo.relativenumber = vim.g.original_relativenumber
+                vim.o.mouse = "a"
+                vim.wo.signcolumn = vim.g.original_signcolumn
+            else
+                vim.wo.number = false
+                vim.wo.relativenumber = false
+                vim.wo.signcolumn = "no"
+                vim.o.mouse = ""
+            end
+        end,
+    })
+    :map("<localleader>um")
