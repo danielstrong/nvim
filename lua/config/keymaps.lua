@@ -139,21 +139,7 @@ map("n", "<Home>", "^", { remap = true, desc = "Go to beginning of line" })
 
 map("n", "S", "s$", { remap = true, desc = "Replace to end of line" })
 
-map("n", "yiy", "^vg_y", { desc = "Yank trimmed line (characterwise)" })
--- map("n", "yiy", function()
---     local line = vim.api.nvim_get_current_line()
---     local trimmed = line:match("^%s*(.-)%s*$")
---     vim.fn.setreg('"', trimmed, "c")
---     vim.fn.setreg("+", trimmed, "c")
---     local row = vim.api.nvim_win_get_cursor(0)[1] - 1
---     local start_col = line:find("%S") - 1
---     local end_col = line:find("%s*$") - 1
---     local ns = vim.api.nvim_create_namespace("yiy_yank")
---     vim.api.nvim_buf_add_highlight(0, ns, "IncSearch", row, start_col, end_col)
---     vim.defer_fn(function()
---         vim.api.nvim_buf_clear_namespace(0, ns, 0, -1)
---     end, 150)
--- end, { desc = "Yank trimmed line (characterwise)" })
+map("n", "yiy", "mp^vg_y`p", { desc = "Yank trimmed line (characterwise)" })
 
 map("n", "<Space>", "i<Space><ESC>l", { desc = "Insert space" })
 map("n", "<BS>", "i<BS><Esc>l", { desc = "Delete character before cursor" })
