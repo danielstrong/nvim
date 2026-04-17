@@ -196,6 +196,42 @@ Snacks.toggle
     })
     :map("<localleader>ul")
 
+Snacks.toggle
+    .new({
+        name = "Word Wrap",
+        get = function()
+            return vim.wo.wrap
+        end,
+        set = function(state)
+            vim.wo.wrap = state
+        end,
+    })
+    :map("<localleader>uw")
+
+Snacks.toggle
+    .new({
+        name = "Spelling",
+        get = function()
+            return vim.wo.spell
+        end,
+        set = function(state)
+            vim.wo.spell = state
+        end,
+    })
+    :map("<localleader>us")
+
+Snacks.toggle
+    .new({
+        name = "Force Statusline",
+        get = function()
+            return vim.o.laststatus == 2
+        end,
+        set = function(state)
+            vim.o.laststatus = state and 2 or 1
+        end,
+    })
+    :map("<localleader>uf")
+
 map("n", "<F12>", function()
     if vim.g.original_signcolumn == nil then
         vim.g.original_signcolumn = vim.wo.signcolumn

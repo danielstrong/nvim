@@ -167,16 +167,3 @@ vim.api.nvim_create_autocmd({ "FocusLost", "VimLeave", "WinLeave" }, {
         vim.wo.statusline = ""
     end,
 })
-
--- Toggle laststatus between 1 and 2
-local function toggle_laststatus()
-    if vim.o.laststatus == 2 then
-        vim.o.laststatus = 1
-    else
-        vim.o.laststatus = 2
-    end
-end
-
-vim.keymap.set("n", "<F9>", toggle_laststatus, { silent = true })
-vim.keymap.set("v", "<F9>", toggle_laststatus, { silent = true })
-vim.keymap.set("i", "<F9>", toggle_laststatus, { silent = true })
