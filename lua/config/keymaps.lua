@@ -32,6 +32,18 @@ map({ "n", "v" }, "<localleader>q", "<cmd>q<cr>", { desc = "quit" })
 map({ "n", "v" }, "<localleader>QQ", "<cmd>qa<cr>", { desc = "quit all" })
 map({ "n", "v" }, "<localleader>QW", "<cmd>AutoSession save<CR><cmd>wqa<cr>", { desc = "quit all + save session" })
 
+require("which-key").add({
+    { "<localleader>d", group = "diagnostics", mode = { "n", "v" } },
+    { "<localleader>f", group = "fuzzy", mode = { "n", "v" } },
+    { "<localleader>g", group = "git", mode = { "n", "v" } },
+    { "<localleader>h", group = "hunk", mode = { "n", "v" } },
+    { "<localleader>n", group = "nvim", mode = { "n", "v" } },
+    { "<localleader>Q", group = "quit", mode = { "n", "v" } },
+    { "<localleader>W", group = "save", mode = { "n", "v" } },
+    { "<localleader>t", group = "tabs", mode = { "n", "v" } },
+    { "<localleader>s", group = "session", mode = { "n", "v" } },
+    { "<localleader>u", group = "ui", mode = { "n", "v" } },
+})
 map({ "n", "v" }, "<localleader>tn", "<cmd>tabnew<cr>", { desc = "Tab new" })
 map({ "n", "v" }, "<localleader>ts", "<cmd>tab split<cr>", { desc = "open current buffer into new tab" })
 map({ "n", "v" }, "<localleader>tx", "<cmd>tabclose<cr>", { desc = "Tab close" })
