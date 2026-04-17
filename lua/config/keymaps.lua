@@ -139,7 +139,7 @@ map("n", "<Home>", "^", { remap = true, desc = "Go to beginning of line" })
 
 map("n", "S", "s$", { remap = true, desc = "Replace to end of line" })
 
-map("n", "yiy", "mp^vg_y`p", { desc = "Yank trimmed line (characterwise)" })
+map("n", "yiy", "my^vg_y`y", { desc = "Yank trimmed line (characterwise)" })
 
 map("n", "<Space>", "i<Space><ESC>l", { desc = "Insert space" })
 map("n", "<BS>", "i<BS><Esc>l", { desc = "Delete character before cursor" })
