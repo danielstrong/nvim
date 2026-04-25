@@ -66,6 +66,35 @@ opt.jumpoptions = "view"
 opt.laststatus = 1 -- global statusline
 opt.linebreak = true -- Wrap lines at convenient points
 opt.list = false
+-- opt.listchars = { tab = "» ", trail = "·", nbsp = "␣", extends = "…" }
+-- opt.listchars = {
+--     tab = "▸ ",
+--     trail = "·",
+--     extends = "»",
+--     precedes = "«",
+--     nbsp = "¬",
+--     eol = "↲",
+-- }
+-- opt.listchars = {
+--     tab = "» ",
+--     trail = "·",
+--     eol = "¬",
+--     nbsp = "␣",
+--     extends = "❯",
+--     precedes = "❮",
+--     lead = " ",
+--     multispace = "· ",
+-- }
+opt.listchars = {
+    tab = "▸ ",
+    trail = "·",
+    lead = "·",
+    eol = "↲",
+    nbsp = "␣",
+    extends = "❯",
+    precedes = "❮",
+    multispace = "» ",
+}
 opt.mouse = "a" -- Enable mouse mode
 opt.number = true -- Print line number
 opt.pumblend = 10 -- Popup blend
