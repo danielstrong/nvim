@@ -1,5 +1,13 @@
 return {
     {
+        "andymass/vim-matchup",
+        enabled = true,
+        event = "BufReadPost",
+        init = function()
+            vim.g.matchup_matchparen_offscreen = { method = "popup" }
+        end,
+    },
+    {
         "folke/flash.nvim",
         enabled = false,
     },
