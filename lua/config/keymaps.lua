@@ -29,7 +29,14 @@ map({ "n", "v" }, "X", '"_X')
 map("n", "<localleader>v", "<C-v>", { desc = "enter visual block mode" })
 
 require("which-key").add({
-    { "<localleader>b", group = "buffers", mode = { "n", "v" } },
+    {
+        "<localleader>b",
+        group = "buffers",
+        mode = { "n", "v" },
+        expand = function()
+            return require("which-key.extras").expand.buf()
+        end,
+    },
     { "<localleader>d", group = "diagnostics", mode = { "n", "v" } },
     { "<localleader>f", group = "fuzzy", mode = { "n", "v" } },
     { "<localleader>g", group = "git", mode = { "n", "v" } },
