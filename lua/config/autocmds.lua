@@ -33,6 +33,35 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     end,
 })
 
+vim.api.nvim_create_autocmd("VimEnter", {
+    group = augroup("startup_md_wrap_spell"),
+    callback = function()
+        local args = vim.fn.argv()
+        if type(args) ~= "table" or #args == 0 then
+            return
+        end
+        local has_md = false
+        for _, name in ipairs(args) do
+            if type(name) == "string" and name:lower():match("%.md$") then
+                has_md = true
+                break
+            end
+        end
+        if not has_md then
+            return
+        end
+        for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+            local bname = vim.api.nvim_buf_get_name(buf)
+            if bname ~= "" and bname:lower():match("%.md$") then
+                for _, win in ipairs(vim.fn.win_findbuf(buf)) do
+                    vim.wo[win].spell = true
+                    vim.wo[win].wrap = true
+                end
+            end
+        end
+    end,
+})
+
 -- vim.api.nvim_del_augroup_by_name("lazyvim_last_loc")
 -- vim.api.nvim_create_autocmd("BufReadPost", {
 --     group = augroup("remember-cursor-position"),
