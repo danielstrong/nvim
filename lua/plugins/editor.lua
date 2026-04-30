@@ -389,8 +389,12 @@ return {
                 end
             end
 
-            vim.g.blink_tab_show = false
-            vim.g.blink_auto_show = true
+            if vim.g.blink_tab_show == nil then
+                vim.g.blink_tab_show = false
+            end
+            if vim.g.blink_auto_show == nil then
+                vim.g.blink_auto_show = true
+            end
             opts.keymap["<Tab>"] = {
                 function(cmp)
                     if not vim.g.blink_tab_show then

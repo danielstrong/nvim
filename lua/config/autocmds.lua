@@ -50,6 +50,8 @@ vim.api.nvim_create_autocmd("VimEnter", {
         if not has_md then
             return
         end
+        vim.g.blink_tab_show = false
+        vim.g.blink_auto_show = false
         for _, buf in ipairs(vim.api.nvim_list_bufs()) do
             local bname = vim.api.nvim_buf_get_name(buf)
             if bname ~= "" and bname:lower():match("%.md$") then
