@@ -106,16 +106,46 @@ end
 map({ "n", "v" }, "<localleader>bL", reload_all_buffers, { desc = "reload all buffers" })
 map({ "n", "v" }, "<localleader>L", reload_all_buffers, { desc = "reload all buffers" })
 
-map({ "n", "v" }, "<localleader>q", function()
+map({ "n", "v" }, "<localleader><tab>q", function()
+    local wins = vim.api.nvim_tabpage_list_wins(0)
+    local cur_ft = vim.bo[vim.api.nvim_get_current_buf()].filetype
+    local non_tree_wins = vim.tbl_filter(function(w)
+        return vim.bo[vim.api.nvim_win_get_buf(w)].filetype ~= "NvimTree"
+    end, wins)
+    if cur_ft ~= "NvimTree" and #non_tree_wins <= 1 then
+        local ok = pcall(function()
+            vim.cmd("b#")
+        end)
+        if not ok then
+            -- vim.cmd("enew")
+            -- vim.cmd("b#")
+            vim.notify("Cannot close last window. press q to quit", vim.log.levels.WARN)
+        end
+        -- vim.cmd("NvimTreeClose")
+        return
+    end
     vim.cmd("close")
 end, { desc = "close window" })
+map({ "n", "v" }, "<localleader>q", function()
+    vim.cmd("quit")
+    local remaining = vim.fn.filter(vim.api.nvim_list_wins(), function(_, w)
+        return vim.api.nvim_win_is_valid(w)
+    end)
+    if #remaining == 1 then
+        local buf = vim.api.nvim_win_get_buf(remaining[1])
+        local ft = vim.api.nvim_get_option_value("filetype", { buf = buf })
+        if ft == "NvimTree" then
+            vim.cmd("quit")
+        end
+    end
+end, { desc = "quit" })
 map({ "n", "v" }, "<localleader>QQ", "<cmd>qa<cr>", { desc = "quit all" })
 map({ "n", "v" }, "<localleader>QA", "<cmd>wqa<cr>", { desc = "save quit all" })
 map({ "n", "v" }, "<localleader>QW", "<cmd>AutoSession save<CR><cmd>wqa<cr>", { desc = "save quit all + save session" })
 map({ "n", "v" }, "<localleader>w", "<cmd>w<cr>", { desc = "save" })
+map({ "n", "v" }, "<localleader>WA", "<cmd>wa<cr>", { desc = "save all" })
 map({ "n", "v" }, "<localleader>WE", "<cmd>noautocmd w<cr>", { desc = "save without formatting" })
-map({ "n", "v" }, "<localleader>WQ", "<cmd>noautocmd wq<cr>", { desc = "save quit" })
-map({ "n", "v" }, "<localleader>WA", "<cmd>noautocmd wa<cr>", { desc = "save all" })
+map({ "n", "v" }, "<localleader>WQ", "<cmd>wq<cr>", { desc = "save quit" })
 map({ "n", "v" }, "<localleader>WW", "<cmd>AutoSession save<CR><cmd>wa<cr>", { desc = "save all + save session" })
 
 map({ "n", "v" }, "<localleader>sw", "<cmd>AutoSession save<CR>", { desc = "Save Session" })
