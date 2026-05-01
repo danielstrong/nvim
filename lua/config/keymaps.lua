@@ -211,6 +211,23 @@ map("n", "<localleader>C", "<cmd>let @+ = expand('%:p')<CR><cmd>echo 'Copied: ' 
 map("n", "z=", "<cmd>FzfLua spell_suggest<cr>", { desc = "Spell Suggest" })
 
 map("n", "<localleader>dd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
+map("n", "<localleader>dc", function()
+    local diags = vim.diagnostic.get(0, { lnum = vim.fn.line(".") - 1 })
+    if #diags == 0 then
+        vim.notify("No diagnostics on this line", vim.log.levels.INFO)
+        return
+    end
+    local messages = vim.tbl_map(function(d)
+        local suffix = ""
+        if d.code then
+            suffix = suffix .. " [" .. d.code .. "]"
+        end
+        return d.message .. suffix
+    end, diags)
+    local text = table.concat(messages, "\n")
+    vim.fn.setreg("+", text)
+    vim.notify("Copied: " .. text, vim.log.levels.INFO)
+end, { desc = "Copy Line Diagnostics" })
 map("n", "<localleader>fB", function()
     Snacks.picker.buffers()
 end, { desc = "Buffers" })
