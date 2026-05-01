@@ -217,16 +217,19 @@ map("n", "<localleader>dc", function()
         vim.notify("No diagnostics on this line", vim.log.levels.INFO)
         return
     end
-    local messages = vim.tbl_map(function(d)
-        local suffix = ""
-        if d.code then
-            suffix = suffix .. " [" .. d.code .. "]"
+    local messages = {}
+    for i, d in ipairs(diags) do
+        local suffix = d.code and (" [" .. d.code .. "]") or ""
+        local line = d.message .. suffix
+        if #diags > 1 then
+            line = i .. ". " .. line
         end
-        return d.message .. suffix
-    end, diags)
+        messages[i] = line
+    end
     local text = table.concat(messages, "\n")
     vim.fn.setreg("+", text)
-    vim.notify("Copied: " .. text, vim.log.levels.INFO)
+    local preview = #messages > 1 and (messages[1] .. " …") or text
+    vim.notify("Copied: " .. preview, vim.log.levels.INFO)
 end, { desc = "Copy Line Diagnostics" })
 map("n", "<localleader>fB", function()
     Snacks.picker.buffers()
