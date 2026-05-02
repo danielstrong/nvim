@@ -62,15 +62,38 @@ return {
     { "EdenEast/nightfox.nvim", name = "nightfox", lazy = true },
     { "rebelot/kanagawa.nvim", name = "kanagawa", lazy = true },
     {
+        "maxmx03/solarized.nvim",
+        lazy = false,
+        priority = 1000,
+        ---@type solarized.config
+        opts = {},
+    },
+    {
+        "svrana/neosolarized.nvim",
+        lazy = false,
+        priority = 1000,
+        config = function()
+            require("neosolarized").setup({
+                comment_italics = true,
+                background_set = false,
+            })
+        end,
+        dependencies = {
+            "tjdevries/colorbuddy.nvim",
+        },
+    },
+    {
         "LazyVim/LazyVim",
         opts = {
             -- colorscheme = "hybrid",
             -- colorscheme = "gruvbox",
             -- colorscheme = "catppuccin",
-            colorscheme = "tokyonight-night",
+            -- colorscheme = "tokyonight-night",
             -- colorscheme = "tomorrow-night",
             -- colorscheme = "nightfox",
-            -- colorscheme = "kanagawa-dragon",
+            colorscheme = "kanagawa-dragon",
+            -- colorscheme = "solarized",
+            -- colorscheme = "neosolarized",
             -- colorscheme = "carbonfox",
             -- colorscheme = "nightfly",
             -- colorscheme = "ayu",
@@ -104,6 +127,10 @@ return {
                     vim.api.nvim_set_hl(0, "StatusLineSectionR", { fg = "#aac474", bg = "#090909" })
                     vim.api.nvim_set_hl(0, "BlinkCmpGhostText", { fg = "#6a9fb5" })
                     vim.api.nvim_set_hl(0, "GitSignsCurrentLineBlame", { fg = "#cccccc", italic = true })
+
+                    if vim.g.colors_name == "neosolarized" then
+                        vim.api.nvim_set_hl(0, "CursorLine", { bg = "#053040" })
+                    end
                 end,
             })
         end,
