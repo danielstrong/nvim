@@ -211,6 +211,14 @@ map("n", "<localleader>C", "<cmd>let @+ = expand('%:p')<CR><cmd>echo 'Copied: ' 
 map("n", "z=", "<cmd>FzfLua spell_suggest<cr>", { desc = "Spell Suggest" })
 
 map("n", "<localleader>dd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
+
+map("n", "<localleader>da", function()
+    vim.diagnostic.setqflist({ open = false })
+    local count = #vim.fn.getqflist()
+    vim.notify(count .. " diagnostics in quickfix", vim.log.levels.INFO)
+end, { desc = "Diagnostics to Quickfix" })
+
+map("n", "<localleader>dA", "<cmd>copen<cr>", { desc = "Diagnostics to Quickfix" })
 map("n", "<localleader>dc", function()
     local diags = vim.diagnostic.get(0, { lnum = vim.fn.line(".") - 1 })
     if #diags == 0 then
