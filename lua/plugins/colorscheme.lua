@@ -82,6 +82,7 @@ return {
             "tjdevries/colorbuddy.nvim",
         },
     },
+    { "rose-pine/neovim", name = "rose-pine", lazy = false },
     {
         "LazyVim/LazyVim",
         opts = {
@@ -92,6 +93,7 @@ return {
             -- colorscheme = "tomorrow-night",
             -- colorscheme = "nightfox",
             colorscheme = "kanagawa-dragon",
+            -- colorscheme = "rose-pine",
             -- colorscheme = "solarized",
             -- colorscheme = "neosolarized",
             -- colorscheme = "carbonfox",
