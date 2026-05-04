@@ -211,14 +211,33 @@ map("n", "<localleader>C", "<cmd>let @+ = expand('%:p')<CR><cmd>echo 'Copied: ' 
 map("n", "z=", "<cmd>FzfLua spell_suggest<cr>", { desc = "Spell Suggest" })
 
 map("n", "<localleader>dd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
+map("n", "<localleader>df", "<cmd>FzfLua diagnostics_workspace<cr>", { desc = "Workspace Diagnostics (fzf)" })
+map("n", "<localleader>dF", "<cmd>FzfLua lsp_workspace_diagnostics<cr>", { desc = "Workspace LSP Diagnostics (fzf)" })
 
-map("n", "<localleader>da", function()
+map("n", "<localleader>dA", function()
     vim.diagnostic.setqflist({ open = false })
     local count = #vim.fn.getqflist()
     vim.notify(count .. " diagnostics in quickfix", vim.log.levels.INFO)
 end, { desc = "Diagnostics to Quickfix" })
+map("n", "<localleader>da", function()
+    local qf_open = false
+    for _, win in ipairs(vim.fn.getwininfo()) do
+        if win.quickfix == 1 then
+            qf_open = true
+            break
+        end
+    end
+    vim.cmd(qf_open and "cclose" or "copen")
+end, { desc = "Toggle Quickfix" })
 
-map("n", "<localleader>dA", "<cmd>copen<cr>", { desc = "Diagnostics to Quickfix" })
+map("n", "<localleader>dq", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Diagnostics (Trouble)" })
+map("n", "<localleader>dQ", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", { desc = "Buffer Diagnostics (Trouble)" })
+map("n", "<localleader>dl", "<cmd>Trouble lsp toggle<cr>", { desc = "LSP references/definitions/... (Trouble)" })
+map("n", "<localleader>dL", "<cmd>Trouble loclist toggle<cr>", { desc = "Location List (Trouble)" })
+map("n", "<localleader>dw", "<cmd>Trouble qflist toggle<cr>", { desc = "Quickfix List (Trouble)" })
+map("n", "<localleader>dW", "<cmd>Trouble qflist toggle<cr>", { desc = "Quickfix List (Trouble)" })
+map("n", "<localleader>dt", "<cmd>Trouble todo toggle<cr>", { desc = "Todo (Trouble)" })
+map("n", "<localleader>dT", "<cmd>Trouble todo toggle filter = {tag = {TODO,FIX,FIXME}}<cr>", { desc = "Todo/Fix/Fixme (Trouble)" })
 map("n", "<localleader>dc", function()
     local diags = vim.diagnostic.get(0, { lnum = vim.fn.line(".") - 1 })
     if #diags == 0 then
