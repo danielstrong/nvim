@@ -45,7 +45,13 @@ return {
                         {
                             "cR",
                             function()
-                                Snacks.rename.rename_file()
+                                Snacks.rename.rename_file({
+                                    on_rename = function(_, _, ok)
+                                        if ok then
+                                            require("nvim-tree.api").tree.reload()
+                                        end
+                                    end,
+                                })
                             end,
                             desc = "Rename File",
                             mode = { "n" },

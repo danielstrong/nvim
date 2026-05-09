@@ -45,10 +45,13 @@ return {
         config = function()
             local function on_attach(bufnr)
                 local api = require("nvim-tree.api")
-
                 -- Preserve all default nvim-tree keymaps
                 -- api.config.mappings.default_on_attach(bufnr)
                 api.map.on_attach.default(bufnr)
+
+                vim.keymap.set("n", "<localleader>r", function()
+                    require("nvim-tree.api").tree.reload()
+                end, { buffer = bufnr, noremap = true, silent = true, desc = "reload tree" })
 
                 vim.keymap.set("n", "<CR>", function()
                     local node = api.tree.get_node_under_cursor()
@@ -108,10 +111,91 @@ return {
                 --     api.filter.git.clean.toggle()
                 --     api.tree.expand_all()
                 -- end, { buffer = bufnr, noremap = true, silent = true, desc = "Toggle git clean filter + expand all" })
+
+                vim.keymap.set("n", "<localleader>ds", function()
+                    local node = api.tree.get_node_under_cursor()
+                    if not node then
+                        return
+                    end
+
+                    local paths = {}
+                    if node.type == "directory" then
+                        local function collect(n)
+                            if n.type == "file" then
+                                table.insert(paths, n.absolute_path)
+                            elseif n.nodes then
+                                for _, child in ipairs(n.nodes) do
+                                    collect(child)
+                                end
+                            end
+                        end
+                        collect(node)
+                    else
+                        paths = { node.absolute_path }
+                    end
+
+                    -- Load any unloaded buffers so LSP can attach and publish diagnostics.
+                    -- Track temp buffers so we can unload them after collecting.
+                    local temp_bufs = {}
+                    local buf_for_path = {}
+                    for _, path in ipairs(paths) do
+                        local pbufnr = vim.fn.bufnr(path)
+                        local was_loaded = pbufnr ~= -1 and vim.fn.bufloaded(pbufnr) == 1
+                        if not was_loaded then
+                            pbufnr = vim.fn.bufadd(path)
+                            vim.fn.bufload(pbufnr)
+                            -- Attach LSP to the new buffer
+                            vim.bo[pbufnr].buflisted = false
+                            vim.api.nvim_buf_call(pbufnr, function()
+                                vim.cmd("silent! doautocmd BufRead")
+                            end)
+                            table.insert(temp_bufs, pbufnr)
+                        end
+                        buf_for_path[path] = pbufnr
+                    end
+
+                    -- Give LSP time to publish diagnostics for newly loaded buffers
+                    local delay = #temp_bufs > 0 and 800 or 0
+                    vim.defer_fn(function()
+                        local items = {}
+                        for _, path in ipairs(paths) do
+                            local pbufnr = buf_for_path[path]
+                            if pbufnr and vim.api.nvim_buf_is_valid(pbufnr) then
+                                for _, d in ipairs(vim.diagnostic.get(pbufnr)) do
+                                    table.insert(items, {
+                                        filename = path,
+                                        lnum = d.lnum + 1,
+                                        col = d.col + 1,
+                                        text = d.message,
+                                        type = d.severity == vim.diagnostic.severity.ERROR and "E" or d.severity == vim.diagnostic.severity.WARN and "W" or "I",
+                                    })
+                                end
+                            end
+                        end
+
+                        -- Unload the temp buffers we created
+                        for _, tbuf in ipairs(temp_bufs) do
+                            if vim.api.nvim_buf_is_valid(tbuf) then
+                                vim.api.nvim_buf_delete(tbuf, { force = true })
+                            end
+                        end
+
+                        vim.fn.setqflist(items, "r")
+                        local count = #items
+                        if count == 0 then
+                            vim.notify("No diagnostics found", vim.log.levels.INFO)
+                        else
+                            vim.notify(count .. " diagnostic(s) added to quickfix", vim.log.levels.INFO)
+                        end
+                    end, delay)
+                end, { buffer = bufnr, noremap = true, silent = true, desc = "Diagnostics to Quickfix" })
             end
 
             require("nvim-tree").setup({
                 on_attach = on_attach,
+                filesystem_watchers = {
+                    enable = true,
+                },
                 view = {
                     float = {
                         enable = false,

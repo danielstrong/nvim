@@ -7,19 +7,19 @@ local map = vim.keymap.set
 
 -- Search and Replace
 -- to use: yank the replacement text, search the target text, then use this keymap
-map("n", "s/", ':%s//\\=@"/gc<CR>', { noremap = true, desc = "Find and replace search incremental" })
+map("n", "<localleader>r/", ':%s//\\=@"/gc<CR>', { noremap = true, desc = "Find and replace search incremental" })
 
 -- Incremental Rename
 -- to use: put cursor over target word, use this keymap, then type in replacement text
-map("n", "srn", 'byiw:%s!<C-r>"!!gc<left><left><left>', { noremap = true, desc = "Find and replace word incremental" })
+map("n", "<localleader>rn", 'byiw:%s!<C-r>"!!gc<left><left><left>', { noremap = true, desc = "Find and replace word incremental" })
 -- to use: visually select the target word, use this keymap, the type in replacement text
-map("v", "srn", '"hy:%s!<C-r>h!!gc<left><left><left>', { noremap = true, desc = "Find and replace visually incremental" })
+map("v", "<localleader>rn", '"hy:%s!<C-r>h!!gc<left><left><left>', { noremap = true, desc = "Find and replace visually incremental" })
 
 -- Rename All
 -- to use: put cursor over target word, use this keymap, then type in replacement text
-map("n", "sra", 'byiw:%s!<C-r>"!!g<left><left>', { noremap = true, desc = "Find and replace word all" })
+map("n", "<localleader>ra", 'byiw:%s!<C-r>"!!g<left><left>', { noremap = true, desc = "Find and replace word all" })
 -- to use: visually select the target word, use this keymap, the type in replacement text
-map("v", "sra", '"hy:%s!<C-r>h!!g<left><left>', { noremap = true, desc = "Find and replace visually all" })
+map("v", "<localleader>ra", '"hy:%s!<C-r>h!!g<left><left>', { noremap = true, desc = "Find and replace visually all" })
 
 map("n", "#", "gcc", { remap = true, desc = "toggle line comment" })
 map("v", "#", "gc", { remap = true, desc = "toggle comment" })
@@ -42,6 +42,7 @@ require("which-key").add({
     { "<localleader>g", group = "git", mode = { "n", "v" } },
     { "<localleader>h", group = "hunk", mode = { "n", "v" } },
     { "<localleader>n", group = "nvim", mode = { "n", "v" } },
+    { "<localleader>r", group = "replace", mode = { "n", "v" } },
     { "<localleader>Q", group = "quit", mode = { "n", "v" } },
     { "<localleader>W", group = "save", mode = { "n", "v" } },
     { "<localleader><tab>", group = "tabs", mode = { "n", "v" } },
