@@ -83,6 +83,7 @@ return {
         },
     },
     { "rose-pine/neovim", name = "rose-pine", lazy = false },
+    { "bluz71/vim-nightfly-colors", name = "nightfly", lazy = false, priority = 1000 },
     {
         "LazyVim/LazyVim",
         opts = {
@@ -92,7 +93,9 @@ return {
             -- colorscheme = "tokyonight-night",
             -- colorscheme = "tomorrow-night",
             -- colorscheme = "nightfox",
-            colorscheme = "kanagawa-dragon",
+            -- colorscheme = "kanagawa",
+            -- colorscheme = "kanagawa-dragon",
+            colorscheme = "nightfly",
             -- colorscheme = "rose-pine",
             -- colorscheme = "solarized",
             -- colorscheme = "neosolarized",
