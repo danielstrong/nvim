@@ -67,8 +67,23 @@ return {
                 end, { buffer = bufnr, noremap = true, silent = true, desc = "Open file and close tree" })
 
                 vim.keymap.set("n", "i", api.node.open.preview, { buffer = bufnr, noremap = true, silent = true, desc = "Preview file (keep tree focused)" })
-                vim.keymap.set("n", "<LeftRelease>", api.node.open.preview, { buffer = bufnr, noremap = true, silent = true, desc = "Open file (keep tree focused) / toggle dir" })
-                -- vim.keymap.set("n", "<2-LeftMouse>", api.node.open.preview, { buffer = bufnr, noremap = true, silent = true, desc = "Open file (keep tree focused) / toggle dir" })
+
+                local function mouse_open()
+                    local node = api.tree.get_node_under_cursor()
+                    if not node then
+                        return
+                    end
+                    if node.type == "directory" then
+                        -- api.node.open.edit()
+                    else
+                        api.node.open.preview()
+                    end
+                end
+
+                vim.keymap.set("n", "<LeftRelease>", mouse_open, { buffer = bufnr, noremap = true, silent = true, desc = "Open file (keep tree focused) / toggle dir" })
+                vim.keymap.set("n", "<2-LeftMouse>", api.node.open.preview, { buffer = bufnr, noremap = true, silent = true, desc = "Double-click: toggle dir / open file" })
+                vim.keymap.set("n", "<2-LeftRelease>", "<Nop>", { buffer = bufnr, noremap = true, silent = true })
+                vim.keymap.set("v", "<2-LeftMouse>", "<Esc>", { buffer = bufnr, noremap = true, silent = true })
 
                 vim.keymap.set("n", "O", function()
                     local marks = api.marks.list()
