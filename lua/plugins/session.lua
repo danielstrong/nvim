@@ -4,6 +4,21 @@ return {
         "rmagatti/auto-session",
         enabled = true,
         lazy = false,
+        keys = {
+            { "<localleader>QW", "<cmd>AutoSession save<CR><cmd>wqa<cr>", mode = { "n", "v" }, desc = "save quit all + save session" },
+            { "<localleader>WW", "<cmd>AutoSession save<CR><cmd>wa<cr>", mode = { "n", "v" }, desc = "save all + save session" },
+            { "<localleader>sw", "<cmd>AutoSession save<CR>", mode = { "n", "v" }, desc = "Save Session" },
+            { "<localleader>sW", ":AutoSession save ", mode = { "n", "v" }, desc = "Save Session with name" },
+            { "<localleader>sr", "<cmd>AutoSession restore<CR>", mode = { "n", "v" }, desc = "Restore Session" },
+            { "<localleader>sR", ":AutoSession restore ", mode = { "n", "v" }, desc = "Restore Session with name" },
+            { "<localleader>se", "<cmd>AutoSession search<CR>", mode = { "n", "v" }, desc = "Search Session" },
+            { "<localleader>sd", "<cmd>AutoSession deletePicker<CR>", mode = { "n", "v" }, desc = "Delete Session Picker" },
+            { "<localleader>sx", "<cmd>AutoSession delete<CR>", mode = { "n", "v" }, desc = "Delete Session" },
+            { "<localleader>sX", ":AutoSession delete ", mode = { "n", "v" }, desc = "Delete Session with name" },
+            { "<localleader>sD", "<cmd>AutoSession purgeOrphaned<CR>", mode = { "n", "v" }, desc = "Purge Orphaned Session" },
+            { "<localleader>st", "<cmd>AutoSession enable<CR>", mode = { "n", "v" }, desc = "Enable Autosave Session" },
+            { "<localleader>sT", "<cmd>AutoSession disable<CR>", mode = { "n", "v" }, desc = "Disable Autosave Session" },
+        },
         config = function()
             require("auto-session").setup({
                 -- log_level = 'debug',
