@@ -20,7 +20,7 @@ require("lazy").setup({
         { "LazyVim/LazyVim", import = "lazyvim.plugins" },
         -- import/override with your plugins
         { import = "plugins" },
-        { import = "apex-mac", cond = vim.loop.os_uname().sysname == "Darwin" },
+        { import = "apex-mac", enabled = vim.g.is_mac },
     },
     defaults = {
         -- By default, only LazyVim plugins will be lazy-loaded. Your custom plugins will load during startup.
