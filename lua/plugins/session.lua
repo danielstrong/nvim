@@ -1,8 +1,43 @@
 return {
-    { "folke/persistence.nvim", enabled = false },
+    {
+        "folke/persistence.nvim",
+        enabled = true,
+        event = "BufReadPre",
+        opts = {},
+        keys = {
+            {
+                "<localleader>sq",
+                function()
+                    require("persistence").load()
+                end,
+                desc = "Restore Session",
+            },
+            {
+                "<localleader>se",
+                function()
+                    require("persistence").select()
+                end,
+                desc = "Select Session",
+            },
+            {
+                "<localleader>sl",
+                function()
+                    require("persistence").load({ last = true })
+                end,
+                desc = "Restore Last Session",
+            },
+            {
+                "<localleader>sd",
+                function()
+                    require("persistence").stop()
+                end,
+                desc = "Don't Save Current Session",
+            },
+        },
+    },
     {
         "rmagatti/auto-session",
-        enabled = true,
+        enabled = false,
         lazy = false,
         keys = {
             { "<localleader>QW", "<cmd>AutoSession save<CR><cmd>wqa<cr>", mode = { "n", "v" }, desc = "save quit all + save session" },
