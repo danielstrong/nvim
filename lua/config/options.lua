@@ -104,7 +104,8 @@ opt.relativenumber = false -- Relative line numbers
 opt.ruler = true -- Disable the default ruler
 opt.scrolloff = 4 -- Lines of context
 -- opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "help", "globals", "skiprtp", "folds" }
-opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "winpos", "help", "globals", "skiprtp", "folds", "localoptions" }
+-- opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "winpos", "help", "globals", "skiprtp", "folds", "localoptions" }
+opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "winpos", "help", "folds", "globals", "localoptions" }
 --vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
 -- opt.sessionoptions = { "blank", "buffers", "curdir", "folds", "help", "tabpages", "winsize", "winpos", "terminal", "localoptions" }
 opt.shortmess:append({ S = false, W = true, I = true, c = true, C = true })

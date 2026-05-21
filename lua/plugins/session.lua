@@ -15,6 +15,27 @@ return {
             {
                 "<localleader>se",
                 function()
+                    require("persistence").load()
+                end,
+                desc = "Restore Session",
+            },
+            {
+                "<localleader>sr",
+                function()
+                    require("persistence").load()
+                end,
+                desc = "Restore Session",
+            },
+            {
+                "<localleader>sw",
+                function()
+                    require("persistence").save()
+                end,
+                desc = "Save Session",
+            },
+            {
+                "<localleader>sp",
+                function()
                     require("persistence").select()
                 end,
                 desc = "Select Session",
