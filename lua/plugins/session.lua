@@ -2,7 +2,7 @@ return {
     {
         "folke/persistence.nvim",
         enabled = true,
-        event = "BufReadPre",
+        -- event = "BufReadPre",
         opts = {},
         keys = {
             {
