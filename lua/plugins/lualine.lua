@@ -55,10 +55,10 @@ return {
             require("noice").setup(opts)
         end,
     },
-    { "akinsho/bufferline.nvim", enabled = false },
+    { "akinsho/bufferline.nvim", enabled = true },
     {
         "nvim-lualine/lualine.nvim",
-        enabled = false,
+        enabled = true,
         event = "VeryLazy",
         init = function()
             vim.g.lualine_laststatus = vim.o.laststatus
@@ -69,6 +69,7 @@ return {
                 -- hide the statusline on the starter page
                 vim.o.laststatus = 0
             end
+            vim.o.cmdheight = 0
         end,
         opts = function()
             -- PERF: we don't need this lualine require madness 🤷

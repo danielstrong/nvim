@@ -202,8 +202,18 @@ map("i", "<Insert>", "<Esc><Right>", { desc = "Exit insert mode (disable replace
 
 map("n", "<C-w>e", "<cmd>wincmd p<CR>", { silent = true, desc = "Previous window split" })
 
-map("n", "<localleader>c", "<cmd>let @+ = fnamemodify(expand('%'), ':.')<CR><cmd>echo 'Copied: ' . fnamemodify(expand('%'), ':.')<CR>", { desc = "copy relative path" })
-map("n", "<localleader>C", "<cmd>let @+ = expand('%:p')<CR><cmd>echo 'Copied: ' . expand('%:p')<CR>", { desc = "copy absolute path" })
+-- map("n", "<localleader>c", "<cmd>let @+ = fnamemodify(expand('%'), ':.')<CR><cmd>echo 'Copied: ' . fnamemodify(expand('%'), ':.')<CR>", { desc = "copy relative path" })
+-- map("n", "<localleader>C", "<cmd>let @+ = expand('%:p')<CR><cmd>echo 'Copied: ' . expand('%:p')<CR>", { desc = "copy absolute path" })
+map("n", "<localleader>c", function()
+    local rel = vim.fn.fnamemodify(vim.fn.expand("%"), ":.")
+    vim.fn.setreg("+", rel)
+    vim.notify("Copied: " .. rel)
+end, { desc = "copy relative path" })
+map("n", "<localleader>C", function()
+    local abs = vim.fn.expand("%:p")
+    vim.fn.setreg("+", abs)
+    vim.notify("Copied: " .. abs)
+end, { desc = "copy absolute path" })
 
 -- https://github.com/ibhagwan/fzf-lua
 map("n", "z=", "<cmd>FzfLua spell_suggest<cr>", { desc = "Spell Suggest" })

@@ -124,7 +124,7 @@ return {
 
                 ---@type SessionLens
                 session_lens = {
-                    picker = "fzf", -- "telescope"|"snacks"|"fzf"|"select"|nil Pickers are detected automatically but you can also set one manually. Falls back to vim.ui.select
+                    picker = nil, -- "telescope"|"snacks"|"fzf"|"select"|nil Pickers are detected automatically but you can also set one manually. Falls back to vim.ui.select
                     load_on_setup = true, -- Only used for telescope, registers the telescope extension at startup so you can use :Telescope session-lens
                     picker_opts = nil, -- Table passed to Telescope / Snacks / Fzf-Lua to configure the picker. See below for more information
 
