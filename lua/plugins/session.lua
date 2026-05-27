@@ -1,7 +1,7 @@
 return {
     {
         "folke/persistence.nvim",
-        enabled = true,
+        enabled = false,
         -- event = "BufReadPre",
         opts = {},
         keys = {
@@ -58,7 +58,7 @@ return {
     },
     {
         "rmagatti/auto-session",
-        enabled = false,
+        enabled = true,
         lazy = false,
         keys = {
             { "<localleader>QW", "<cmd>AutoSession save<CR><cmd>wqa<cr>", mode = { "n", "v" }, desc = "save quit all + save session" },
@@ -80,7 +80,7 @@ return {
                 -- log_level = 'debug',
                 -- Saving / restoring
                 enabled = true, -- Enables/disables auto creating, saving and restoring
-                auto_save = false, -- Enables/disables auto saving session on exit
+                auto_save = true, -- Enables/disables auto saving session on exit
                 auto_restore = true, -- Enables/disables auto restoring session on start
                 auto_create = true, -- Enables/disables auto creating new session files. Can be a function that returns true if a new session file should be allowed
                 auto_restore_last_session = false, -- On startup, loads the last saved session if session for cwd does not exist
@@ -124,7 +124,7 @@ return {
 
                 ---@type SessionLens
                 session_lens = {
-                    picker = nil, -- "telescope"|"snacks"|"fzf"|"select"|nil Pickers are detected automatically but you can also set one manually. Falls back to vim.ui.select
+                    picker = "fzf", -- "telescope"|"snacks"|"fzf"|"select"|nil Pickers are detected automatically but you can also set one manually. Falls back to vim.ui.select
                     load_on_setup = true, -- Only used for telescope, registers the telescope extension at startup so you can use :Telescope session-lens
                     picker_opts = nil, -- Table passed to Telescope / Snacks / Fzf-Lua to configure the picker. See below for more information
 
