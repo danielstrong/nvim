@@ -55,10 +55,10 @@ return {
             require("noice").setup(opts)
         end,
     },
-    { "akinsho/bufferline.nvim", enabled = true },
+    { "akinsho/bufferline.nvim", enabled = false },
     {
         "nvim-lualine/lualine.nvim",
-        enabled = true,
+        enabled = false,
         event = "VeryLazy",
         init = function()
             vim.g.lualine_laststatus = vim.o.laststatus
