@@ -56,44 +56,80 @@ require("which-key").add({
     { "<localleader>r", group = "replace", mode = { "n", "v" } },
     { "<localleader>Q", group = "quit", mode = { "n", "v" } },
     { "<localleader>W", group = "save", mode = { "n", "v" } },
-    { "<localleader><tab>", group = "tabs", mode = { "n", "v" } },
+    { "<localleader>t", group = "tabs", mode = { "n", "v" } },
     { "<localleader>s", group = "session", mode = { "n", "v" } },
     { "<localleader>u", group = "ui", mode = { "n", "v" } },
 })
-map({ "n", "v" }, "<localleader><tab>n", "<cmd>tabnew<cr>", { desc = "Tab new" })
-map({ "n", "v" }, "<localleader><tab>s", "<cmd>tab split<cr>", { desc = "open current buffer into new tab" })
-map({ "n", "v" }, "<localleader><tab>x", "<cmd>tabclose<cr>", { desc = "Tab close" })
-map({ "n", "v" }, "<localleader><tab>X", "<cmd>tabonly<cr>", { desc = "kill other tabs" })
-map({ "n", "v" }, "<localleader><tab>q", "<cmd>tabprev<cr>", { desc = "navigate tab to left" })
-map({ "n", "v" }, "<localleader><tab>w", "<cmd>tabnext<cr>", { desc = "navigate tab to right" })
-map({ "n", "v" }, "<localleader><tab>e", "<cmd>tabnext #<cr>", { desc = "navigate tab to last accessed" })
-map({ "n", "v" }, "<localleader><tab>h", "<cmd>tabprev<cr>", { desc = "navigate tab to left" })
-map({ "n", "v" }, "<localleader><tab>l", "<cmd>tabnext<cr>", { desc = "navigate tab to right" })
-map({ "n", "v" }, "<localleader><tab>1", "<cmd>1tabnext<cr>", { desc = "navigate to tab 1" })
-map({ "n", "v" }, "<localleader><tab>2", "<cmd>2tabnext<cr>", { desc = "navigate to tab 2" })
-map({ "n", "v" }, "<localleader><tab>3", "<cmd>3tabnext<cr>", { desc = "navigate to tab 3" })
-map({ "n", "v" }, "<localleader><tab>4", "<cmd>4tabnext<cr>", { desc = "navigate to tab 4" })
-map({ "n", "v" }, "<localleader><tab>5", "<cmd>5tabnext<cr>", { desc = "navigate to tab 5" })
-map({ "n", "v" }, "<localleader><tab>6", "<cmd>6tabnext<cr>", { desc = "navigate to tab 6" })
-map({ "n", "v" }, "<localleader><tab>7", "<cmd>7tabnext<cr>", { desc = "navigate to tab 7" })
-map({ "n", "v" }, "<localleader><tab>8", "<cmd>8tabnext<cr>", { desc = "navigate to tab 8" })
-map({ "n", "v" }, "<localleader><tab>9", "<cmd>9tabnext<cr>", { desc = "navigate to tab 9" })
-map({ "n", "v" }, "<localleader><tab>0", "<cmd>tabfirst<cr>", { desc = "navigate tab first" })
-map({ "n", "v" }, "<localleader><tab>$", "<cmd>tablast<cr>", { desc = "navigate tab last" })
-map({ "n", "v" }, "<localleader><tab>mh", "<cmd>-tabmove<cr>", { desc = "move tab to left" })
-map({ "n", "v" }, "<localleader><tab>ml", "<cmd>+tabmove<cr>", { desc = "move tab to right" })
-map({ "n", "v" }, "<localleader><tab>m1", "<cmd>tabmove 0<cr>", { desc = "move tab to 1" })
-map({ "n", "v" }, "<localleader><tab>m2", "<cmd>tabmove 2<cr>", { desc = "move tab to 2" })
-map({ "n", "v" }, "<localleader><tab>m3", "<cmd>tabmove 3<cr>", { desc = "move tab to 3" })
-map({ "n", "v" }, "<localleader><tab>m4", "<cmd>tabmove 4<cr>", { desc = "move tab to 4" })
-map({ "n", "v" }, "<localleader><tab>m5", "<cmd>tabmove 5<cr>", { desc = "move tab to 5" })
-map({ "n", "v" }, "<localleader><tab>m6", "<cmd>tabmove 6<cr>", { desc = "move tab to 6" })
-map({ "n", "v" }, "<localleader><tab>m7", "<cmd>tabmove 7<cr>", { desc = "move tab to 7" })
-map({ "n", "v" }, "<localleader><tab>m8", "<cmd>tabmove 8<cr>", { desc = "move tab to 8" })
-map({ "n", "v" }, "<localleader><tab>m9", "<cmd>tabmove 9<cr>", { desc = "move tab to 9" })
-map({ "n", "v" }, "<localleader><tab>m0", "<cmd>tabmove 0<cr>", { desc = "move tab to first" })
-map({ "n", "v" }, "<localleader><tab>m$", "<cmd>tabmove $<cr>", { desc = "move tab to end" })
-map({ "n", "v" }, "<localleader><tab>m#", "<cmd>tabmove #<cr>", { desc = "move tab after last accessed" })
+map({ "n", "v" }, "<localleader>tn", "<cmd>tabnew<cr>", { desc = "Tab new" })
+map({ "n", "v" }, "<localleader>ts", "<cmd>tab split<cr>", { desc = "open current buffer into new tab" })
+map({ "n", "v" }, "<localleader>tx", "<cmd>tabclose<cr>", { desc = "Tab close" })
+map({ "n", "v" }, "<localleader>tX", "<cmd>tabonly<cr>", { desc = "kill other tabs" })
+map({ "n", "v" }, "<localleader>te", "<cmd>tabnext #<cr>", { desc = "navigate tab to last accessed" })
+map({ "n", "v" }, "<localleader>t[", "<cmd>tabprev<cr>", { desc = "navigate tab to left" })
+map({ "n", "v" }, "<localleader>t]", "<cmd>tabnext<cr>", { desc = "navigate tab to right" })
+map({ "n", "v" }, "<localleader>th", "<cmd>tabprev<cr>", { desc = "navigate tab to left" })
+map({ "n", "v" }, "<localleader>tl", "<cmd>tabnext<cr>", { desc = "navigate tab to right" })
+map({ "n", "v" }, "<localleader>t1", "<cmd>1tabnext<cr>", { desc = "navigate to tab 1" })
+map({ "n", "v" }, "<localleader>t2", "<cmd>2tabnext<cr>", { desc = "navigate to tab 2" })
+map({ "n", "v" }, "<localleader>t3", "<cmd>3tabnext<cr>", { desc = "navigate to tab 3" })
+map({ "n", "v" }, "<localleader>t4", "<cmd>4tabnext<cr>", { desc = "navigate to tab 4" })
+map({ "n", "v" }, "<localleader>t5", "<cmd>5tabnext<cr>", { desc = "navigate to tab 5" })
+map({ "n", "v" }, "<localleader>t6", "<cmd>6tabnext<cr>", { desc = "navigate to tab 6" })
+map({ "n", "v" }, "<localleader>t7", "<cmd>7tabnext<cr>", { desc = "navigate to tab 7" })
+map({ "n", "v" }, "<localleader>t8", "<cmd>8tabnext<cr>", { desc = "navigate to tab 8" })
+map({ "n", "v" }, "<localleader>t9", "<cmd>9tabnext<cr>", { desc = "navigate to tab 9" })
+map({ "n", "v" }, "<localleader>t0", "<cmd>tabfirst<cr>", { desc = "navigate tab first" })
+map({ "n", "v" }, "<localleader>t$", "<cmd>tablast<cr>", { desc = "navigate tab last" })
+map({ "n", "v" }, "<localleader>tm[", "<cmd>-tabmove<cr>", { desc = "move tab to left" })
+map({ "n", "v" }, "<localleader>tm]", "<cmd>+tabmove<cr>", { desc = "move tab to right" })
+map({ "n", "v" }, "<localleader>tmh", "<cmd>-tabmove<cr>", { desc = "move tab to left" })
+map({ "n", "v" }, "<localleader>tml", "<cmd>+tabmove<cr>", { desc = "move tab to right" })
+map({ "n", "v" }, "<localleader>tm1", "<cmd>tabmove 0<cr>", { desc = "move tab to 1" })
+map({ "n", "v" }, "<localleader>tm2", "<cmd>tabmove 2<cr>", { desc = "move tab to 2" })
+map({ "n", "v" }, "<localleader>tm3", "<cmd>tabmove 3<cr>", { desc = "move tab to 3" })
+map({ "n", "v" }, "<localleader>tm4", "<cmd>tabmove 4<cr>", { desc = "move tab to 4" })
+map({ "n", "v" }, "<localleader>tm5", "<cmd>tabmove 5<cr>", { desc = "move tab to 5" })
+map({ "n", "v" }, "<localleader>tm6", "<cmd>tabmove 6<cr>", { desc = "move tab to 6" })
+map({ "n", "v" }, "<localleader>tm7", "<cmd>tabmove 7<cr>", { desc = "move tab to 7" })
+map({ "n", "v" }, "<localleader>tm8", "<cmd>tabmove 8<cr>", { desc = "move tab to 8" })
+map({ "n", "v" }, "<localleader>tm9", "<cmd>tabmove 9<cr>", { desc = "move tab to 9" })
+map({ "n", "v" }, "<localleader>tm0", "<cmd>tabmove 0<cr>", { desc = "move tab to first" })
+map({ "n", "v" }, "<localleader>tm$", "<cmd>tabmove $<cr>", { desc = "move tab to end" })
+map({ "n", "v" }, "<localleader>tm#", "<cmd>tabmove #<cr>", { desc = "move tab after last accessed" })
+
+map({ "n", "v" }, "<localleader>tr", function()
+    local current = vim.t.tab_name or ""
+    vim.ui.input({ prompt = "Tab name: ", default = current }, function(name)
+        if name == nil then
+            return
+        end
+        vim.t.tab_name = (name ~= "" and name or nil)
+        vim.cmd("redrawtabline")
+    end)
+end, { desc = "Rename tab" })
+
+vim.o.tabline = "%!v:lua.TabLine()"
+function _G.TabLine()
+    local s = ""
+    for i = 1, vim.fn.tabpagenr("$") do
+        local tabnr = i
+        local tabpage = vim.api.nvim_list_tabpages()[i]
+        local ok, name = pcall(vim.api.nvim_tabpage_get_var, tabpage, "tab_name")
+        if not ok then
+            name = nil
+        end
+        if not name or name == "" then
+            local buflist = vim.fn.tabpagebuflist(tabnr)
+            local winnr = vim.fn.tabpagewinnr(tabnr)
+            local bufnr = buflist[winnr]
+            local fname = vim.fn.fnamemodify(vim.fn.bufname(bufnr), ":t")
+            name = (fname ~= "" and fname or "[No Name]")
+        end
+        local hl = (tabnr == vim.fn.tabpagenr()) and "%#TabLineSel#" or "%#TabLine#"
+        s = s .. hl .. "%" .. tabnr .. "T " .. tabnr .. ": " .. name .. " %T"
+    end
+    return s .. "%#TabLineFill#%T"
+end
 
 map({ "n", "v" }, "<localleader>x", "<cmd>bn | bd #<cr>", { desc = "kill buffer" })
 map({ "n", "v" }, "<localleader>bx", "<cmd>bn | bd #<cr>", { desc = "kill buffer" })
@@ -118,7 +154,7 @@ end
 map({ "n", "v" }, "<localleader>bL", reload_all_buffers, { desc = "reload all buffers" })
 map({ "n", "v" }, "<localleader>L", reload_all_buffers, { desc = "reload all buffers" })
 
-map({ "n", "v" }, "<localleader><tab>q", function()
+map({ "n", "v" }, "<localleader>tq", function()
     local wins = vim.api.nvim_tabpage_list_wins(0)
     local cur_ft = vim.bo[vim.api.nvim_get_current_buf()].filetype
     local non_tree_wins = vim.tbl_filter(function(w)
