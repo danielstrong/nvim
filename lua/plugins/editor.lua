@@ -23,13 +23,34 @@ return {
         enabled = true,
         config = function()
             require("scrollview").setup({
+                on_startup = false,
                 excluded_filetypes = { "nerdtree" },
+                hide_on_text_intersect = true,
+                -- signs_scrollbar_overlap = "under",
                 -- current_only = true,
                 -- base = "buffer",
                 -- column = 80,
                 -- signs_on_startup = { "all" },
+                signs_on_startup = { "latestchange", "conflicts", "diagnostics", "cursor", "folds", "keywords", "search", "spell" },
+                -- signs_on_startup = { "diagnostics", "folds", "keywords", "search", "spell" },
                 -- diagnostics_severities = { vim.diagnostic.severity.ERROR },
             })
+            require("scrollview.contrib.gitsigns").setup({ enabled = true, only_first_line = true })
+            Snacks.toggle
+                .new({
+                    name = "Scrollview",
+                    get = function()
+                        return vim.g.scrollview_enabled
+                    end,
+                    set = function(state)
+                        if state then
+                            vim.cmd("ScrollViewEnable")
+                        else
+                            vim.cmd("ScrollViewDisable")
+                        end
+                    end,
+                })
+                :map("<localleader>um")
         end,
     },
     {
