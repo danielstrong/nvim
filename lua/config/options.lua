@@ -20,7 +20,7 @@ vim.g.lazyvim_ruby_formatter = "rubocop"
 local opt = vim.opt
 
 opt.autowrite = false
-opt.autoread = false
+opt.autoread = true
 -- only set clipboard if not in ssh, to make sure the OSC 52
 -- integration works automatically.
 

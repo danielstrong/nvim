@@ -14,6 +14,43 @@ local function augroup(name)
 end
 
 vim.api.nvim_del_augroup_by_name("lazyvim_checktime")
+-- vim.api.nvim_create_autocmd({ "FocusGained", "TermClose", "TermLeave", "BufEnter", "CursorHold" }, {
+--     group = augroup("checktime"),
+--     callback = function()
+--         if vim.o.buftype ~= "nofile" then
+--             vim.cmd("checktime")
+--         end
+--     end,
+-- })
+vim.api.nvim_create_autocmd("FileChangedShellPost", {
+    group = augroup("checktime"),
+    callback = function()
+        local file = vim.fn.fnamemodify(vim.fn.expand("<afile>"), ":~:.")
+        local reason = vim.v.fcs_reason
+        vim.notify(file .. " changed on disk " .. reason, vim.log.levels.INFO)
+    end,
+})
+
+-- vim.api.nvim_create_autocmd("FileChangedShell", {
+--     group = augroup("checktime"),
+--     callback = function()
+--         local file = vim.fn.fnamemodify(vim.fn.expand("<afile>"), ":~:.")
+--         local reason = vim.v.fcs_reason
+--
+--         if reason == "conflict" then
+--             vim.v.fcs_choice = ""
+--             vim.notify(file .. " changed on disk — NOT reloaded (local changes)", vim.log.levels.WARN)
+--         elseif reason == "deleted" then
+--             vim.v.fcs_choice = ""
+--             vim.notify(file .. " was deleted on disk — buffer kept", vim.log.levels.WARN)
+--         elseif reason == "changed" then
+--             vim.v.fcs_choice = "reload"
+--             vim.notify(file .. " changed on disk, buffer reloaded", vim.log.levels.INFO)
+--         else
+--             vim.v.fcs_choice = "reload"
+--         end
+--     end,
+-- })
 
 vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
 -- vim.api.nvim_create_autocmd("FileType", {

@@ -1,5 +1,37 @@
 return {
     {
+        "rcarriga/nvim-notify",
+        event = "VeryLazy",
+        keys = {
+            {
+                "<localleader>nd",
+                function()
+                    require("notify").dismiss({ silent = false, pending = true })
+                end,
+                desc = "Dismiss notifications",
+            },
+            { "<localleader>nh", "<cmd>Notifications<CR>", desc = "Notification History" },
+        },
+        opts = {
+            timeout = 3000,
+            stages = "static",
+            render = "wrapped-compact",
+            merge_duplicates = 2,
+            top_down = true,
+            -- max_height = function()
+            --     return math.floor(vim.o.lines * 0.75)
+            -- end,
+            -- max_width = function()
+            --     return math.floor(vim.o.columns * 0.75)
+            -- end,
+        },
+        config = function(_, opts)
+            local notify = require("notify")
+            notify.setup(opts)
+            vim.notify = notify
+        end,
+    },
+    {
         "christoomey/vim-tmux-navigator",
         event = "VimEnter",
         cmd = {
