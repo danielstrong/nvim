@@ -14,12 +14,15 @@ return {
             diagnostics = {
                 underline = true,
                 update_in_insert = false,
+                float = {
+                    border = "rounded",
+                },
                 -- virtual_text = {
                 --     spacing = 4,
                 --     source = "if_many",
-                --     prefix = "●",
+                --     -- prefix = "●",
                 --     -- this will set set the prefix to a function that returns the diagnostics icon based on the severity
-                --     -- prefix = "icons",
+                --     prefix = "icons",
                 -- },
                 -- virtual_text = false,
                 severity_sort = true,
@@ -34,11 +37,23 @@ return {
             },
 
             inlay_hints = {
-                enabled = false,
+                enabled = false, -- virtual text that shows up after parameters to tell you their data type
             },
             servers = {
                 ["*"] = {
                     keys = {
+                        {
+                            "K",
+                            function()
+                                return vim.lsp.buf.hover({
+                                    max_width = 120,
+                                    max_height = 480,
+                                    border = "rounded",
+                                })
+                            end,
+                            desc = "Hover",
+                            has = "hover",
+                        },
                         { "cq", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "x" }, has = "codeAction" },
                         { "cz", vim.lsp.codelens.run, desc = "Run Codelens", mode = { "n", "x" }, has = "codeLens" },
                         { "cZ", vim.lsp.codelens.refresh, desc = "Refresh & Display Codelens", mode = { "n" }, has = "codeLens" },
@@ -61,6 +76,42 @@ return {
                         { "cQ", LazyVim.lsp.action.source, desc = "Source Action", has = "codeAction" },
                     },
                 },
+                -- vtsls = {
+                --     settings = {
+                --         vtsls = {
+                --             experimental = {
+                --                 -- don't abbreviate long inlay-hint types with "..."
+                --                 maxInlayHintLength = 100,
+                --             },
+                --         },
+                --         typescript = {
+                --             -- show full type signatures in hover instead of truncating
+                --             tsserver = {
+                --                 preferences = {
+                --                     noErrorTruncation = true,
+                --                 },
+                --             },
+                --         },
+                --     },
+                -- },
+            },
+        },
+    },
+    {
+        "nemanjamalesija/ts-expand-hover.nvim",
+        ft = { "typescript", "typescriptreact" },
+        opts = {
+            keymaps = {
+                hover = "<localleader>UK",
+                expand = "o",
+                collapse = "i",
+            },
+            float = {
+                border = "rounded",
+                max_width = 120,
+                max_height = 40,
+                -- max_width = 80,
+                -- max_height = 30,
             },
         },
     },

@@ -65,13 +65,64 @@ return {
             { "<localleader>WW", "<cmd>AutoSession save<CR><cmd>wa<cr>", mode = { "n", "v" }, desc = "save all + save session" },
             { "<localleader>sw", "<cmd>AutoSession save<CR>", mode = { "n", "v" }, desc = "Save Session" },
             { "<localleader>sW", ":AutoSession save ", mode = { "n", "v" }, desc = "Save Session with name" },
+            {
+                "<localleader>sn",
+                function()
+                    local filepath = vim.api.nvim_buf_get_name(0)
+                    local as = require("auto-session")
+                    as.save_session()
+                    vim.ui.input({ prompt = "New session name: " }, function(name)
+                        if not name or name == "" then
+                            return
+                        end
+                        vim.cmd("silent! tabonly")
+                        vim.cmd("silent! only")
+                        vim.cmd("silent! %bwipeout!")
+                        if filepath ~= "" then
+                            vim.cmd("edit " .. vim.fn.fnameescape(filepath))
+                        end
+                        as.save_session(name)
+                    end)
+                end,
+                mode = { "n", "v" },
+                desc = "New named session (current file only)",
+            },
             { "<localleader>sr", "<cmd>AutoSession restore<CR>", mode = { "n", "v" }, desc = "Restore Session" },
             { "<localleader>sR", ":AutoSession restore ", mode = { "n", "v" }, desc = "Restore Session with name" },
+            {
+                "<localleader>sl",
+                function()
+                    local as = require("auto-session")
+                    local cur = vim.v.this_session
+                    if cur == nil or cur == "" then
+                        vim.notify("No active session to reload", vim.log.levels.WARN)
+                        return
+                    end
+                    as.restore_session_file(cur, { show_message = true })
+                end,
+                mode = { "n", "v" },
+                desc = "Reload current session",
+            },
             { "<localleader>se", "<cmd>AutoSession search<CR>", mode = { "n", "v" }, desc = "Search Session" },
             { "<localleader>sd", "<cmd>AutoSession deletePicker<CR>", mode = { "n", "v" }, desc = "Delete Session Picker" },
             { "<localleader>sx", "<cmd>AutoSession delete<CR>", mode = { "n", "v" }, desc = "Delete Session" },
             { "<localleader>sX", ":AutoSession delete ", mode = { "n", "v" }, desc = "Delete Session with name" },
             { "<localleader>sD", "<cmd>AutoSession purgeOrphaned<CR>", mode = { "n", "v" }, desc = "Purge Orphaned Session" },
+            {
+                "<localleader>sk",
+                function()
+                    local cur = vim.v.this_session
+                    if cur == nil or cur == "" then
+                        vim.notify("No active session", vim.log.levels.INFO)
+                        return
+                    end
+                    local name = vim.fn.fnamemodify(cur, ":t:r")
+                    name = name:gsub("%%(%x%x)", function(hex) return string.char(tonumber(hex, 16)) end)
+                    vim.notify("Session: " .. name, vim.log.levels.INFO)
+                end,
+                mode = { "n", "v" },
+                desc = "Show current session name",
+            },
             { "<localleader>st", "<cmd>AutoSession enable<CR>", mode = { "n", "v" }, desc = "Enable Autosave Session" },
             { "<localleader>sT", "<cmd>AutoSession disable<CR>", mode = { "n", "v" }, desc = "Disable Autosave Session" },
         },

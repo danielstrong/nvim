@@ -1,6 +1,7 @@
 return {
     { "ellisonleao/gruvbox.nvim", lazy = true },
     { "Shatur/neovim-ayu", name = "ayu", lazy = true },
+    { "kepano/flexoki-neovim", name = "flexoki", lazy = true },
     {
         "folke/tokyonight.nvim",
         lazy = true,
@@ -94,6 +95,7 @@ return {
             -- colorscheme = "tomorrow-night",
             -- colorscheme = "nightfox",
             colorscheme = "kanagawa",
+            -- colorscheme = "flexoki",
             -- colorscheme = "kanagawa-dragon",
             -- colorscheme = "nightfly",
             -- colorscheme = "rose-pine",
