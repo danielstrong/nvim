@@ -11,7 +11,7 @@ return {
         -- similair to fidget but little differnet also turns vim.notify into floating windows
         "nvim-mini/mini.notify",
         enabled = false,
-        version = false,
+        version = true,
         opts = { -- Content management
             content = {
                 -- Function which formats the notification message

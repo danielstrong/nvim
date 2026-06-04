@@ -253,6 +253,13 @@ end, { desc = "copy absolute path" })
 
 -- https://github.com/ibhagwan/fzf-lua
 map("n", "z=", "<cmd>FzfLua spell_suggest<cr>", { desc = "Spell Suggest" })
+map("n", "czt", '"_ciwtrue<Esc>', { desc = "Replace word with true" })
+map("n", "czf", '"_ciwfalse<Esc>', { desc = "Replace word with false" })
+map("n", "czn", '"_ciwnull<Esc>', { desc = "Replace word with null" })
+map("n", "czu", '"_ciwundefined<Esc>', { desc = "Replace word with undefined" })
+map("n", "cz0", '"_ciw0<Esc>', { desc = "Replace word with 0" })
+map("n", "cz`", '"_ciw0<Esc>', { desc = "Replace word with 0" })
+map("n", "cz1", '"_ciw1<Esc>', { desc = "Replace word with 1" })
 
 map("n", "<localleader>dd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
 map("n", "<localleader>df", "<cmd>FzfLua diagnostics_workspace<cr>", { desc = "Workspace Diagnostics (fzf)" })
