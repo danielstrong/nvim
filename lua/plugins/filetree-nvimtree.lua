@@ -123,6 +123,7 @@ return {
                 vim.keymap.set("n", "<C-s>", api.node.run.system, { buffer = bufnr, noremap = true, silent = true, desc = "Run System" })
                 vim.keymap.set("n", "s", api.node.open.horizontal, { buffer = bufnr, noremap = true, silent = true, desc = "Open: Horizontal Split" })
                 vim.keymap.set("n", "S", api.node.open.vertical, { buffer = bufnr, noremap = true, silent = true, desc = "Open: Vertical Split" })
+                vim.keymap.set("n", "T", api.node.open.tab, { buffer = bufnr, noremap = true, silent = true, desc = "Open: New Tab" })
 
                 -- vim.keymap.set("n", "C", function()
                 --     api.filter.git.clean.toggle()
