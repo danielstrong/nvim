@@ -98,6 +98,110 @@ return {
         },
     },
     {
+        "rachartier/tiny-code-action.nvim",
+        dependencies = {
+            -- optional picker via telescope
+            -- { "nvim-telescope/telescope.nvim" },
+            -- optional picker via fzf-lua
+            -- { "ibhagwan/fzf-lua" },
+            -- .. or via snacks
+            -- {
+            --     "folke/snacks.nvim",
+            --     opts = {
+            --         terminal = {},
+            --     },
+            -- },
+        },
+        event = "LspAttach",
+        opts = {
+            -- picker = { "snacks" },
+            -- picker = { "fzf-lua" },
+            -- picker = { "select", opts = {} },
+
+            backend = "vim",
+            -- backend = "delta",
+            picker = {
+                "buffer",
+                opts = {
+                    hotkeys = true, -- Enable hotkeys for quick selection of actions
+                    -- hotkeys_mode = "text_based", -- Modes for generating hotkeys
+                    hotkeys_mode = "text_diff_based", -- Modes for generating hotkeys
+                    auto_preview = true, -- Enable or disable automatic preview
+                    auto_accept = false, -- Automatically accept the selected action (with hotkeys)
+                    position = "cursor", -- Position of the picker window
+                    -- winborder = "single", -- Border style for picker and preview windows
+                    winborder = "rounded", -- Border style for picker and preview windows
+                    keymaps = {
+                        preview = "K", -- Key to show preview
+                        close = { "q", "<Esc>" }, -- Keys to close the window (can be string or table)
+                        select = "<CR>", -- Keys to select action (can be string or table)
+                        preview_close = { "q", "<Esc>" }, -- Keys to return from preview to main window (can be string or table)
+                    },
+                    custom_keys = {
+                        { key = "m", pattern = "Fill match arms" },
+                        { key = "m", pattern = "Consider making this binding mutable: mut" },
+                        { key = "r", pattern = "Rename.*" }, -- Lua pattern matching
+                        { key = "e", pattern = "Extract Method" },
+                    },
+                    group_icon = " └",
+                },
+            },
+
+            -- resolve_timeout = 100, -- Timeout in milliseconds to resolve code actions
+
+            -- Notification settings
+            notify = {
+                enabled = true, -- Enable/disable all notifications
+                on_empty = true, -- Show notification when no code actions are found
+            },
+
+            -- Customize how action titles are displayed in the picker
+            -- Function receives (action, client) and returns a formatted string
+            -- Default: action.title
+            -- format_title = nil,
+
+            -- The icons to use for the code actions
+            -- You can add your own icons, you just need to set the exact action's kind of the code action
+            -- You can set the highlight like so: { link = "DiagnosticError" } or  like nvim_set_hl ({ fg ..., bg..., bold..., ...})
+            signs = {
+                quickfix = { "", { link = "DiagnosticWarning" } },
+                others = { "", { link = "DiagnosticWarning" } },
+                refactor = { "", { link = "DiagnosticInfo" } },
+                ["refactor.move"] = { "󰪹", { link = "DiagnosticInfo" } },
+                ["refactor.extract"] = { "", { link = "DiagnosticError" } },
+                ["source.organizeImports"] = { "", { link = "DiagnosticWarning" } },
+                ["source.fixAll"] = { "󰃢", { link = "DiagnosticError" } },
+                ["source"] = { "", { link = "DiagnosticError" } },
+                ["rename"] = { "󰑕", { link = "DiagnosticWarning" } },
+                ["codeAction"] = { "", { link = "DiagnosticWarning" } },
+            },
+        },
+        config = function(_, opts)
+            require("tiny-code-action").setup(opts)
+
+            vim.keymap.set({ "n", "x" }, "<localleader>ac", function()
+                require("tiny-code-action").code_action({
+                    -- sort = function(a, b)
+                    --     local function get_priority(kind)
+                    --         if string.match(kind or "", "^quickfix") then
+                    --             return 1
+                    --         end
+                    --         if string.match(kind or "", "^refactor") then
+                    --             return 2
+                    --         end
+                    --         return 3
+                    --     end
+                    --
+                    --     local a_priority = get_priority(a.action.kind)
+                    --     local b_priority = get_priority(b.action.kind)
+                    --
+                    --     return a_priority < b_priority
+                    -- end,
+                })
+            end, { noremap = true, silent = true, desc = "Code" })
+        end,
+    },
+    {
         "nemanjamalesija/ts-expand-hover.nvim",
         ft = { "typescript", "typescriptreact" },
         opts = {

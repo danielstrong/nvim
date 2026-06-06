@@ -40,25 +40,26 @@ map({ "n", "v" }, "X", '"_X')
 map("n", "<localleader>v", "<C-v>", { desc = "enter visual block mode" })
 
 require("which-key").add({
+    { "<localleader>a", group = "Actions", mode = { "n", "v" } },
     {
         "<localleader>b",
-        group = "buffers",
+        group = "Buffers",
         mode = { "n", "v" },
         expand = function()
             return require("which-key.extras").expand.buf()
         end,
     },
-    { "<localleader>d", group = "diagnostics", mode = { "n", "v" } },
-    { "<localleader>f", group = "fuzzy", mode = { "n", "v" } },
-    { "<localleader>g", group = "git", mode = { "n", "v" } },
-    { "<localleader>h", group = "hunk", mode = { "n", "v" } },
-    { "<localleader>n", group = "nvim", mode = { "n", "v" } },
-    { "<localleader>r", group = "replace", mode = { "n", "v" } },
-    { "<localleader>Q", group = "quit", mode = { "n", "v" } },
-    { "<localleader>W", group = "save", mode = { "n", "v" } },
-    { "<localleader>t", group = "tabs", mode = { "n", "v" } },
-    { "<localleader>s", group = "session", mode = { "n", "v" } },
-    { "<localleader>u", group = "ui", mode = { "n", "v" } },
+    { "<localleader>d", group = "Diagnostics", mode = { "n", "v" } },
+    { "<localleader>f", group = "Fuzzy", mode = { "n", "v" } },
+    { "<localleader>g", group = "Git", mode = { "n", "v" } },
+    { "<localleader>h", group = "Hunk", mode = { "n", "v" } },
+    { "<localleader>n", group = "Nvim", mode = { "n", "v" } },
+    { "<localleader>r", group = "Replace", mode = { "n", "v" } },
+    { "<localleader>Q", group = "Quit", mode = { "n", "v" } },
+    { "<localleader>W", group = "Save", mode = { "n", "v" } },
+    { "<localleader>t", group = "Tabs", mode = { "n", "v" } },
+    { "<localleader>s", group = "Session", mode = { "n", "v" } },
+    { "<localleader>u", group = "UI", mode = { "n", "v" } },
 })
 map({ "n", "v" }, "<localleader>tn", "<cmd>tabnew<cr>", { desc = "Tab new" })
 map({ "n", "v" }, "<localleader>ts", "<cmd>tab split<cr>", { desc = "open current buffer into new tab" })
