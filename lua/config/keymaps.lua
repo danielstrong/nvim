@@ -1,6 +1,7 @@
 -- Keymaps are automatically loaded on the VeryLazy event
--- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
--- Add any additional keymaps here
+-- Default keymaps that are always set:
+-- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
+-- ~/.local/share/nvim/lazy/LazyVim/lua/lazyvim/config/keymaps.lua
 --
 
 local map = vim.keymap.set
@@ -228,9 +229,35 @@ map("n", "<Home>", "^", { remap = true, desc = "Go to beginning of line" })
 --     end
 -- end, { desc = "Go to beginning of line (smart home)" })
 
-map("n", "S", "s$", { remap = true, desc = "Replace to end of line" })
+map("n", "S", "s$", { remap = true, desc = "Stamp to end of line" })
 
-map("n", "yiy", "my^vg_y`y", { desc = "Yank trimmed line (characterwise)" })
+-- map("n", "yiy", "my^vg_y`y", { desc = "Yank trimmed line (characterwise)" })
+map({ "x", "o" }, "iy", function()
+    vim.cmd("normal! ^")
+    vim.cmd("normal! v")
+    vim.cmd("normal! g_")
+end, { desc = "Text object: trimmed line content" })
+
+map({ "x", "o" }, "ay", function()
+    vim.cmd("normal! 0")
+    vim.cmd("normal! v")
+    vim.cmd("normal! g_")
+end, { desc = "Text object: full line content (characterwise, no newline)" })
+
+map({ "x", "o" }, "ae", function()
+    vim.cmd("normal! ggVG")
+end, { desc = "Text object: entire file" })
+
+map({ "x", "o" }, "ie", function()
+    local first = vim.fn.nextnonblank(1)
+    local last = vim.fn.prevnonblank(vim.fn.line("$"))
+    if first == 0 or last == 0 then
+        return
+    end
+    vim.fn.cursor(first, 1)
+    vim.cmd("normal! V")
+    vim.fn.cursor(last, 1)
+end, { desc = "Text object: entire file (trimmed)" })
 
 map("n", "<Space>", "i<Space><ESC>l", { desc = "Insert space" })
 map("n", "<BS>", "i<BS><Esc>l", { desc = "Delete character before cursor" })

@@ -92,7 +92,7 @@ return {
             keymap = {
                 builtin = {
                     ["<M-Esc>"] = "hide",
-                    ["<F1>"] = "toggle-help",
+                    ["<C-g>"] = "toggle-help",
                     ["<C-z>"] = "toggle-fullscreen",
                     -- ["<C-w>"] = "toggle-preview-wrap",
                     ["<C-p>"] = "toggle-preview",
@@ -114,6 +114,7 @@ return {
                     ["ctrl-a"] = "beginning-of-line",
                     ["ctrl-e"] = "end-of-line",
                     ["alt-a"] = "toggle-all",
+                    ["alt-s"] = "toggle",
                     ["alt-g"] = "first",
                     ["alt-G"] = "last",
                     ["shift-down"] = "preview-page-down",
