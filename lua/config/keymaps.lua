@@ -216,7 +216,28 @@ map("i", "<C-up>", "<Esc><cmd>m -2<CR>gi", { desc = "Move line up" })
 
 map("n", "<CR>", "O<Esc>j", { desc = "Insert blank line above" })
 map("v", "<CR>", "y", { desc = "Yank selection" })
-map("x", "<localleader>p", '"_dP', { desc = "Paste without yank" })
+-- map("x", "<localleader>p", '"_dP', { desc = "Paste without yank" })
+
+-- Paste forced characterwise (inline).
+-- Useful after a linewise yank (yy / Vy) when you want the text inline instead of on its own line.
+local function paste_charwise(after)
+    local lines = vim.fn.getreg('"', 1, true)
+    if #lines == 0 then
+        return
+    end
+    if vim.fn.getregtype('"') == "V" then
+        table.insert(lines, "")
+    end
+    vim.api.nvim_put(lines, "c", after, true)
+end
+
+map("n", "zp", function()
+    paste_charwise(true)
+end, { desc = "Paste characterwise inline" })
+
+map("n", "zP", function()
+    paste_charwise(false)
+end, { desc = "Paste before characterwise inline" })
 
 map("n", "<Home>", "^", { remap = true, desc = "Go to beginning of line" })
 -- map("n", "<Home>", function()

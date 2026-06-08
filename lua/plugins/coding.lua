@@ -1,7 +1,7 @@
 return {
     {
         "nvim-mini/mini.pairs",
-        enabled = false,
+        enabled = true,
     },
     {
         "nvim-mini/mini.surround",
