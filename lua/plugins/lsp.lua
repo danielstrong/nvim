@@ -54,7 +54,7 @@ return {
                             desc = "Hover",
                             has = "hover",
                         },
-                        { "cq", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "x" }, has = "codeAction" },
+                        { "<localleader>ac", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "x" }, has = "codeAction" },
                         { "czz", vim.lsp.codelens.run, desc = "Run Codelens", mode = { "n", "x" }, has = "codeLens" },
                         { "czZ", vim.lsp.codelens.refresh, desc = "Refresh & Display Codelens", mode = { "n" }, has = "codeLens" },
                         {
@@ -179,7 +179,7 @@ return {
         config = function(_, opts)
             require("tiny-code-action").setup(opts)
 
-            vim.keymap.set({ "n", "x" }, "<localleader>ac", function()
+            vim.keymap.set({ "n", "x" }, "cq", function()
                 require("tiny-code-action").code_action({
                     -- sort = function(a, b)
                     --     local function get_priority(kind)
