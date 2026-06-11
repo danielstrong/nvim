@@ -6,49 +6,49 @@ return {
         opts = {},
         keys = {
             {
-                "<localleader>sq",
+                "<localleader>zq",
                 function()
                     require("persistence").load()
                 end,
                 desc = "Restore Session",
             },
             {
-                "<localleader>se",
+                "<localleader>ze",
                 function()
                     require("persistence").load()
                 end,
                 desc = "Restore Session",
             },
             {
-                "<localleader>sr",
+                "<localleader>zr",
                 function()
                     require("persistence").load()
                 end,
                 desc = "Restore Session",
             },
             {
-                "<localleader>sw",
+                "<localleader>zw",
                 function()
                     require("persistence").save()
                 end,
                 desc = "Save Session",
             },
             {
-                "<localleader>sp",
+                "<localleader>zp",
                 function()
                     require("persistence").select()
                 end,
                 desc = "Select Session",
             },
             {
-                "<localleader>sl",
+                "<localleader>Zz",
                 function()
                     require("persistence").load({ last = true })
                 end,
                 desc = "Restore Last Session",
             },
             {
-                "<localleader>sd",
+                "<localleader>zd",
                 function()
                     require("persistence").stop()
                 end,
@@ -61,12 +61,12 @@ return {
         enabled = true,
         lazy = false,
         keys = {
-            { "<localleader>QW", "<cmd>AutoSession save<CR><cmd>wqa<cr>", mode = { "n", "v" }, desc = "save quit all + save session" },
-            { "<localleader>WW", "<cmd>AutoSession save<CR><cmd>wa<cr>", mode = { "n", "v" }, desc = "save all + save session" },
-            { "<localleader>sw", "<cmd>AutoSession save<CR>", mode = { "n", "v" }, desc = "Save Session" },
-            { "<localleader>sW", ":AutoSession save ", mode = { "n", "v" }, desc = "Save Session with name" },
+            { "<localleader>zw", "<cmd>AutoSession save<CR><cmd>wqa<cr>", mode = { "n", "v" }, desc = "save quit all + save session" },
+            { "<localleader>zW", "<cmd>AutoSession save<CR><cmd>wa<cr>", mode = { "n", "v" }, desc = "save all + save session" },
+            { "<localleader>zw", "<cmd>AutoSession save<CR>", mode = { "n", "v" }, desc = "Save Session" },
+            { "<localleader>zW", ":AutoSession save ", mode = { "n", "v" }, desc = "Save Session with name" },
             {
-                "<localleader>sn",
+                "<localleader>zz",
                 function()
                     local filepath = vim.api.nvim_buf_get_name(0)
                     local as = require("auto-session")
@@ -87,10 +87,10 @@ return {
                 mode = { "n", "v" },
                 desc = "New named session (current file only)",
             },
-            { "<localleader>sr", "<cmd>AutoSession restore<CR>", mode = { "n", "v" }, desc = "Restore Session" },
-            { "<localleader>sR", ":AutoSession restore ", mode = { "n", "v" }, desc = "Restore Session with name" },
+            { "<localleader>zr", "<cmd>AutoSession restore<CR>", mode = { "n", "v" }, desc = "Restore Session" },
+            { "<localleader>zR", ":AutoSession restore ", mode = { "n", "v" }, desc = "Restore Session with name" },
             {
-                "<localleader>sl",
+                "<localleader>zl",
                 function()
                     local as = require("auto-session")
                     local cur = vim.v.this_session
@@ -103,13 +103,13 @@ return {
                 mode = { "n", "v" },
                 desc = "Reload current session",
             },
-            { "<localleader>se", "<cmd>AutoSession search<CR>", mode = { "n", "v" }, desc = "Search Session" },
-            { "<localleader>sd", "<cmd>AutoSession deletePicker<CR>", mode = { "n", "v" }, desc = "Delete Session Picker" },
-            { "<localleader>sx", "<cmd>AutoSession delete<CR>", mode = { "n", "v" }, desc = "Delete Session" },
-            { "<localleader>sX", ":AutoSession delete ", mode = { "n", "v" }, desc = "Delete Session with name" },
-            { "<localleader>sD", "<cmd>AutoSession purgeOrphaned<CR>", mode = { "n", "v" }, desc = "Purge Orphaned Session" },
+            { "<localleader>ze", "<cmd>AutoSession search<CR>", mode = { "n", "v" }, desc = "Search Session" },
+            { "<localleader>zd", "<cmd>AutoSession deletePicker<CR>", mode = { "n", "v" }, desc = "Delete Session Picker" },
+            { "<localleader>zf", "<cmd>AutoSession delete<CR>", mode = { "n", "v" }, desc = "Delete Session" },
+            { "<localleader>zF", ":AutoSession delete ", mode = { "n", "v" }, desc = "Delete Session with name" },
+            { "<localleader>zD", "<cmd>AutoSession purgeOrphaned<CR>", mode = { "n", "v" }, desc = "Purge Orphaned Session" },
             {
-                "<localleader>sk",
+                "<localleader>zH",
                 function()
                     local cur = vim.v.this_session
                     if cur == nil or cur == "" then
@@ -117,14 +117,16 @@ return {
                         return
                     end
                     local name = vim.fn.fnamemodify(cur, ":t:r")
-                    name = name:gsub("%%(%x%x)", function(hex) return string.char(tonumber(hex, 16)) end)
+                    name = name:gsub("%%(%x%x)", function(hex)
+                        return string.char(tonumber(hex, 16))
+                    end)
                     vim.notify("Session: " .. name, vim.log.levels.INFO)
                 end,
                 mode = { "n", "v" },
                 desc = "Show current session name",
             },
-            { "<localleader>st", "<cmd>AutoSession enable<CR>", mode = { "n", "v" }, desc = "Enable Autosave Session" },
-            { "<localleader>sT", "<cmd>AutoSession disable<CR>", mode = { "n", "v" }, desc = "Disable Autosave Session" },
+            { "<localleader>zt", "<cmd>AutoSession enable<CR>", mode = { "n", "v" }, desc = "Enable Autosave Session" },
+            { "<localleader>zT", "<cmd>AutoSession disable<CR>", mode = { "n", "v" }, desc = "Disable Autosave Session" },
         },
         config = function()
             require("auto-session").setup({

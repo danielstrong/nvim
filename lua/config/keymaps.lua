@@ -6,6 +6,35 @@
 
 local map = vim.keymap.set
 
+require("which-key").add({
+    { "<localleader>a", group = "Actions", mode = { "n", "v" } },
+    {
+        "<localleader>b",
+        group = "Buffers",
+        mode = { "n", "v" },
+        expand = function()
+            return require("which-key.extras").expand.buf()
+        end,
+    },
+    { "<localleader>d", group = "Diagnostics", mode = { "n", "v" } },
+    { "<localleader>f", group = "Fuzzy", mode = { "n", "v" } },
+    { "<localleader>g", group = "Git", mode = { "n", "v" } },
+    { "<localleader>h", group = "Hunk", mode = { "n", "v" } },
+    { "<localleader>n", group = "Nvim", mode = { "n", "v" } },
+    { "<localleader>r", group = "Replace", mode = { "n", "v" } },
+    { "<localleader>z", group = "Session", mode = { "n", "v" } },
+    { "<localleader>za", group = "No Format", mode = { "n", "v" } },
+    { "<localleader>Z", group = "Session Close", mode = { "n", "v" } },
+    { "Z", group = "File", mode = { "n", "v" } },
+    { "<localleader>W", group = "Save", mode = { "n", "v" } },
+    { "<localleader>t", group = "Tabs", mode = { "n", "v" } },
+    { "<localleader>u", group = "UI", mode = { "n", "v" } },
+    { "<localleader>=", group = "Fix Indention", mode = { "n", "v" } },
+    { "<localleader>=z", group = "Formatters", mode = { "n", "v" } },
+})
+
+map("n", "=zj", "<cmd>%!jq .<CR>", { noremap = true, desc = "Format JSON with jq" })
+
 -- Search and Replace
 -- to use: yank the replacement text, search the target text, then use this keymap
 map("n", "<localleader>r/", ':%s//\\=@"/gc<CR>', { noremap = true, desc = "Find and replace search incremental" })
@@ -40,28 +69,6 @@ map({ "n", "v" }, "x", '"_x')
 map({ "n", "v" }, "X", '"_X')
 map("n", "<localleader>v", "<C-v>", { desc = "enter visual block mode" })
 
-require("which-key").add({
-    { "<localleader>a", group = "Actions", mode = { "n", "v" } },
-    {
-        "<localleader>b",
-        group = "Buffers",
-        mode = { "n", "v" },
-        expand = function()
-            return require("which-key.extras").expand.buf()
-        end,
-    },
-    { "<localleader>d", group = "Diagnostics", mode = { "n", "v" } },
-    { "<localleader>f", group = "Fuzzy", mode = { "n", "v" } },
-    { "<localleader>g", group = "Git", mode = { "n", "v" } },
-    { "<localleader>h", group = "Hunk", mode = { "n", "v" } },
-    { "<localleader>n", group = "Nvim", mode = { "n", "v" } },
-    { "<localleader>r", group = "Replace", mode = { "n", "v" } },
-    { "<localleader>Q", group = "Quit", mode = { "n", "v" } },
-    { "<localleader>W", group = "Save", mode = { "n", "v" } },
-    { "<localleader>t", group = "Tabs", mode = { "n", "v" } },
-    { "<localleader>s", group = "Session", mode = { "n", "v" } },
-    { "<localleader>u", group = "UI", mode = { "n", "v" } },
-})
 map({ "n", "v" }, "<localleader>tn", "<cmd>tabnew<cr>", { desc = "Tab new" })
 map({ "n", "v" }, "<localleader>ts", "<cmd>tab split<cr>", { desc = "open current buffer into new tab" })
 map({ "n", "v" }, "<localleader>tx", "<cmd>tabclose<cr>", { desc = "Tab close" })
@@ -166,10 +173,41 @@ function _G.TabLineSplits()
     return s .. "%#TabLineFill#%T"
 end
 
-map({ "n", "v" }, "<localleader>x", "<cmd>bn | bd #<cr>", { desc = "kill buffer" })
+map({ "n", "v" }, "<localleader>x", function()
+    if vim.fn.tabpagenr("$") == 1 and #vim.api.nvim_tabpage_list_wins(0) == 1 then
+        vim.notify("Can't close the last window", vim.log.levels.WARN)
+        return
+    end
+    vim.cmd("quit")
+    local remaining = vim.fn.filter(vim.api.nvim_list_wins(), function(_, w)
+        return vim.api.nvim_win_is_valid(w)
+    end)
+    if #remaining == 1 then
+        local buf = vim.api.nvim_win_get_buf(remaining[1])
+        local ft = vim.api.nvim_get_option_value("filetype", { buf = buf })
+        if ft == "NvimTree" and vim.fn.tabpagenr("$") > 1 then
+            vim.cmd("quit")
+        end
+    end
+end, { desc = "kill buffer" })
+
+map({ "n", "v" }, "<localleader>bC", function()
+    local shown = {}
+    for _, win in ipairs(vim.api.nvim_list_wins()) do
+        shown[vim.api.nvim_win_get_buf(win)] = true
+    end
+    local deleted = 0
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.bo[buf].buflisted and not shown[buf] then
+            if pcall(vim.api.nvim_buf_delete, buf, { force = false }) then
+                deleted = deleted + 1
+            end
+        end
+    end
+    vim.notify(("Deleted %d buffer%s"):format(deleted, deleted == 1 and "" or "s"))
+end, { desc = "kill unshown buffers" })
 map({ "n", "v" }, "<localleader>bx", "<cmd>bn | bd #<cr>", { desc = "kill buffer" })
-map({ "n", "v" }, "<localleader>X", "<cmd>%bd |e# | bd#<cr>", { desc = "kill other buffers" })
-map({ "n", "v" }, "<localleader>bX", "<cmd>%bd |e# | bd#<cr>", { desc = "kill other buffers" })
+map({ "n", "v" }, "<localleader>bc", "<cmd>%bd |e# | bd#<cr>", { desc = "kill other buffers" })
 map({ "n", "v" }, "<localleader>l", "<cmd>e<cr>", { desc = "reload buffer" })
 map({ "n", "v" }, "<localleader>bl", "<cmd>e<cr>", { desc = "reload buffer" })
 map({ "n", "v" }, "<localleader>bd", function()
@@ -209,7 +247,19 @@ map({ "n", "v" }, "<localleader>tq", function()
     end
     vim.cmd("close")
 end, { desc = "close window" })
-map({ "n", "v" }, "<localleader>q", function()
+
+map("n", "ZZ", "<cmd>x<cr>", { desc = "save quit file" })
+map("n", "ZS", "<cmd>x<cr>", { desc = "save quit file" })
+map("n", "ZQ", "<cmd>q<cr>", { desc = "quit no save" })
+map("n", "ZD", "<cmd>wqa<cr>", { desc = "save quit all" })
+map("n", "ZW", "<cmd>w<cr>", { desc = "quit no save" })
+map("n", "ZE", "<cmd>wa<cr>", { desc = "save all" })
+map("n", "<localleader>ZS", "<cmd>wqa<cr>", { desc = "save quit all files" })
+map("n", "ZC", "<cmd>qa<cr>", { desc = "quit all windows" })
+
+map({ "n", "v" }, "<localleader>ZX", "<cmd>qa<cr>", { desc = "quit all windows" })
+map({ "n", "v" }, "<localleader>X", "<cmd>qa<cr>", { desc = "quit all windows" })
+map({ "n", "v" }, "ZX", function()
     vim.cmd("quit")
     local remaining = vim.fn.filter(vim.api.nvim_list_wins(), function(_, w)
         return vim.api.nvim_win_is_valid(w)
@@ -221,13 +271,13 @@ map({ "n", "v" }, "<localleader>q", function()
             vim.cmd("quit")
         end
     end
-end, { desc = "quit" })
-map({ "n", "v" }, "<localleader>QQ", "<cmd>qa<cr>", { desc = "quit all" })
-map({ "n", "v" }, "<localleader>QA", "<cmd>wqa<cr>", { desc = "save quit all" })
-map({ "n", "v" }, "<localleader>w", "<cmd>w<cr>", { desc = "save" })
-map({ "n", "v" }, "<localleader>WA", "<cmd>wa<cr>", { desc = "save all" })
-map({ "n", "v" }, "<localleader>WE", "<cmd>noautocmd w<cr>", { desc = "save without formatting" })
-map({ "n", "v" }, "<localleader>WQ", "<cmd>wq<cr>", { desc = "save quit" })
+end, { desc = "quit window" })
+map({ "n", "v" }, "<localleader>s", "<cmd>w<cr>", { desc = "Save Buffer" })
+map({ "n", "v" }, "<localleader>zs", "<cmd>w<cr>", { desc = "Save Buffer" })
+map({ "n", "v" }, "<localleader>zas", "<cmd>noautocmd w<cr>", { desc = "save buffer no format" })
+map({ "n", "v" }, "<localleader>zS", "<cmd>wa<cr>", { desc = "Save All Buffers" })
+map({ "n", "v" }, "<localleader>S", "<cmd>wa<cr>", { desc = "Save All Buffers" })
+map({ "n", "v" }, "<localleader>zaS", "<cmd>noautocmd wa<cr>", { desc = "save all files no format" })
 
 map("n", "<localleader>nn", "<cmd>messages<cr>", { desc = "Messages" })
 map("n", "<localleader>nr", "<cmd>registers<cr>", { desc = "Registers" })

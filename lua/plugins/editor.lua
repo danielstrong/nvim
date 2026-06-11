@@ -68,7 +68,8 @@ return {
                 -- signs_on_startup = { "diagnostics", "folds", "keywords", "search", "spell" },
                 -- diagnostics_severities = { vim.diagnostic.severity.ERROR },
             })
-            require("scrollview.contrib.gitsigns").setup({ enabled = true, only_first_line = true })
+            -- Uncoment below to show gitsigns in the minimap
+            -- require("scrollview.contrib.gitsigns").setup({ enabled = true, only_first_line = true })
             Snacks.toggle
                 .new({
                     name = "Scrollview",
