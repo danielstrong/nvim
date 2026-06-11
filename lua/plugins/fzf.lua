@@ -127,8 +127,11 @@ return {
                 require("fzf-lua").files({ cmd = "fd --type f --no-ignore --exclude node_modules --exclude .git" })
             end
             local function fzf_files_path()
-                ---@diagnostic disable-next-line: assign-type-mismatch
-                require("fzf-lua").files({ formatter = false })
+                require("fzf-lua").files({
+                    ---@diagnostic disable-next-line: assign-type-mismatch
+                    formatter = false,
+                    cmd = "fd --type f --hidden --no-ignore --exclude node_modules --exclude .git/objects",
+                })
             end
             local function fzf_git_changes()
                 require("fzf-lua").fzf_exec("git diff --name-only && git ls-files --deleted --others --killed --exclude-standard", { actions = require("fzf-lua").defaults.actions.files, previewer = "builtin" })

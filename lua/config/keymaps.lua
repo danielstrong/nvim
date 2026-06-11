@@ -21,6 +21,7 @@ require("which-key").add({
     { "<localleader>g", group = "Git", mode = { "n", "v" } },
     { "<localleader>h", group = "Hunk", mode = { "n", "v" } },
     { "<localleader>n", group = "Nvim", mode = { "n", "v" } },
+    { "<localleader>Q", group = "Quick", mode = { "n", "v" } },
     { "<localleader>r", group = "Replace", mode = { "n", "v" } },
     { "<localleader>z", group = "Session", mode = { "n", "v" } },
     { "<localleader>za", group = "No Format", mode = { "n", "v" } },
@@ -275,6 +276,7 @@ map("n", "ZD", "<cmd>wqa<cr>", { desc = "save quit all" })
 map("n", "ZW", "<cmd>w<cr>", { desc = "quit no save" })
 map("n", "ZE", "<cmd>wa<cr>", { desc = "save all" })
 map("n", "<localleader>ZS", "<cmd>wqa<cr>", { desc = "save quit all files" })
+map("n", "<localleader>QQ", "<cmd>qa<cr>", { desc = "quit all windows" })
 map("n", "ZC", "<cmd>qa<cr>", { desc = "quit all windows" })
 
 map({ "n", "v" }, "<localleader>ZX", "<cmd>qa<cr>", { desc = "quit all windows" })
