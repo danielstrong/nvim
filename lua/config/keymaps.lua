@@ -173,9 +173,29 @@ function _G.TabLineSplits()
     return s .. "%#TabLineFill#%T"
 end
 
+map({ "n", "v" }, "<localleader>q", function()
+    if vim.fn.tabpagenr("$") == 1 and #vim.api.nvim_tabpage_list_wins(0) == 1 then
+        vim.notify("Can't close the last window", vim.log.levels.WARN)
+        -- vim.cmd("bn | bd #")
+        return
+    end
+    Snacks.bufdelete()
+    local remaining = vim.fn.filter(vim.api.nvim_list_wins(), function(_, w)
+        return vim.api.nvim_win_is_valid(w)
+    end)
+    if #remaining == 1 then
+        local buf = vim.api.nvim_win_get_buf(remaining[1])
+        local ft = vim.api.nvim_get_option_value("filetype", { buf = buf })
+        if ft == "NvimTree" and vim.fn.tabpagenr("$") > 1 then
+            Snacks.bufdelete()
+        end
+    end
+end, { desc = "close buffer" })
+
 map({ "n", "v" }, "<localleader>x", function()
     if vim.fn.tabpagenr("$") == 1 and #vim.api.nvim_tabpage_list_wins(0) == 1 then
         vim.notify("Can't close the last window", vim.log.levels.WARN)
+        -- vim.cmd("bn | bd #")
         return
     end
     vim.cmd("quit")
