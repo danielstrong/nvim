@@ -1,4 +1,77 @@
 return {
+
+    {
+        "folke/which-key.nvim",
+        opts = {
+            -- preset = "classic",
+            -- preset = "modern",
+            preset = "helix",
+            plugins = {
+                marks = true, -- shows a list of your marks on ' and `
+                registers = true, -- shows your registers on " in NORMAL or <C-r> in INSERT mode
+                -- the presets plugin, adds help for a bunch of default keybindings in Neovim
+                -- No actual key bindings are created
+                spelling = {
+                    enabled = true, -- enabling this will show WhichKey when pressing z= to select spelling suggestions
+                    suggestions = 20, -- how many suggestions should be shown in the list?
+                },
+                presets = {
+                    operators = true, -- adds help for operators like d, y, ...
+                    motions = false, -- adds help for motions
+                    text_objects = true, -- help for text objects triggered after entering an operator
+                    windows = true, -- default bindings on <c-w>
+                    nav = true, -- misc bindings to work with windows
+                    z = false, -- bindings for folds, spelling and others prefixed with z
+                    g = true, -- bindings for prefixed with g
+                },
+            },
+            spec = {
+                { "c", group = "Change22", mode = { "n", "v" } },
+                { "cr", group = "Replace Text", mode = { "n", "v" } },
+                { "Z", group = "File", mode = { "n", "v" } },
+                { "<localleader>a", group = "Actions", mode = { "n", "v" } },
+                {
+                    "<localleader>b",
+                    group = "Buffers",
+                    mode = { "n", "v" },
+                    expand = function()
+                        return require("which-key.extras").expand.buf()
+                    end,
+                },
+                { "<localleader>d", group = "Diagnostics", mode = { "n", "v" } },
+                { "<localleader>f", group = "Fuzzy", mode = { "n", "v" } },
+                { "<localleader>g", group = "Git", mode = { "n", "v" } },
+                { "<localleader>h", group = "Hunk", mode = { "n", "v" } },
+                { "<localleader>n", group = "Nvim", mode = { "n", "v" } },
+                { "<localleader>Q", group = "Quick", mode = { "n", "v" } },
+                { "<localleader>r", group = "Replace", mode = { "n", "v" } },
+                { "<localleader>z", group = "Session", mode = { "n", "v" } },
+                { "<localleader>za", group = "No Format", mode = { "n", "v" } },
+                { "<localleader>Z", group = "Session Close", mode = { "n", "v" } },
+                { "<localleader>W", group = "Save", mode = { "n", "v" } },
+                { "<localleader>t", group = "Tabs", mode = { "n", "v" } },
+                { "<localleader>u", group = "UI", mode = { "n", "v" } },
+                { "<localleader>=", group = "Fix Indention", mode = { "n", "v" } },
+                { "<localleader>=z", group = "Formatters", mode = { "n", "v" } },
+            },
+        },
+        keys = {
+            {
+                "<leader>?",
+                function()
+                    require("which-key").show({ global = true })
+                end,
+                desc = "Global Keymaps ",
+            },
+            {
+                "<localleader>?",
+                function()
+                    require("which-key").show({ global = false })
+                end,
+                desc = "Local Keymaps",
+            },
+        },
+    },
     {
         "rcarriga/nvim-notify",
         enabled = false,
@@ -255,7 +328,7 @@ return {
     {
         "Isrothy/neominimap.nvim",
         version = "v3.x.x",
-        enabled = true,
+        enabled = false,
         lazy = false, -- NOTE: NO NEED to Lazy load
         -- Optional. You can also set your own keybindings
         keys = {

@@ -54,11 +54,11 @@ return {
                             desc = "Hover",
                             has = "hover",
                         },
-                        { "<localleader>ac", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "x" }, has = "codeAction" },
+                        { "czC", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "x" }, has = "codeAction" },
                         { "czz", vim.lsp.codelens.run, desc = "Run Codelens", mode = { "n", "x" }, has = "codeLens" },
                         { "czZ", vim.lsp.codelens.refresh, desc = "Refresh & Display Codelens", mode = { "n" }, has = "codeLens" },
                         {
-                            "cR",
+                            "czf",
                             function()
                                 Snacks.rename.rename_file({
                                     on_rename = function(_, _, ok)
@@ -72,8 +72,8 @@ return {
                             mode = { "n" },
                             has = { "workspace/didRenameFiles", "workspace/willRenameFiles" },
                         },
-                        { "cr", vim.lsp.buf.rename, desc = "Rename", has = "rename" },
-                        { "cQ", LazyVim.lsp.action.source, desc = "Source Action", has = "codeAction" },
+                        { "czr", vim.lsp.buf.rename, desc = "Rename", has = "rename" },
+                        { "czQ", LazyVim.lsp.action.source, desc = "Source Action", has = "codeAction" },
                     },
                 },
                 -- vtsls = {

@@ -155,6 +155,7 @@ return {
             local function fzf_text_search_grep()
                 require("fzf-lua").grep({ rg_opts = "--fixed-strings --color=always --no-heading --with-filename --line-number --column", prompt = "Text> " })
             end
+            -- https://github.com/ibhagwan/fzf-lua
             return {
                 { "<localleader>fE", fzf_files, desc = "Fzf Files" },
                 { "<localleader>fe", "<cmd>FzfLua files<cr>", desc = "Fzf All files" },
@@ -174,6 +175,7 @@ return {
                 { "<localleader>fo", "<cmd>FzfLua commands<cr>", desc = "Fzf Commands" },
                 { "<localleader>fO", "<cmd>FzfLua builtin<cr>", desc = "Fzf Builtin" },
                 { "<localleader>f?", "<cmd>FzfLua keymaps<cr>", desc = "Fzf Keymaps" },
+                { "<localleader>f=", "<cmd>FzfLua spell_suggest<cr>", desc = "Spell Suggest" },
             }
         end)(),
     },

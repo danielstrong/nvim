@@ -6,34 +6,6 @@
 
 local map = vim.keymap.set
 
-require("which-key").add({
-    { "<localleader>a", group = "Actions", mode = { "n", "v" } },
-    {
-        "<localleader>b",
-        group = "Buffers",
-        mode = { "n", "v" },
-        expand = function()
-            return require("which-key.extras").expand.buf()
-        end,
-    },
-    { "<localleader>d", group = "Diagnostics", mode = { "n", "v" } },
-    { "<localleader>f", group = "Fuzzy", mode = { "n", "v" } },
-    { "<localleader>g", group = "Git", mode = { "n", "v" } },
-    { "<localleader>h", group = "Hunk", mode = { "n", "v" } },
-    { "<localleader>n", group = "Nvim", mode = { "n", "v" } },
-    { "<localleader>Q", group = "Quick", mode = { "n", "v" } },
-    { "<localleader>r", group = "Replace", mode = { "n", "v" } },
-    { "<localleader>z", group = "Session", mode = { "n", "v" } },
-    { "<localleader>za", group = "No Format", mode = { "n", "v" } },
-    { "<localleader>Z", group = "Session Close", mode = { "n", "v" } },
-    { "Z", group = "File", mode = { "n", "v" } },
-    { "<localleader>W", group = "Save", mode = { "n", "v" } },
-    { "<localleader>t", group = "Tabs", mode = { "n", "v" } },
-    { "<localleader>u", group = "UI", mode = { "n", "v" } },
-    { "<localleader>=", group = "Fix Indention", mode = { "n", "v" } },
-    { "<localleader>=z", group = "Formatters", mode = { "n", "v" } },
-})
-
 map("n", "=zj", "<cmd>%!jq .<CR>", { noremap = true, desc = "Format JSON with jq" })
 
 -- Search and Replace
@@ -405,15 +377,13 @@ map("n", "<localleader>C", function()
     vim.notify("Copied: " .. abs)
 end, { desc = "copy absolute path" })
 
--- https://github.com/ibhagwan/fzf-lua
-map("n", "z=", "<cmd>FzfLua spell_suggest<cr>", { desc = "Spell Suggest" })
-map("n", "czt", '"_ciwtrue<Esc>', { desc = "Replace word with true" })
-map("n", "czf", '"_ciwfalse<Esc>', { desc = "Replace word with false" })
-map("n", "czn", '"_ciwnull<Esc>', { desc = "Replace word with null" })
-map("n", "czu", '"_ciwundefined<Esc>', { desc = "Replace word with undefined" })
-map("n", "cz0", '"_ciw0<Esc>', { desc = "Replace word with 0" })
-map("n", "cz`", '"_ciw0<Esc>', { desc = "Replace word with 0" })
-map("n", "cz1", '"_ciw1<Esc>', { desc = "Replace word with 1" })
+map("n", "crt", '"_ciwtrue<Esc>', { desc = "Replace word with true" })
+map("n", "crf", '"_ciwfalse<Esc>', { desc = "Replace word with false" })
+map("n", "crn", '"_ciwnull<Esc>', { desc = "Replace word with null" })
+map("n", "cru", '"_ciwundefined<Esc>', { desc = "Replace word with undefined" })
+map("n", "cr0", '"_ciw0<Esc>', { desc = "Replace word with 0" })
+map("n", "cr`", '"_ciw0<Esc>', { desc = "Replace word with 0" })
+map("n", "cr1", '"_ciw1<Esc>', { desc = "Replace word with 1" })
 
 map("n", "<localleader>dd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
 map("n", "<localleader>df", "<cmd>FzfLua diagnostics_workspace<cr>", { desc = "Workspace Diagnostics (fzf)" })
@@ -466,6 +436,16 @@ end, { desc = "Copy Line Diagnostics" })
 map("n", "<localleader>fB", function()
     Snacks.picker.buffers()
 end, { desc = "Buffers" })
+map("n", "<localleader>ae", function()
+    vim.cmd("write")
+    local file = vim.api.nvim_buf_get_name(0)
+    if file == "" then
+        vim.notify("No file in current buffer", vim.log.levels.WARN)
+        return
+    end
+    local q = vim.fn.shellescape(file)
+    Snacks.terminal({ "sh", "-c", "chmod +x " .. q .. " && " .. q })
+end, { desc = "Execute file as script" })
 map("n", "<localleader>gG", function()
     Snacks.lazygit()
 end, { desc = "Lazygit" })
