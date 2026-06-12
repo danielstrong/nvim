@@ -29,7 +29,7 @@ map("v", "#", "gc", { remap = true, desc = "toggle comment" })
 
 map({ "n", "v" }, "x", '"_x')
 map({ "n", "v" }, "X", '"_X')
-map("n", "<localleader>v", "<C-v>", { desc = "enter visual block mode" })
+map({ "n", "v" }, "<localleader>vb", "<C-v>", { desc = "enter visual block mode" })
 
 map({ "n", "v" }, "<localleader>tn", "<cmd>tabnew<cr>", { desc = "Tab new" })
 map({ "n", "v" }, "<localleader>ts", "<cmd>tab split<cr>", { desc = "open current buffer into new tab" })
@@ -241,8 +241,9 @@ map({ "n", "v" }, "ZV", real_quit_window, { desc = "quit window" })
 map({ "n", "v" }, "ZQ", "<cmd>q<cr>", { desc = "quit no save" })
 
 map({ "n", "v" }, "<localleader>QQ", "<cmd>AutoSession disable<CR><cmd>qa<cr>", { desc = "quit all disable session" }) -- TODO dont have this save sesion..
+map({ "n", "v" }, "<localleader>QA", "<cmd>qa<cr>", { desc = "quit all save session" }) -- TODO dont have this save sesion..
 map({ "n", "v" }, "<localleader>x", real_quit_window_without_closing_nvim, { desc = "Close Window" })
-map({ "n", "v" }, "<localleader>X", "<cmd>qa<cr>", { desc = "quit all windows" })
+map({ "n", "v" }, "<localleader>X", "<cmd>qa<cr>", { desc = "quit all save session" })
 
 map({ "n", "v" }, "<localleader>s", "<cmd>w<cr>", { desc = "Save Buffer" })
 map({ "n", "v" }, "<localleader>S", "<cmd>wa<cr>", { desc = "Save All Buffers" })
