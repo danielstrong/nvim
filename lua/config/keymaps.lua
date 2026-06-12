@@ -10,19 +10,19 @@ map("n", "=zj", "<cmd>%!jq .<CR>", { noremap = true, desc = "Format JSON with jq
 
 -- Search and Replace
 -- to use: yank the replacement text, search the target text, then use this keymap
-map("n", "<localleader>r/", ':%s//\\=@"/gc<CR>', { noremap = true, desc = "Find and replace search incremental" })
+map("n", "<localleader>r/", ':%s//\\=@"/gc<CR>', { noremap = true, desc = "Find and replace search" })
 
 -- Incremental Rename
 -- to use: put cursor over target word, use this keymap, then type in replacement text
-map("n", "<localleader>rn", 'byiw:%s!<C-r>"!!gc<left><left><left>', { noremap = true, desc = "Find and replace word incremental" })
+map("n", "<localleader>rn", 'b"hyiw:%s!<C-r>h!!gc<left><left><left><C-r>h', { noremap = true, desc = "Find and replace word incremental" })
 -- to use: visually select the target word, use this keymap, the type in replacement text
-map("v", "<localleader>rn", '"hy:%s!<C-r>h!!gc<left><left><left>', { noremap = true, desc = "Find and replace visually incremental" })
+map("v", "<localleader>rn", '"hy:%s!<C-r>h!!gc<left><left><left><C-r>h', { noremap = true, desc = "Find and replace visually incremental" })
 
 -- Rename All
 -- to use: put cursor over target word, use this keymap, then type in replacement text
-map("n", "<localleader>ra", 'byiw:%s!<C-r>"!!g<left><left>', { noremap = true, desc = "Find and replace word all" })
+map("n", "<localleader>ra", 'b"hyiw:%s!<C-r>h!!g<left><left><C-r>h', { noremap = true, desc = "Find and replace word all" })
 -- to use: visually select the target word, use this keymap, the type in replacement text
-map("v", "<localleader>ra", '"hy:%s!<C-r>h!!g<left><left>', { noremap = true, desc = "Find and replace visually all" })
+map("v", "<localleader>ra", '"hy:%s!<C-r>h!!g<left><left><C-r>h', { noremap = true, desc = "Find and replace visually all" })
 
 map("n", "#", "gcc", { remap = true, desc = "toggle line comment" })
 map("v", "#", "gc", { remap = true, desc = "toggle comment" })
@@ -240,16 +240,16 @@ map({ "n", "v" }, "ZC", "<cmd>qa<cr>", { desc = "quit all windows" })
 map({ "n", "v" }, "ZV", real_quit_window, { desc = "quit window" })
 map({ "n", "v" }, "ZQ", "<cmd>q<cr>", { desc = "quit no save" })
 
-map({ "n", "v" }, "<localleader>QQ", "<cmd>AutoSession disable<CR><cmd>qa<cr>", { desc = "quit all windows" }) -- TODO dont have this save sesion..
+map({ "n", "v" }, "<localleader>QQ", "<cmd>AutoSession disable<CR><cmd>qa<cr>", { desc = "quit all disable session" }) -- TODO dont have this save sesion..
 map({ "n", "v" }, "<localleader>x", real_quit_window_without_closing_nvim, { desc = "Close Window" })
 map({ "n", "v" }, "<localleader>X", "<cmd>qa<cr>", { desc = "quit all windows" })
 
 map({ "n", "v" }, "<localleader>s", "<cmd>w<cr>", { desc = "Save Buffer" })
 map({ "n", "v" }, "<localleader>S", "<cmd>wa<cr>", { desc = "Save All Buffers" })
-map({ "n", "v" }, "<localleader>zs", "<cmd>w<cr>", { desc = "Save Buffer" })
-map({ "n", "v" }, "<localleader>zS", "<cmd>wa<cr>", { desc = "Save All Buffers" })
-map({ "n", "v" }, "<localleader>ze", "<cmd>noautocmd w<cr>", { desc = "save buffer no format" })
-map({ "n", "v" }, "<localleader>zE", "<cmd>noautocmd wa<cr>", { desc = "save all files no format" })
+map({ "n", "v" }, "<localleader>Ws", "<cmd>w<cr>", { desc = "Save Buffer" })
+map({ "n", "v" }, "<localleader>WS", "<cmd>wa<cr>", { desc = "Save All Buffers" })
+map({ "n", "v" }, "<localleader>We", "<cmd>noautocmd w<cr>", { desc = "save buffer no format" })
+map({ "n", "v" }, "<localleader>WE", "<cmd>noautocmd wa<cr>", { desc = "save all files no format" })
 
 map({ "n", "v" }, "<localleader>nn", "<cmd>messages<cr>", { desc = "Messages" })
 map({ "n", "v" }, "<localleader>nr", "<cmd>registers<cr>", { desc = "Registers" })
