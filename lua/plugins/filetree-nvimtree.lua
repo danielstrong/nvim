@@ -49,7 +49,7 @@ return {
                 -- api.config.mappings.default_on_attach(bufnr)
                 api.map.on_attach.default(bufnr)
 
-                vim.keymap.set("n", "<localleader>r", function()
+                vim.keymap.set("n", "<localleader>R", function()
                     require("nvim-tree.api").tree.reload()
                 end, { buffer = bufnr, noremap = true, silent = true, desc = "reload tree" })
 

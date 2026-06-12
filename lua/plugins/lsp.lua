@@ -56,9 +56,9 @@ return {
                         },
                         { "czC", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "x" }, has = "codeAction" },
                         { "czz", vim.lsp.codelens.run, desc = "Run Codelens", mode = { "n", "x" }, has = "codeLens" },
-                        { "czZ", vim.lsp.codelens.refresh, desc = "Refresh & Display Codelens", mode = { "n" }, has = "codeLens" },
+                        { "czZ", vim.lsp.codelens.enable, desc = "Refresh & Display Codelens", mode = { "n" }, has = "codeLens" },
                         {
-                            "czf",
+                            "<localleader>rf",
                             function()
                                 Snacks.rename.rename_file({
                                     on_rename = function(_, _, ok)
@@ -72,7 +72,7 @@ return {
                             mode = { "n" },
                             has = { "workspace/didRenameFiles", "workspace/willRenameFiles" },
                         },
-                        { "czr", vim.lsp.buf.rename, desc = "Rename", has = "rename" },
+                        { "<localleader>rc", vim.lsp.buf.rename, desc = "LSP Rename", has = "rename" },
                         { "czQ", LazyVim.lsp.action.source, desc = "Source Action", has = "codeAction" },
                     },
                 },

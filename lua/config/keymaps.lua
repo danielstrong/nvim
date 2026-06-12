@@ -24,17 +24,6 @@ map("n", "<localleader>ra", 'byiw:%s!<C-r>"!!g<left><left>', { noremap = true, d
 -- to use: visually select the target word, use this keymap, the type in replacement text
 map("v", "<localleader>ra", '"hy:%s!<C-r>h!!g<left><left>', { noremap = true, desc = "Find and replace visually all" })
 
-map("n", "<localleader>rc", vim.lsp.buf.rename, { desc = "LSP Rename" })
-map("n", "<localleader>rf", function()
-    Snacks.rename.rename_file({
-        on_rename = function(_, _, ok)
-            if ok then
-                require("nvim-tree.api").tree.reload()
-            end
-        end,
-    })
-end, { desc = "Rename File" })
-
 map("n", "#", "gcc", { remap = true, desc = "toggle line comment" })
 map("v", "#", "gc", { remap = true, desc = "toggle comment" })
 
