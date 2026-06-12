@@ -464,6 +464,18 @@ Snacks.toggle
 
 Snacks.toggle
     .new({
+        name = "Codelens",
+        get = function()
+            return vim.lsp.codelens.is_enabled()
+        end,
+        set = function(state)
+            vim.lsp.codelens.enable(state)
+        end,
+    })
+    :map("<localleader>ur")
+
+Snacks.toggle
+    .new({
         name = "Word Wrap",
         get = function()
             return vim.wo.wrap

@@ -54,9 +54,9 @@ return {
                             desc = "Hover",
                             has = "hover",
                         },
-                        { "czC", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "x" }, has = "codeAction" },
-                        { "czz", vim.lsp.codelens.run, desc = "Run Codelens", mode = { "n", "x" }, has = "codeLens" },
-                        { "czZ", vim.lsp.codelens.enable, desc = "Refresh & Display Codelens", mode = { "n" }, has = "codeLens" },
+                        { "cQ", LazyVim.lsp.action.source, desc = "Source Action", has = "codeAction" },
+                        -- { "cq", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "x" }, has = "codeAction" },
+                        { "<localleader>ac", vim.lsp.codelens.run, desc = "Run Codelens", mode = { "n", "x" }, has = "codeLens" },
                         {
                             "<localleader>rf",
                             function()
@@ -73,7 +73,6 @@ return {
                             has = { "workspace/didRenameFiles", "workspace/willRenameFiles" },
                         },
                         { "<localleader>rc", vim.lsp.buf.rename, desc = "LSP Rename", has = "rename" },
-                        { "czQ", LazyVim.lsp.action.source, desc = "Source Action", has = "codeAction" },
                     },
                 },
                 -- vtsls = {
@@ -124,11 +123,12 @@ return {
                 "buffer",
                 opts = {
                     hotkeys = true, -- Enable hotkeys for quick selection of actions
-                    hotkeys_mode = "text_based", -- Modes for generating hotkeys
-                    -- hotkeys_mode = "text_diff_based", -- Modes for generating hotkeys
+                    -- hotkeys_mode = "text_based", -- Modes for generating hotkeys
+                    hotkeys_mode = "text_diff_based", -- Modes for generating hotkeys
                     auto_preview = true, -- Enable or disable automatic preview
-                    auto_accept = false, -- Automatically accept the selected action (with hotkeys)
-                    position = "cursor", -- Position of the picker window
+                    auto_accept = true, -- Automatically accept the selected action (with hotkeys)
+                    -- position = "cursor", -- Position of the picker window
+                    position = "center", -- Position of the picker window
                     -- winborder = "single", -- Border style for picker and preview windows
                     winborder = "rounded", -- Border style for picker and preview windows
                     keymaps = {
@@ -146,6 +146,31 @@ return {
                     group_icon = " └",
                 },
             },
+
+            -- Sort import-related actions to the top (within their category group)
+            sort = function(a, b)
+                local function is_import(item)
+                    local action = item.action or {}
+                    local title = (action.title or ""):lower()
+                    local kind = (action.kind or ""):lower()
+                    return title:find("import", 1, true) ~= nil or kind:find("import", 1, true) ~= nil
+                end
+
+                local a_import = is_import(a)
+                local b_import = is_import(b)
+                if a_import ~= b_import then
+                    return a_import
+                end
+
+                -- preserve the isPreferred-first ordering applied before this comparator
+                local a_pref = a.action and a.action.isPreferred == true
+                local b_pref = b.action and b.action.isPreferred == true
+                if a_pref ~= b_pref then
+                    return a_pref
+                end
+
+                return false
+            end,
 
             -- resolve_timeout = 100, -- Timeout in milliseconds to resolve code actions
 
