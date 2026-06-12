@@ -10,7 +10,7 @@ map("n", "=zj", "<cmd>%!jq .<CR>", { noremap = true, desc = "Format JSON with jq
 
 -- Search and Replace
 -- to use: yank the replacement text, search the target text, then use this keymap
-map("n", "<localleader>r/", ':%s//\\=@"/gc<CR>', { noremap = true, desc = "Find and replace search" })
+map("n", "<localleader>r/", ":%s//<C-r>//gc<left><left><left>", { noremap = true, desc = "Find and replace search" })
 
 -- Incremental Rename
 -- to use: put cursor over target word, use this keymap, then type in replacement text
