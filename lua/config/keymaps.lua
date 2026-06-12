@@ -251,10 +251,10 @@ map({ "n", "v" }, "<localleader>WS", "<cmd>wa<cr>", { desc = "Save All Buffers" 
 map({ "n", "v" }, "<localleader>We", "<cmd>noautocmd w<cr>", { desc = "save buffer no format" })
 map({ "n", "v" }, "<localleader>WE", "<cmd>noautocmd wa<cr>", { desc = "save all files no format" })
 
-map({ "n", "v" }, "<localleader>nn", "<cmd>messages<cr>", { desc = "Messages" })
-map({ "n", "v" }, "<localleader>nr", "<cmd>registers<cr>", { desc = "Registers" })
-map({ "n", "v" }, "<localleader>nj", "<cmd>jumps<cr>", { desc = "Jumps" })
-map({ "n", "v" }, "<localleader>nm", "<cmd>marks<cr>", { desc = "Marks" })
+map({ "n", "v" }, "<localleader>Nn", "<cmd>messages<cr>", { desc = "Messages" })
+map({ "n", "v" }, '<localleader>N"', "<cmd>registers<cr>", { desc = "Registers" })
+map({ "n", "v" }, "<localleader>Nj", "<cmd>jumps<cr>", { desc = "Jumps" })
+map({ "n", "v" }, "<localleader>N'", "<cmd>marks<cr>", { desc = "Marks" })
 
 -- map("n", "<localleader>D", "<cmd>Ex<cr>", { desc = "Explore" })
 -- map("n", "<localleader>d", "<cmd>Lexplore<cr>", { desc = "Explore Bar" })
@@ -364,8 +364,6 @@ map("n", "cr`", '"_ciw0<Esc>', { desc = "Replace word with 0" })
 map("n", "cr1", '"_ciw1<Esc>', { desc = "Replace word with 1" })
 
 map("n", "<localleader>dd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
-map("n", "<localleader>df", "<cmd>FzfLua diagnostics_workspace<cr>", { desc = "Workspace Diagnostics (fzf)" })
-map("n", "<localleader>dF", "<cmd>FzfLua lsp_workspace_diagnostics<cr>", { desc = "Workspace LSP Diagnostics (fzf)" })
 
 map("n", "<localleader>dA", function()
     vim.diagnostic.setqflist({ open = false })
@@ -430,21 +428,9 @@ end, { desc = "Lazygit" })
 map("n", "<localleader>gg", function()
     Snacks.terminal("gitui")
 end, { desc = "GitUI" })
-map("n", "<localleader>gb", "<cmd>FzfLua git_blame<cr>", { desc = "Git Blame" })
-map("n", "<localleader>gc", "<cmd>FzfLua git_commits<cr>", { desc = "Git Commits" })
-map("n", "<localleader>gC", "<cmd>FzfLua git_bcommits<cr>", { desc = "Git Commits (buffer)" })
-map("n", "<localleader>gs", "<cmd>FzfLua git_status<cr>", { desc = "Git Status" })
-map("n", "<localleader>gw", "<cmd>FzfLua git_worktrees<cr>", { desc = "Git Worktrees" })
-map("n", "<localleader>gn", "<cmd>FzfLua git_branches<cr>", { desc = "Git Branches" })
-map("n", "<localleader>gr", "<cmd>FzfLua git_stash<cr>", { desc = "Git Stash" })
-map("n", "<localleader>gt", "<cmd>FzfLua git_tags<cr>", { desc = "Git Tags" })
 
-map("n", "<localleader>gB", function()
-    Snacks.picker.git_log_line()
-end, { desc = "Git Blame Line" })
-map("n", "<localleader>gS", function()
-    Snacks.picker.git_status()
-end, { desc = "Git Status" })
+map("n", "<localleader>gB", Snacks.picker.git_log_line, { desc = "Git Blame Line" })
+map("n", "<localleader>gS", Snacks.picker.git_status, { desc = "Git Status" })
 
 Snacks.toggle
     .new({

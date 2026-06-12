@@ -61,10 +61,8 @@ return {
         enabled = true,
         lazy = false,
         keys = {
-            { "<localleader>zw", "<cmd>AutoSession save<CR><cmd>wqa<cr>", mode = { "n", "v" }, desc = "save quit all + save session" },
-            { "<localleader>zW", "<cmd>AutoSession save<CR><cmd>wa<cr>", mode = { "n", "v" }, desc = "save all + save session" },
-            { "<localleader>zw", "<cmd>AutoSession save<CR>", mode = { "n", "v" }, desc = "Save Session" },
-            { "<localleader>zW", ":AutoSession save ", mode = { "n", "v" }, desc = "Save Session with name" },
+            { "<localleader>zw", "<cmd>AutoSession save<CR>", mode = { "n", "v" }, desc = "Session Save" },
+            { "<localleader>zW", ":AutoSession save ", mode = { "n", "v" }, desc = "Session Save with name" },
             {
                 "<localleader>zs",
                 function()
@@ -78,7 +76,7 @@ return {
                     end)
                 end,
                 mode = { "n", "v" },
-                desc = "New named session (copy session)",
+                desc = "Session Clone",
             },
             {
                 "<localleader>zn",
@@ -100,10 +98,10 @@ return {
                     end)
                 end,
                 mode = { "n", "v" },
-                desc = "New named session (current file only)",
+                desc = "Session Clone (current file only)",
             },
-            { "<localleader>zr", "<cmd>AutoSession restore<CR>", mode = { "n", "v" }, desc = "Restore Session" },
-            { "<localleader>zR", ":AutoSession restore ", mode = { "n", "v" }, desc = "Restore Session with name" },
+            { "<localleader>zr", "<cmd>AutoSession restore<CR>", mode = { "n", "v" }, desc = "Session Restore" },
+            { "<localleader>zR", ":AutoSession restore ", mode = { "n", "v" }, desc = "Session Restore with name" },
             {
                 "<localleader>zl",
                 function()
@@ -116,15 +114,15 @@ return {
                     as.restore_session_file(cur, { show_message = true })
                 end,
                 mode = { "n", "v" },
-                desc = "Reload current session",
+                desc = "Session Reload",
             },
-            { "<localleader>ze", "<cmd>AutoSession search<CR>", mode = { "n", "v" }, desc = "Search Session" },
-            { "<localleader>zd", "<cmd>AutoSession deletePicker<CR>", mode = { "n", "v" }, desc = "Delete Session Picker" },
-            { "<localleader>zf", "<cmd>AutoSession delete<CR>", mode = { "n", "v" }, desc = "Delete Session" },
-            { "<localleader>zF", ":AutoSession delete ", mode = { "n", "v" }, desc = "Delete Session with name" },
-            { "<localleader>zD", "<cmd>AutoSession purgeOrphaned<CR>", mode = { "n", "v" }, desc = "Purge Orphaned Session" },
+            { "<localleader>ze", "<cmd>AutoSession search<CR>", mode = { "n", "v" }, desc = "Session Search" },
+            { "<localleader>zd", "<cmd>AutoSession deletePicker<CR>", mode = { "n", "v" }, desc = "Session Delete Picker" },
+            { "<localleader>zf", "<cmd>AutoSession delete<CR>", mode = { "n", "v" }, desc = "Session Delete" },
+            { "<localleader>zF", ":AutoSession delete ", mode = { "n", "v" }, desc = "Session Delete with name" },
+            { "<localleader>zD", "<cmd>AutoSession purgeOrphaned<CR>", mode = { "n", "v" }, desc = "Session Purge Orphaned" },
             {
-                "<localleader>zH",
+                "<localleader>zK",
                 function()
                     local cur = vim.v.this_session
                     if cur == nil or cur == "" then
@@ -138,10 +136,10 @@ return {
                     vim.notify("Session: " .. name, vim.log.levels.INFO)
                 end,
                 mode = { "n", "v" },
-                desc = "Show current session name",
+                desc = "Session Show Name",
             },
-            { "<localleader>zt", "<cmd>AutoSession enable<CR>", mode = { "n", "v" }, desc = "Enable Autosave Session" },
-            { "<localleader>zT", "<cmd>AutoSession disable<CR>", mode = { "n", "v" }, desc = "Disable Autosave Session" },
+            { "<localleader>zt", "<cmd>AutoSession enable<CR>", mode = { "n", "v" }, desc = "Session Enable Autosave" },
+            { "<localleader>zT", "<cmd>AutoSession disable<CR>", mode = { "n", "v" }, desc = "Session Disable Autosave" },
         },
         config = function()
             require("auto-session").setup({
@@ -192,8 +190,8 @@ return {
 
                 ---@type SessionLens
                 session_lens = {
-                    picker = nil, -- "telescope"|"snacks"|"fzf"|"select"|nil Pickers are detected automatically but you can also set one manually. Falls back to vim.ui.select
-                    load_on_setup = true, -- Only used for telescope, registers the telescope extension at startup so you can use :Telescope session-lens
+                    picker = "fzf", -- "telescope"|"snacks"|"fzf"|"select"|nil Pickers are detected automatically but you can also set one manually. Falls back to vim.ui.select
+                    load_on_setup = false, -- Only used for telescope, registers the telescope extension at startup so you can use :Telescope session-lens
                     picker_opts = nil, -- Table passed to Telescope / Snacks / Fzf-Lua to configure the picker. See below for more information
 
                     ---@type SessionLensMappings

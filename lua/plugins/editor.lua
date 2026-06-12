@@ -53,6 +53,7 @@ return {
                 { "<localleader>g", group = "Git", mode = { "n", "v" } },
                 { "<localleader>h", group = "Hunk", mode = { "n", "v" } },
                 { "<localleader>n", group = "Nvim", mode = { "n", "v" } },
+                { "<localleader>N", group = "Nvim Raw", mode = { "n", "v" } },
                 { "<localleader>Q", group = "Quick", mode = { "n", "v" } },
                 { "<localleader>r", group = "Replace", mode = { "n", "v" } },
                 { "<localleader>z", group = "Session", mode = { "n", "v" } },

@@ -54,6 +54,27 @@ return {
                             desc = "Hover",
                             has = "hover",
                         },
+                        { "<localleader>ah", vim.lsp.buf.document_highlight, desc = "Document Highlight" },
+                        { "<localleader>aH", vim.lsp.buf.clear_references, desc = "Clear Document Highlight" },
+                        { "<localleader>af", vim.lsp.buf.format, desc = "LSP Format" },
+                        { "<localleader>ai", vim.lsp.buf.incoming_calls, desc = "LSP Incoming Calls" },
+                        { "<localleader>aI", vim.lsp.buf.outgoing_calls, desc = "LSP Outoging Calls" },
+                        {
+                            "<localleader>at",
+                            function()
+                                vim.lsp.buf.typehierarchy("subtypes")
+                            end,
+                            desc = "LSP Type Hierarchy Subtypes",
+                        },
+                        {
+                            "<localleader>aT",
+                            function()
+                                vim.lsp.buf.typehierarchy("supertypes")
+                            end,
+                            desc = "LSP Type Hierarchy Supertypes",
+                        },
+                        { "<localleader>aw", vim.lsp.buf.list_workspace_folders, desc = "LSP List Workspace Folders" },
+                        { "<localleader>ao", vim.lsp.buf.workspace_symbol, desc = "LSP List Workspace Folders" },
                         { "cQ", LazyVim.lsp.action.source, desc = "Source Action", has = "codeAction" },
                         -- { "cq", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "x" }, has = "codeAction" },
                         { "<localleader>ac", vim.lsp.codelens.run, desc = "Run Codelens", mode = { "n", "x" }, has = "codeLens" },
@@ -68,11 +89,11 @@ return {
                                     end,
                                 })
                             end,
-                            desc = "Rename File",
+                            desc = "LSP Rename File",
                             mode = { "n" },
                             has = { "workspace/didRenameFiles", "workspace/willRenameFiles" },
                         },
-                        { "<localleader>rc", vim.lsp.buf.rename, desc = "LSP Rename", has = "rename" },
+                        { "<localleader>rc", vim.lsp.buf.rename, desc = "LSP Rename Reference", has = "rename" },
                     },
                 },
                 -- vtsls = {
