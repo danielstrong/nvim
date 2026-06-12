@@ -146,27 +146,32 @@ function _G.TabLineSplits()
     return s .. "%#TabLineFill#%T"
 end
 
-map({ "n", "v" }, "<localleader>q", function()
-    if vim.fn.tabpagenr("$") == 1 and #vim.api.nvim_tabpage_list_wins(0) == 1 then
-        vim.notify("Can't close the last window", vim.log.levels.WARN)
-        -- vim.cmd("bn | bd #")
-        return
+local function real_win_count()
+    local count = 0
+    for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+        if vim.api.nvim_win_get_config(win).relative == "" then
+            count = count + 1
+        end
     end
-    Snacks.bufdelete()
+    return count
+end
+
+local function real_quit_window()
+    vim.cmd("quit")
     local remaining = vim.fn.filter(vim.api.nvim_list_wins(), function(_, w)
         return vim.api.nvim_win_is_valid(w)
     end)
     if #remaining == 1 then
         local buf = vim.api.nvim_win_get_buf(remaining[1])
         local ft = vim.api.nvim_get_option_value("filetype", { buf = buf })
-        if ft == "NvimTree" and vim.fn.tabpagenr("$") > 1 then
-            Snacks.bufdelete()
+        if ft == "NvimTree" then
+            vim.cmd("quit")
         end
     end
-end, { desc = "close buffer" })
+end
 
-map({ "n", "v" }, "<localleader>x", function()
-    if vim.fn.tabpagenr("$") == 1 and #vim.api.nvim_tabpage_list_wins(0) == 1 then
+local function real_quit_window_without_closing_nvim()
+    if vim.fn.tabpagenr("$") == 1 and real_win_count() == 1 then
         vim.notify("Can't close the last window", vim.log.levels.WARN)
         -- vim.cmd("bn | bd #")
         return
@@ -182,8 +187,28 @@ map({ "n", "v" }, "<localleader>x", function()
             vim.cmd("quit")
         end
     end
-end, { desc = "kill buffer" })
+end
 
+local function real_delete_buffer_without_closing_nvim()
+    if vim.fn.tabpagenr("$") == 1 and real_win_count() == 1 then
+        vim.notify("Can't close the last window", vim.log.levels.WARN)
+        -- vim.cmd("bn | bd #")
+        return
+    end
+    Snacks.bufdelete()
+    local remaining = vim.fn.filter(vim.api.nvim_list_wins(), function(_, w)
+        return vim.api.nvim_win_is_valid(w)
+    end)
+    if #remaining == 1 then
+        local buf = vim.api.nvim_win_get_buf(remaining[1])
+        local ft = vim.api.nvim_get_option_value("filetype", { buf = buf })
+        if ft == "NvimTree" and vim.fn.tabpagenr("$") > 1 then
+            Snacks.bufdelete()
+        end
+    end
+end
+
+map({ "n", "v" }, "<localleader>q", real_delete_buffer_without_closing_nvim, { desc = "close buffer" })
 map({ "n", "v" }, "<localleader>bC", function()
     local shown = {}
     for _, win in ipairs(vim.api.nvim_list_wins()) do
@@ -220,63 +245,27 @@ end
 map({ "n", "v" }, "<localleader>bL", reload_all_buffers, { desc = "reload all buffers" })
 map({ "n", "v" }, "<localleader>L", reload_all_buffers, { desc = "reload all buffers" })
 
-map({ "n", "v" }, "<localleader>tq", function()
-    local wins = vim.api.nvim_tabpage_list_wins(0)
-    local cur_ft = vim.bo[vim.api.nvim_get_current_buf()].filetype
-    local non_tree_wins = vim.tbl_filter(function(w)
-        return vim.bo[vim.api.nvim_win_get_buf(w)].filetype ~= "NvimTree"
-    end, wins)
-    if cur_ft ~= "NvimTree" and #non_tree_wins <= 1 then
-        local ok = pcall(function()
-            vim.cmd("b#")
-        end)
-        if not ok then
-            -- vim.cmd("enew")
-            -- vim.cmd("b#")
-            vim.notify("Cannot close last window. press q to quit", vim.log.levels.WARN)
-        end
-        -- vim.cmd("NvimTreeClose")
-        return
-    end
-    vim.cmd("close")
-end, { desc = "close window" })
+map({ "n", "v" }, "ZZ", "<cmd>x<cr>", { desc = "save quit file" })
+map({ "n", "v" }, "ZX", "<cmd>wqa<cr>", { desc = "save quit all" })
+map({ "n", "v" }, "ZC", "<cmd>qa<cr>", { desc = "quit all windows" })
+map({ "n", "v" }, "ZV", real_quit_window, { desc = "quit window" })
+map({ "n", "v" }, "ZQ", "<cmd>q<cr>", { desc = "quit no save" })
 
-map("n", "ZZ", "<cmd>x<cr>", { desc = "save quit file" })
-map("n", "ZS", "<cmd>x<cr>", { desc = "save quit file" })
-map("n", "ZQ", "<cmd>q<cr>", { desc = "quit no save" })
-map("n", "ZD", "<cmd>wqa<cr>", { desc = "save quit all" })
-map("n", "ZW", "<cmd>w<cr>", { desc = "quit no save" })
-map("n", "ZE", "<cmd>wa<cr>", { desc = "save all" })
-map("n", "<localleader>ZS", "<cmd>wqa<cr>", { desc = "save quit all files" })
-map("n", "<localleader>QQ", "<cmd>qa<cr>", { desc = "quit all windows" })
-map("n", "ZC", "<cmd>qa<cr>", { desc = "quit all windows" })
-
-map({ "n", "v" }, "<localleader>ZX", "<cmd>qa<cr>", { desc = "quit all windows" })
+map({ "n", "v" }, "<localleader>QQ", "<cmd>AutoSession disable<CR><cmd>qa<cr>", { desc = "quit all windows" }) -- TODO dont have this save sesion..
+map({ "n", "v" }, "<localleader>x", real_quit_window_without_closing_nvim, { desc = "Close Window" })
 map({ "n", "v" }, "<localleader>X", "<cmd>qa<cr>", { desc = "quit all windows" })
-map({ "n", "v" }, "ZX", function()
-    vim.cmd("quit")
-    local remaining = vim.fn.filter(vim.api.nvim_list_wins(), function(_, w)
-        return vim.api.nvim_win_is_valid(w)
-    end)
-    if #remaining == 1 then
-        local buf = vim.api.nvim_win_get_buf(remaining[1])
-        local ft = vim.api.nvim_get_option_value("filetype", { buf = buf })
-        if ft == "NvimTree" then
-            vim.cmd("quit")
-        end
-    end
-end, { desc = "quit window" })
-map({ "n", "v" }, "<localleader>s", "<cmd>w<cr>", { desc = "Save Buffer" })
-map({ "n", "v" }, "<localleader>zs", "<cmd>w<cr>", { desc = "Save Buffer" })
-map({ "n", "v" }, "<localleader>zas", "<cmd>noautocmd w<cr>", { desc = "save buffer no format" })
-map({ "n", "v" }, "<localleader>zS", "<cmd>wa<cr>", { desc = "Save All Buffers" })
-map({ "n", "v" }, "<localleader>S", "<cmd>wa<cr>", { desc = "Save All Buffers" })
-map({ "n", "v" }, "<localleader>zaS", "<cmd>noautocmd wa<cr>", { desc = "save all files no format" })
 
-map("n", "<localleader>nn", "<cmd>messages<cr>", { desc = "Messages" })
-map("n", "<localleader>nr", "<cmd>registers<cr>", { desc = "Registers" })
-map("n", "<localleader>nj", "<cmd>jumps<cr>", { desc = "Jumps" })
-map("n", "<localleader>nm", "<cmd>marks<cr>", { desc = "Marks" })
+map({ "n", "v" }, "<localleader>s", "<cmd>w<cr>", { desc = "Save Buffer" })
+map({ "n", "v" }, "<localleader>S", "<cmd>wa<cr>", { desc = "Save All Buffers" })
+map({ "n", "v" }, "<localleader>Zs", "<cmd>w<cr>", { desc = "Save Buffer" })
+map({ "n", "v" }, "<localleader>ZS", "<cmd>wa<cr>", { desc = "Save All Buffers" })
+map({ "n", "v" }, "<localleader>Ze", "<cmd>noautocmd w<cr>", { desc = "save buffer no format" })
+map({ "n", "v" }, "<localleader>ZE", "<cmd>noautocmd wa<cr>", { desc = "save all files no format" })
+
+map({ "n", "v" }, "<localleader>nn", "<cmd>messages<cr>", { desc = "Messages" })
+map({ "n", "v" }, "<localleader>nr", "<cmd>registers<cr>", { desc = "Registers" })
+map({ "n", "v" }, "<localleader>nj", "<cmd>jumps<cr>", { desc = "Jumps" })
+map({ "n", "v" }, "<localleader>nm", "<cmd>marks<cr>", { desc = "Marks" })
 
 -- map("n", "<localleader>D", "<cmd>Ex<cr>", { desc = "Explore" })
 -- map("n", "<localleader>d", "<cmd>Lexplore<cr>", { desc = "Explore Bar" })

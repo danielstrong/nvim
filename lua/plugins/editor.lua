@@ -2,6 +2,7 @@ return {
 
     {
         "folke/which-key.nvim",
+        lazy = true,
         opts = {
             -- preset = "classic",
             -- preset = "modern",
@@ -25,9 +26,18 @@ return {
                     g = true, -- bindings for prefixed with g
                 },
             },
+            -- triggers = {
+            --     { "<auto>", mode = "nxso" },
+            --     { "<leader>", mode = { "n", "v" } },
+            --     { "<localleader>", mode = { "n", "v" } },
+            --     { "c", mode = { "n", "v" } },
+            -- },
+            -- sort = { "local", "order", "group", "alphanum", "mod" },
+            -- sort = { "alphanum", "order", "group", "mod", "local" },
+            sort = { "alphanum", "order", "mod" },
             spec = {
-                { "c", group = "Change22", mode = { "n", "v" } },
-                { "cr", group = "Replace Text", mode = { "n", "v" } },
+                { "c", group = "Replace Text" },
+                { "cr" },
                 { "Z", group = "File", mode = { "n", "v" } },
                 { "<localleader>a", group = "Actions", mode = { "n", "v" } },
                 {
@@ -47,7 +57,7 @@ return {
                 { "<localleader>r", group = "Replace", mode = { "n", "v" } },
                 { "<localleader>z", group = "Session", mode = { "n", "v" } },
                 { "<localleader>za", group = "No Format", mode = { "n", "v" } },
-                { "<localleader>Z", group = "Session Close", mode = { "n", "v" } },
+                { "<localleader>Z", group = "File", mode = { "n", "v" } },
                 { "<localleader>W", group = "Save", mode = { "n", "v" } },
                 { "<localleader>t", group = "Tabs", mode = { "n", "v" } },
                 { "<localleader>u", group = "UI", mode = { "n", "v" } },
