@@ -246,10 +246,10 @@ map({ "n", "v" }, "<localleader>X", "<cmd>qa<cr>", { desc = "quit all windows" }
 
 map({ "n", "v" }, "<localleader>s", "<cmd>w<cr>", { desc = "Save Buffer" })
 map({ "n", "v" }, "<localleader>S", "<cmd>wa<cr>", { desc = "Save All Buffers" })
-map({ "n", "v" }, "<localleader>Zs", "<cmd>w<cr>", { desc = "Save Buffer" })
-map({ "n", "v" }, "<localleader>ZS", "<cmd>wa<cr>", { desc = "Save All Buffers" })
-map({ "n", "v" }, "<localleader>Ze", "<cmd>noautocmd w<cr>", { desc = "save buffer no format" })
-map({ "n", "v" }, "<localleader>ZE", "<cmd>noautocmd wa<cr>", { desc = "save all files no format" })
+map({ "n", "v" }, "<localleader>zs", "<cmd>w<cr>", { desc = "Save Buffer" })
+map({ "n", "v" }, "<localleader>zS", "<cmd>wa<cr>", { desc = "Save All Buffers" })
+map({ "n", "v" }, "<localleader>ze", "<cmd>noautocmd w<cr>", { desc = "save buffer no format" })
+map({ "n", "v" }, "<localleader>zE", "<cmd>noautocmd wa<cr>", { desc = "save all files no format" })
 
 map({ "n", "v" }, "<localleader>nn", "<cmd>messages<cr>", { desc = "Messages" })
 map({ "n", "v" }, "<localleader>nr", "<cmd>registers<cr>", { desc = "Registers" })
