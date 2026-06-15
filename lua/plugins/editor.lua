@@ -43,7 +43,6 @@ return {
                 {
                     "<localleader>b",
                     group = "Buffers",
-                    mode = { "n", "v" },
                     expand = function()
                         return require("which-key.extras").expand.buf()
                     end,
@@ -62,16 +61,8 @@ return {
                 { "<localleader>u", group = "UI", mode = { "n", "v" } },
                 {
                     "<localleader>w",
-                    group = "windows",
-                    proxy = "<c-w>",
-                    expand = function()
-                        return require("which-key.extras").expand.win()
-                    end,
-                },
-                {
-                    "<localleader>w",
                     group = "Windows",
-                    mode = { "n", "v" },
+                    proxy = "<c-w>",
                     expand = function()
                         local extras = require("which-key.extras")
                         local ret = {}
