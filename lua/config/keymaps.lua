@@ -235,13 +235,14 @@ map({ "n", "v" }, "<localleader>bL", reload_all_buffers, { desc = "reload all bu
 map({ "n", "v" }, "<localleader>L", reload_all_buffers, { desc = "reload all buffers" })
 
 map({ "n", "v" }, "ZZ", "<cmd>x<cr>", { desc = "save quit file" })
-map({ "n", "v" }, "ZX", "<cmd>wqa<cr>", { desc = "save quit all" })
-map({ "n", "v" }, "ZC", "<cmd>qa<cr>", { desc = "quit all windows" })
-map({ "n", "v" }, "ZV", real_quit_window, { desc = "quit window" })
-map({ "n", "v" }, "ZQ", "<cmd>q<cr>", { desc = "quit no save" })
+map({ "n", "v" }, "ZX", real_quit_window, { desc = "quit window" })
+map({ "n", "v" }, "ZC", "<cmd>qa<cr>", { desc = "quit all save session" })
+map({ "n", "v" }, "ZV", "<cmd>wqa<cr>", { desc = "save quit all" })
+map({ "n", "v" }, "ZQ", "<cmd>q<cr>", { desc = "quit window save session" })
 
 map({ "n", "v" }, "<localleader>QQ", "<cmd>AutoSession disable<CR><cmd>qa<cr>", { desc = "quit all disable session" }) -- TODO dont have this save sesion..
 map({ "n", "v" }, "<localleader>QA", "<cmd>qa<cr>", { desc = "quit all save session" }) -- TODO dont have this save sesion..
+map({ "n", "v" }, "<localleader>QW", "<cmd>wqa<cr>", { desc = "quit save all save session" }) -- TODO dont have this save sesion..
 map({ "n", "v" }, "<localleader>x", real_quit_window_without_closing_nvim, { desc = "Close Window" })
 map({ "n", "v" }, "<localleader>X", "<cmd>qa<cr>", { desc = "quit all save session" })
 

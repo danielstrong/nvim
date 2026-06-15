@@ -148,8 +148,8 @@ return {
                     hotkeys_mode = "text_diff_based", -- Modes for generating hotkeys
                     auto_preview = true, -- Enable or disable automatic preview
                     auto_accept = true, -- Automatically accept the selected action (with hotkeys)
-                    -- position = "cursor", -- Position of the picker window
-                    position = "center", -- Position of the picker window
+                    position = "cursor", -- Position of the picker window
+                    -- position = "center", -- Position of the picker window
                     -- winborder = "single", -- Border style for picker and preview windows
                     winborder = "rounded", -- Border style for picker and preview windows
                     keymaps = {
