@@ -60,6 +60,39 @@ return {
                 { "<localleader>W", group = "Save", mode = { "n", "v" } },
                 { "<localleader>t", group = "Tabs", mode = { "n", "v" } },
                 { "<localleader>u", group = "UI", mode = { "n", "v" } },
+                {
+                    "<localleader>w",
+                    group = "windows",
+                    proxy = "<c-w>",
+                    expand = function()
+                        return require("which-key.extras").expand.win()
+                    end,
+                },
+                {
+                    "<localleader>w",
+                    group = "Windows",
+                    mode = { "n", "v" },
+                    expand = function()
+                        local extras = require("which-key.extras")
+                        local ret = {}
+                        for i = 1, vim.fn.winnr("$") do
+                            local win = vim.fn.win_getid(i)
+                            if vim.api.nvim_win_get_config(win).relative == "" then
+                                local buf = vim.api.nvim_win_get_buf(win)
+                                local name = extras.bufname(buf)
+                                ret[#ret + 1] = {
+                                    tostring(i),
+                                    function()
+                                        vim.cmd(i .. "wincmd w")
+                                    end,
+                                    desc = name,
+                                    icon = { cat = "file", name = name },
+                                }
+                            end
+                        end
+                        return ret
+                    end,
+                },
                 { "<localleader>=", group = "Fix Indention", mode = { "n", "v" } },
                 { "<localleader>=z", group = "Formatters", mode = { "n", "v" } },
             },

@@ -135,6 +135,10 @@ function _G.TabLineSplits()
     return s .. "%#TabLineFill#%T"
 end
 
+map("n", "<localleader>ws", "<C-W>s", { desc = "Split Window Below", remap = true })
+map("n", "<localleader>wv", "<C-W>v", { desc = "Split Window Right", remap = true })
+map("n", "<localleader>wd", "<C-W>c", { desc = "Delete Window", remap = true })
+
 local function real_win_count()
     local count = 0
     for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
@@ -524,3 +528,6 @@ Snacks.toggle
         end,
     })
     :map("<localleader>uc")
+
+Snacks.toggle.zoom():map("<localleader>wz"):map("<localleader>uZ")
+Snacks.toggle.zen():map("<localleader>uz")
