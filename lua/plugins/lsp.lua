@@ -144,8 +144,8 @@ return {
                 "buffer",
                 opts = {
                     hotkeys = true, -- Enable hotkeys for quick selection of actions
-                    -- hotkeys_mode = "text_based", -- Modes for generating hotkeys
-                    hotkeys_mode = "text_diff_based", -- Modes for generating hotkeys
+                    hotkeys_mode = "text_based", -- Modes for generating hotkeys
+                    -- hotkeys_mode = "text_diff_based", -- Modes for generating hotkeys
                     auto_preview = true, -- Enable or disable automatic preview
                     auto_accept = true, -- Automatically accept the selected action (with hotkeys)
                     position = "cursor", -- Position of the picker window
