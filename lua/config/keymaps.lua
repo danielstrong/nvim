@@ -143,66 +143,65 @@ local function real_win_count()
     local count = 0
     for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
         if vim.api.nvim_win_get_config(win).relative == "" then
-            count = count + 1
+            local buf = vim.api.nvim_win_get_buf(win)
+            local ft = vim.api.nvim_get_option_value("filetype", { buf = buf })
+            if ft ~= "NvimTree" then
+                count = count + 1
+            end
         end
     end
     return count
 end
 
-local function real_quit_window()
-    vim.cmd("quit")
+local function real_tab_count()
+    return vim.fn.tabpagenr("$")
+end
+
+local function real_is_only_nvimtree_remaining()
     local remaining = vim.fn.filter(vim.api.nvim_list_wins(), function(_, w)
         return vim.api.nvim_win_is_valid(w)
     end)
     if #remaining == 1 then
         local buf = vim.api.nvim_win_get_buf(remaining[1])
         local ft = vim.api.nvim_get_option_value("filetype", { buf = buf })
-        if ft == "NvimTree" then
-            vim.cmd("quit")
+        if ft == "NvimTree" and real_tab_count() > 1 then
+            return true
         end
+    end
+    return false
+end
+
+local function real_quit_window()
+    vim.cmd("quit")
+    if real_is_only_nvimtree_remaining() then
+        vim.cmd("quit")
     end
 end
 
 local function real_quit_window_without_closing_nvim()
-    if vim.fn.tabpagenr("$") == 1 and real_win_count() == 1 then
+    if real_tab_count() == 1 and real_win_count() == 1 then
         vim.notify("Can't close the last window", vim.log.levels.WARN)
-        -- vim.cmd("bn | bd #")
         return
     end
     vim.cmd("quit")
-    local remaining = vim.fn.filter(vim.api.nvim_list_wins(), function(_, w)
-        return vim.api.nvim_win_is_valid(w)
-    end)
-    if #remaining == 1 then
-        local buf = vim.api.nvim_win_get_buf(remaining[1])
-        local ft = vim.api.nvim_get_option_value("filetype", { buf = buf })
-        if ft == "NvimTree" and vim.fn.tabpagenr("$") > 1 then
-            vim.cmd("quit")
-        end
+    if real_tab_count() > 1 and real_is_only_nvimtree_remaining() then
+        vim.cmd("quit")
     end
 end
 
 local function real_delete_buffer_without_closing_nvim()
-    if vim.fn.tabpagenr("$") == 1 and real_win_count() == 1 then
+    if real_tab_count() == 1 and real_win_count() == 1 then
         vim.notify("Can't close the last window", vim.log.levels.WARN)
-        -- vim.cmd("bn | bd #")
         return
     end
     Snacks.bufdelete()
-    local remaining = vim.fn.filter(vim.api.nvim_list_wins(), function(_, w)
-        return vim.api.nvim_win_is_valid(w)
-    end)
-    if #remaining == 1 then
-        local buf = vim.api.nvim_win_get_buf(remaining[1])
-        local ft = vim.api.nvim_get_option_value("filetype", { buf = buf })
-        if ft == "NvimTree" and vim.fn.tabpagenr("$") > 1 then
-            Snacks.bufdelete()
-        end
+    if real_tab_count() > 1 and real_is_only_nvimtree_remaining() then
+        Snacks.bufdelete()
     end
 end
 
 map({ "n", "v" }, "<localleader>q", real_delete_buffer_without_closing_nvim, { desc = "close buffer" })
-map({ "n", "v" }, "<localleader>bC", function()
+map({ "n", "v" }, "<localleader>bc", function()
     local shown = {}
     for _, win in ipairs(vim.api.nvim_list_wins()) do
         shown[vim.api.nvim_win_get_buf(win)] = true
@@ -218,7 +217,7 @@ map({ "n", "v" }, "<localleader>bC", function()
     vim.notify(("Deleted %d buffer%s"):format(deleted, deleted == 1 and "" or "s"))
 end, { desc = "kill unshown buffers" })
 map({ "n", "v" }, "<localleader>bx", "<cmd>bn | bd #<cr>", { desc = "kill buffer" })
-map({ "n", "v" }, "<localleader>bc", "<cmd>%bd |e# | bd#<cr>", { desc = "kill other buffers" })
+map({ "n", "v" }, "<localleader>bo", "<cmd>%bd |e# | bd#<cr>", { desc = "only buffer" })
 map({ "n", "v" }, "<localleader>l", "<cmd>e<cr>", { desc = "reload buffer" })
 map({ "n", "v" }, "<localleader>bl", "<cmd>e<cr>", { desc = "reload buffer" })
 map({ "n", "v" }, "<localleader>bd", function()
