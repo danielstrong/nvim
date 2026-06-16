@@ -158,17 +158,20 @@ local function real_tab_count()
 end
 
 local function real_is_only_nvimtree_remaining()
-    local remaining = vim.fn.filter(vim.api.nvim_list_wins(), function(_, w)
-        return vim.api.nvim_win_is_valid(w)
-    end)
-    if #remaining == 1 then
-        local buf = vim.api.nvim_win_get_buf(remaining[1])
-        local ft = vim.api.nvim_get_option_value("filetype", { buf = buf })
-        if ft == "NvimTree" and real_tab_count() > 1 then
-            return true
+    local count = 0
+    local nvimtreecount = 0
+    for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+        if vim.api.nvim_win_get_config(win).relative == "" then
+            local buf = vim.api.nvim_win_get_buf(win)
+            local ft = vim.api.nvim_get_option_value("filetype", { buf = buf })
+            if ft ~= "NvimTree" then
+                count = count + 1
+            else
+                nvimtreecount = nvimtreecount + 1
+            end
         end
     end
-    return false
+    return count == 0 and nvimtreecount == 1
 end
 
 local function real_quit_window()
@@ -194,6 +197,7 @@ local function real_delete_buffer_without_closing_nvim()
         vim.notify("Can't close the last window", vim.log.levels.WARN)
         return
     end
+    -- TODO: if another window is showing this buffer then instead call vim.cmd("quit")
     Snacks.bufdelete()
     if real_tab_count() > 1 and real_is_only_nvimtree_remaining() then
         Snacks.bufdelete()
