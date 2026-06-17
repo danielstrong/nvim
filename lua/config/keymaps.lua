@@ -452,11 +452,14 @@ local function eslint_runner(root)
     return { "npx" }
 end
 
-map("n", "<localleader>ds", function()
+local function run_eslint(quiet)
     local root = vim.fs.root(0, { ".git", "package.json" }) or vim.fn.getcwd()
     vim.notify("Running ESLint in " .. root .. " …", vim.log.levels.INFO)
     vim.fn.setqflist({}, "r", { title = "ESLint", items = {} })
     local cmd = vim.list_extend(eslint_runner(root), { "eslint", ".", "--format", "json" })
+    if quiet then
+        table.insert(cmd, "--quiet")
+    end
     local stdout, stderr = {}, {}
     vim.fn.jobstart(cmd, {
         cwd = root,
@@ -515,7 +518,15 @@ map("n", "<localleader>ds", function()
             end)
         end,
     })
+end
+
+map("n", "<localleader>ds", function()
+    run_eslint(true)
 end, { desc = "ESLint project to Quickfix" })
+
+map("n", "<localleader>dS", function()
+    run_eslint(false)
+end, { desc = "ESLint project to Quickfix (ignore warnings)" })
 
 map("n", "<localleader>nl", function()
     if not eslint_output_logs or #eslint_output_logs == 0 then
