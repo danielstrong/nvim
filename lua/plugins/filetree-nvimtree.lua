@@ -49,7 +49,7 @@ return {
                 -- api.config.mappings.default_on_attach(bufnr)
                 api.map.on_attach.default(bufnr)
 
-                vim.keymap.set("n", "<localleader>R", function()
+                vim.keymap.set("n", "<localleader>r", function()
                     require("nvim-tree.api").tree.reload()
                 end, { buffer = bufnr, noremap = true, silent = true, desc = "reload tree" })
 
@@ -80,10 +80,10 @@ return {
                     end
                 end
 
-                vim.keymap.set("n", "<LeftRelease>", mouse_open, { buffer = bufnr, noremap = true, silent = true, desc = "Open file (keep tree focused) / toggle dir" })
+                -- vim.keymap.set("n", "<LeftRelease>", mouse_open, { buffer = bufnr, noremap = true, silent = true, desc = "Open file (keep tree focused) / toggle dir" })
                 vim.keymap.set("n", "<2-LeftMouse>", api.node.open.preview, { buffer = bufnr, noremap = true, silent = true, desc = "Double-click: toggle dir / open file" })
-                vim.keymap.set("n", "<2-LeftRelease>", "<Nop>", { buffer = bufnr, noremap = true, silent = true })
-                vim.keymap.set("v", "<2-LeftMouse>", "<Esc>", { buffer = bufnr, noremap = true, silent = true })
+                -- vim.keymap.set("n", "<2-LeftRelease>", "<Nop>", { buffer = bufnr, noremap = true, silent = true })
+                -- vim.keymap.set("v", "<2-LeftMouse>", "<Esc>", { buffer = bufnr, noremap = true, silent = true })
 
                 vim.keymap.set("n", "O", function()
                     local marks = api.marks.list()

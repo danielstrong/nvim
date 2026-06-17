@@ -157,6 +157,17 @@ local function real_tab_count()
     return vim.fn.tabpagenr("$")
 end
 
+local function real_wins_showing_current_buf_count()
+    local cur = vim.api.nvim_get_current_buf()
+    local showing = 0
+    for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+        if vim.api.nvim_win_get_config(win).relative == "" and vim.api.nvim_win_get_buf(win) == cur then
+            showing = showing + 1
+        end
+    end
+    return showing
+end
+
 local function real_is_only_nvimtree_remaining()
     local count = 0
     local nvimtreecount = 0
@@ -197,7 +208,10 @@ local function real_delete_buffer_without_closing_nvim()
         vim.notify("Can't close the last window", vim.log.levels.WARN)
         return
     end
-    -- TODO: if another window is showing this buffer then instead call vim.cmd("quit")
+    if real_wins_showing_current_buf_count() > 1 then
+        vim.cmd("quit")
+        return
+    end
     Snacks.bufdelete()
     if real_tab_count() > 1 and real_is_only_nvimtree_remaining() then
         Snacks.bufdelete()
@@ -224,10 +238,10 @@ map({ "n", "v" }, "<localleader>bx", "<cmd>bn | bd #<cr>", { desc = "kill buffer
 map({ "n", "v" }, "<localleader>bo", "<cmd>%bd |e# | bd#<cr>", { desc = "only buffer" })
 map({ "n", "v" }, "<localleader>l", "<cmd>e<cr>", { desc = "reload buffer" })
 map({ "n", "v" }, "<localleader>bl", "<cmd>e<cr>", { desc = "reload buffer" })
-map({ "n", "v" }, "<localleader>bd", function()
+map({ "n", "v" }, "<localleader>bD", function()
     Snacks.bufdelete()
 end, { desc = "buffer delete" })
-map({ "n", "v" }, "<localleader>bD", "<cmd>bd<cr>", { desc = "buffer delete" })
+map({ "n", "v" }, "<localleader>bd", "<cmd>bd<cr>", { desc = "buffer delete" })
 map({ "n", "v" }, "<localleader>be", "<cmd>b#<cr>", { desc = "switch to last buffer" })
 local function reload_all_buffers()
     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
