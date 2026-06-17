@@ -545,6 +545,48 @@ Snacks.toggle
         end,
     })
     :map("<localleader>uc")
-
+--
 Snacks.toggle.zoom():map("<localleader>wz"):map("<localleader>uZ")
 Snacks.toggle.zen():map("<localleader>uz")
+Snacks.toggle.profiler():map("<leader>pp")
+Snacks.toggle.profiler_highlights():map("<leader>ph")
+map({ "n" }, "<leader>ps", function()
+    Snacks.profiler.scratch()
+end, { desc = "Profiler Scratch Bufer" })
+
+do
+    local rm = require("nvim-treesitter-textobjects.repeatable_move")
+
+    -- ; / , repeat whichever move (bracket motion or f/F/t/T) ran last.
+    map({ "n", "x", "o" }, ";", rm.repeat_last_move_next, { desc = "Repeat last move" })
+    map({ "n", "x", "o" }, ",", rm.repeat_last_move_previous, { desc = "Repeat last move (opposite)" })
+
+    -- f/F/t/T record themselves as the last move, then native char-search.
+    map({ "n", "x", "o" }, "f", rm.builtin_f_expr, { expr = true, desc = "Find char forward" })
+    map({ "n", "x", "o" }, "F", rm.builtin_F_expr, { expr = true, desc = "Find char backward" })
+    map({ "n", "x", "o" }, "t", rm.builtin_t_expr, { expr = true, desc = "Till char forward" })
+    map({ "n", "x", "o" }, "T", rm.builtin_T_expr, { expr = true, desc = "Till char backward" })
+
+    -- diagnostic
+    local diagnostic_goto = function(next, severity)
+        return function()
+            vim.diagnostic.jump({
+                count = (next and 1 or -1) * vim.v.count1,
+                severity = severity and vim.diagnostic.severity[severity] or nil,
+                float = true,
+            })
+        end
+    end
+
+    local repeat_move = require("repeatable_move")
+    local repeatable_next_diag, repeatable_prev_diag = repeat_move.make_repeatable_move_pair(diagnostic_goto(true), diagnostic_goto(false))
+    local repeatable_next_diag_error, repeatable_prev_diag_error = repeat_move.make_repeatable_move_pair(diagnostic_goto(true, "ERROR"), diagnostic_goto(false, "ERROR"))
+    local repeatable_next_diag_warn, repeatable_prev_diag_warn = repeat_move.make_repeatable_move_pair(diagnostic_goto(true, "WARN"), diagnostic_goto(false, "WARN"))
+
+    map({ "n", "x", "o" }, "]d", repeatable_next_diag, { desc = "Next Diagnostic" })
+    map({ "n", "x", "o" }, "[d", repeatable_prev_diag, { desc = "Prev Diagnostic" })
+    map({ "n", "x", "o" }, "]e", repeatable_next_diag_error, { desc = "Next Error" })
+    map({ "n", "x", "o" }, "[e", repeatable_prev_diag_error, { desc = "Prev Error" })
+    map({ "n", "x", "o" }, "]w", repeatable_next_diag_warn, { desc = "Next Warning" })
+    map({ "n", "x", "o" }, "[w", repeatable_prev_diag_warn, { desc = "Prev Warning" })
+end

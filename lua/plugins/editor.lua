@@ -518,6 +518,10 @@ return {
         },
     },
     {
+        "kiyoon/repeatable-move.nvim",
+        dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
+    },
+    {
         "lewis6991/gitsigns.nvim",
         event = "LazyFile",
         opts = {
@@ -547,110 +551,142 @@ return {
                     vim.keymap.set(mode, l, r, { buffer = buffer, desc = desc, silent = true })
                 end
 
-      -- stylua: ignore start
-      map("n", "]h", function()
-        if vim.wo.diff then
-          vim.cmd.normal({ "]c", bang = true })
-        else
-          gs.nav_hunk("next")
-        end
-      end, "Next Hunk")
-      map("n", "[h", function()
-        if vim.wo.diff then
-          vim.cmd.normal({ "[c", bang = true })
-        else
-          gs.nav_hunk("prev")
-        end
-      end, "Prev Hunk")
-      map("n", "]H", function() gs.nav_hunk("last") end, "Last Hunk")
-      map("n", "[H", function() gs.nav_hunk("first") end, "First Hunk")
-      map({ "n", "x" }, "<localleader>hs", ":Gitsigns stage_hunk<CR>", "Stage Hunk")
-      map({ "n", "x" }, "<localleader>hr", ":Gitsigns reset_hunk<CR>", "Reset Hunk")
-      map("n", "<localleader>hS", gs.stage_buffer, "Stage Buffer")
-      map("n", "<localleader>hu", gs.undo_stage_hunk, "Undo Stage Hunk")
-      map("n", "<localleader>hR", gs.reset_buffer, "Reset Buffer")
-      map("n", "<localleader>he", gs.preview_hunk_inline, "Hunk Diff Preview Inline")
-      map("n", "<localleader>hh", gs.preview_hunk, "Hunk Diff Hover")
-      map("n", "<localleader>hB", function() Snacks.git.blame_line() end, "Snacks Blame Line")
-      map("n", "<localleader>hb", function() gs.blame_line({ full = true }) end, "Blame Line")
-      Snacks.toggle
-        .new({
-          name = "Blame Buffer",
-          get = function()
-            for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-              local name = vim.api.nvim_buf_get_name(buf)
-              if name:match("^gitsigns%-blame:") then return true end
-            end
-            return false
-          end,
-          set = function(state)
-            if state then
-              gs.blame()
-            else
-              for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-                if vim.api.nvim_buf_get_name(buf):match("^gitsigns%-blame:") then
-                  vim.api.nvim_buf_delete(buf, { force = true })
+                local next_hunk = function()
+                    if vim.wo.diff then
+                        vim.cmd.normal({ "]c", bang = true })
+                    else
+                        gs.nav_hunk("next")
+                    end
                 end
-              end
-            end
-          end,
-        })
-        :map("<localleader>uB")
-      Snacks.toggle
-        .new({
-          name = "Inline Blame",
-          get = function() return require("gitsigns.config").config.current_line_blame end,
-          set = function() gs.toggle_current_line_blame() end,
-        })
-        :map("<localleader>ub")
 
-      local function close_gitsigns_diff()
-        vim.cmd("diffoff!")
-        for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-          local name = vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(win))
-          if name:match("^gitsigns://") then
-            vim.api.nvim_win_close(win, true)
-            break
-          end
-        end
-      end
+                local prev_hunk = function()
+                    if vim.wo.diff then
+                        vim.cmd.normal({ "[c", bang = true })
+                    else
+                        gs.nav_hunk("prev")
+                    end
+                end
 
-      local function gitsigns_diff_mode()
-        for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-          local name = vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(win))
-          if name:match("^gitsigns://") then
-            -- "~" diffs have the ref after the last colon, e.g. gitsigns://…:~1:filename
-            return name:match("HEAD~") and "tilde" or "head"
-          end
-        end
-        return nil
-      end
+                -- local rm = require("nvim-treesitter-textobjects.repeatable_move")
+                --
+                -- local repeatable_next_hunk = rm.make_repeatable_move(function(dir)
+                --     next_hunk()
+                -- end)
+                -- local repeatable_prev_hunk = rm.make_repeatable_move(function(dir)
+                --     prev_hunk()
+                -- end)
+                local repeat_move = require("repeatable_move")
+                local repeatable_next_hunk, repeatable_prev_hunk = repeat_move.make_repeatable_move_pair(next_hunk, prev_hunk)
 
-      map("n", "<localleader>gd", function()
-        local mode = gitsigns_diff_mode()
-        if mode == "head" then
-          close_gitsigns_diff()
-        elseif mode == "tilde" then
-          close_gitsigns_diff()
-          vim.schedule(function() gs.diffthis() end)
-        else
-          gs.diffthis()
-        end
-      end, "Diff This (against staged)")
+                map("n", "]h", repeatable_next_hunk, "Next Hunk")
+                map("n", "[h", repeatable_prev_hunk, "Prev Hunk")
+                map("n", "]H", function()
+                    gs.nav_hunk("last")
+                end, "Last Hunk")
+                map("n", "[H", function()
+                    gs.nav_hunk("first")
+                end, "First Hunk")
+                map({ "n", "x" }, "<localleader>hs", ":Gitsigns stage_hunk<CR>", "Stage Hunk")
+                map({ "n", "x" }, "<localleader>hr", ":Gitsigns reset_hunk<CR>", "Reset Hunk")
+                map("n", "<localleader>hS", gs.stage_buffer, "Stage Buffer")
+                map("n", "<localleader>hu", gs.undo_stage_hunk, "Undo Stage Hunk")
+                map("n", "<localleader>hR", gs.reset_buffer, "Reset Buffer")
+                map("n", "<localleader>he", gs.preview_hunk_inline, "Hunk Diff Preview Inline")
+                map("n", "<localleader>hh", gs.preview_hunk, "Hunk Diff Hover")
+                map("n", "<localleader>hB", function()
+                    Snacks.git.blame_line()
+                end, "Snacks Blame Line")
+                map("n", "<localleader>hb", function()
+                    gs.blame_line({ full = true })
+                end, "Blame Line")
+                Snacks.toggle
+                    .new({
+                        name = "Blame Buffer",
+                        get = function()
+                            for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+                                local name = vim.api.nvim_buf_get_name(buf)
+                                if name:match("^gitsigns%-blame:") then
+                                    return true
+                                end
+                            end
+                            return false
+                        end,
+                        set = function(state)
+                            if state then
+                                gs.blame()
+                            else
+                                for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+                                    if vim.api.nvim_buf_get_name(buf):match("^gitsigns%-blame:") then
+                                        vim.api.nvim_buf_delete(buf, { force = true })
+                                    end
+                                end
+                            end
+                        end,
+                    })
+                    :map("<localleader>uB")
+                Snacks.toggle
+                    .new({
+                        name = "Inline Blame",
+                        get = function()
+                            return require("gitsigns.config").config.current_line_blame
+                        end,
+                        set = function()
+                            gs.toggle_current_line_blame()
+                        end,
+                    })
+                    :map("<localleader>ub")
 
-      map("n", "<localleader>gD", function()
-        local mode = gitsigns_diff_mode()
-        if mode == "tilde" then
-          close_gitsigns_diff()
-        elseif mode == "head" then
-          close_gitsigns_diff()
-          vim.schedule(function() gs.diffthis("~") end)
-        else
-          gs.diffthis("~")
-        end
-      end, "Diff This (against last commit)")
+                local function close_gitsigns_diff()
+                    vim.cmd("diffoff!")
+                    for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+                        local name = vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(win))
+                        if name:match("^gitsigns://") then
+                            vim.api.nvim_win_close(win, true)
+                            break
+                        end
+                    end
+                end
 
-      map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
+                local function gitsigns_diff_mode()
+                    for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+                        local name = vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(win))
+                        if name:match("^gitsigns://") then
+                            -- "~" diffs have the ref after the last colon, e.g. gitsigns://…:~1:filename
+                            return name:match("HEAD~") and "tilde" or "head"
+                        end
+                    end
+                    return nil
+                end
+
+                map("n", "<localleader>gd", function()
+                    local mode = gitsigns_diff_mode()
+                    if mode == "head" then
+                        close_gitsigns_diff()
+                    elseif mode == "tilde" then
+                        close_gitsigns_diff()
+                        vim.schedule(function()
+                            gs.diffthis()
+                        end)
+                    else
+                        gs.diffthis()
+                    end
+                end, "Diff This (against staged)")
+
+                map("n", "<localleader>gD", function()
+                    local mode = gitsigns_diff_mode()
+                    if mode == "tilde" then
+                        close_gitsigns_diff()
+                    elseif mode == "head" then
+                        close_gitsigns_diff()
+                        vim.schedule(function()
+                            gs.diffthis("~")
+                        end)
+                    else
+                        gs.diffthis("~")
+                    end
+                end, "Diff This (against last commit)")
+
+                map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
             end,
         },
     },
