@@ -440,11 +440,23 @@ map("n", "<localleader>dc", function()
 end, { desc = "Copy Line Diagnostics" })
 local eslint_output_logs = nil -- last run's full log lines (table of strings), or nil if never run
 
+-- Pick the binary runner based on the project's lockfile (falls back to npx).
+local function eslint_runner(root)
+    if vim.fn.filereadable(root .. "/pnpm-lock.yaml") == 1 then
+        return { "pnpm", "exec" }
+    elseif vim.fn.filereadable(root .. "/yarn.lock") == 1 then
+        return { "yarn", "exec" }
+    elseif vim.fn.filereadable(root .. "/bun.lockb") == 1 or vim.fn.filereadable(root .. "/bun.lock") == 1 then
+        return { "bun", "x" }
+    end
+    return { "npx" }
+end
+
 map("n", "<localleader>ds", function()
     local root = vim.fs.root(0, { ".git", "package.json" }) or vim.fn.getcwd()
     vim.notify("Running ESLint in " .. root .. " …", vim.log.levels.INFO)
     vim.fn.setqflist({}, "r", { title = "ESLint", items = {} })
-    local cmd = { "npx", "eslint", ".", "--format", "json" }
+    local cmd = vim.list_extend(eslint_runner(root), { "eslint", ".", "--format", "json" })
     local stdout, stderr = {}, {}
     vim.fn.jobstart(cmd, {
         cwd = root,
