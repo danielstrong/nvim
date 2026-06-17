@@ -608,10 +608,45 @@ do
             vim.api.nvim_feedkeys(keys, "n", false)
         end
     end
-    local repeatable_next_qf, repeatable_prev_qf = repeat_move.make_repeatable_move_pair(resolve_map_fn("]q"), resolve_map_fn("[q"))
-    map({ "n", "x", "o" }, "]q", repeatable_next_qf, { desc = "Next Quickfix (repeatable)" })
-    map({ "n", "x", "o" }, "[q", repeatable_prev_qf, { desc = "Prev Quickfix (repeatable)" })
-    local repeatable_next_todo, repeatable_prev_todo = repeat_move.make_repeatable_move_pair(resolve_map_fn("]t"), resolve_map_fn("[t"))
-    map({ "n", "x", "o" }, "]t", repeatable_next_todo, { desc = "Next TODO (repeatable)" })
-    map({ "n", "x", "o" }, "[t", repeatable_prev_todo, { desc = "Prev TODO (repeatable)" })
+    local function map_desc(lhs)
+        local m = vim.fn.maparg(lhs, "n", false, true)
+        return type(m) == "table" and m.desc or nil
+    end
+    local function map_modes(lhs)
+        local modes = {}
+        for _, mode in ipairs({ "n", "x", "o" }) do
+            local m = vim.fn.maparg(lhs, mode, false, true)
+            if type(m) == "table" and next(m) ~= nil then
+                table.insert(modes, mode)
+            end
+        end
+        return #modes > 0 and modes or { "n" }
+    end
+
+    local function make_mappings_repeatable(next_keymap, prev_keymap)
+        local repeatable_next_qf, repeatable_prev_qf = repeat_move.make_repeatable_move_pair(resolve_map_fn(next_keymap), resolve_map_fn(prev_keymap))
+        map(map_modes(next_keymap), next_keymap, repeatable_next_qf, { desc = map_desc(next_keymap) })
+        map(map_modes(prev_keymap), prev_keymap, repeatable_prev_qf, { desc = map_desc(prev_keymap) })
+    end
+    local function make_bracket_mappings_repeatable(nextprev_keymap)
+        make_mappings_repeatable("]" .. nextprev_keymap, "[" .. nextprev_keymap)
+    end
+    make_bracket_mappings_repeatable("L")
+    make_bracket_mappings_repeatable("M")
+    make_bracket_mappings_repeatable("Q")
+    make_bracket_mappings_repeatable("T")
+    make_bracket_mappings_repeatable("b")
+    make_bracket_mappings_repeatable("l")
+    make_bracket_mappings_repeatable("m")
+    make_bracket_mappings_repeatable("q")
+    make_bracket_mappings_repeatable("s")
+    make_bracket_mappings_repeatable("t")
+    make_mappings_repeatable("gt", "gT")
+    -- local repeatable_next_qf, repeatable_prev_qf = repeat_move.make_repeatable_move_pair(resolve_map_fn("]q"), resolve_map_fn("[q"))
+    -- map(map_modes("]q"), "]q", repeatable_next_qf, { desc = map_desc("]q") })
+    -- map(map_modes("[q"), "[q", repeatable_prev_qf, { desc = map_desc("[q") })
+
+    -- local repeatable_next_todo, repeatable_prev_todo = repeat_move.make_repeatable_move_pair(resolve_map_fn("]t"), resolve_map_fn("[t"))
+    -- map(map_modes("]t"), "]t", repeatable_next_todo, { desc = map_desc("]t") })
+    -- map(map_modes("[t"), "[t", repeatable_prev_todo, { desc = map_desc("[t") })
 end
