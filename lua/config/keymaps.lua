@@ -432,6 +432,8 @@ map("n", "<localleader>dc", function()
     local preview = #messages > 1 and (messages[1] .. " …") or text
     vim.notify("Copied: " .. preview, vim.log.levels.INFO)
 end, { desc = "Copy Line Diagnostics" })
+local eslint_output_logs = nil -- last run's full log lines (table of strings), or nil if never run
+
 map("n", "<localleader>ds", function()
     local root = vim.fs.root(0, { ".git", "package.json" }) or vim.fn.getcwd()
     vim.notify("Running ESLint in " .. root .. " …", vim.log.levels.INFO)
@@ -482,13 +484,7 @@ map("n", "<localleader>ds", function()
                     table.insert(log, "--- could not parse JSON; raw stdout follows ---")
                     vim.list_extend(log, stdout)
                 end
-                local buf = vim.api.nvim_create_buf(false, true)
-                vim.bo[buf].bufhidden = "wipe"
-                vim.bo[buf].filetype = "log"
-                vim.api.nvim_buf_set_lines(buf, 0, -1, false, log)
-                vim.cmd("botright split")
-                vim.api.nvim_win_set_buf(0, buf)
-                vim.api.nvim_win_set_height(0, 15)
+                eslint_output_logs = log
 
                 vim.fn.setqflist({}, "r", { title = "ESLint", items = items })
                 if #items > 0 then
@@ -497,12 +493,32 @@ map("n", "<localleader>ds", function()
                 elseif ok then
                     vim.notify("ESLint: no issues", vim.log.levels.INFO)
                 else
-                    vim.notify("ESLint failed (see log buffer)", vim.log.levels.ERROR)
+                    vim.notify("ESLint failed (<localleader>nl to view log)", vim.log.levels.ERROR)
                 end
             end)
         end,
     })
 end, { desc = "ESLint project to Quickfix" })
+
+map("n", "<localleader>nl", function()
+    if not eslint_output_logs or #eslint_output_logs == 0 then
+        vim.notify("No ESLint logs yet", vim.log.levels.INFO)
+        return
+    end
+    Snacks.win({
+        title = " ESLint Output ",
+        title_pos = "center",
+        text = eslint_output_logs,
+        ft = "log",
+        width = 0.8,
+        height = 0.8,
+        border = "rounded",
+        enter = true,
+        wo = { number = false, relativenumber = false, wrap = false },
+        bo = { modifiable = false, readonly = true },
+        keys = { q = "close" },
+    })
+end, { desc = "View ESLint logs" })
 
 map("n", "<localleader>fB", function()
     Snacks.picker.buffers()
