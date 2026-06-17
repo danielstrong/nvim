@@ -589,4 +589,29 @@ do
     map({ "n", "x", "o" }, "[e", repeatable_prev_diag_error, { desc = "Prev Error" })
     map({ "n", "x", "o" }, "]w", repeatable_next_diag_warn, { desc = "Next Warning" })
     map({ "n", "x", "o" }, "[w", repeatable_prev_diag_warn, { desc = "Prev Warning" })
+
+    -- Turn whatever is currently mapped to [q / ]q into a repeatable pair,
+    -- without hardcoding the underlying action.
+    local function resolve_map_fn(lhs)
+        local m = vim.fn.maparg(lhs, "n", false, true)
+        if type(m) == "table" and m.callback then
+            return m.callback
+        elseif type(m) == "table" and m.rhs and m.rhs ~= "" then
+            local keys = vim.api.nvim_replace_termcodes(m.rhs, true, true, true)
+            local mode = m.noremap == 1 and "n" or "m"
+            return function()
+                vim.api.nvim_feedkeys(keys, mode, false)
+            end
+        end
+        local keys = vim.api.nvim_replace_termcodes(lhs, true, true, true)
+        return function()
+            vim.api.nvim_feedkeys(keys, "n", false)
+        end
+    end
+    local repeatable_next_qf, repeatable_prev_qf = repeat_move.make_repeatable_move_pair(resolve_map_fn("]q"), resolve_map_fn("[q"))
+    map({ "n", "x", "o" }, "]q", repeatable_next_qf, { desc = "Next Quickfix (repeatable)" })
+    map({ "n", "x", "o" }, "[q", repeatable_prev_qf, { desc = "Prev Quickfix (repeatable)" })
+    local repeatable_next_todo, repeatable_prev_todo = repeat_move.make_repeatable_move_pair(resolve_map_fn("]t"), resolve_map_fn("[t"))
+    map({ "n", "x", "o" }, "]t", repeatable_next_todo, { desc = "Next TODO (repeatable)" })
+    map({ "n", "x", "o" }, "[t", repeatable_prev_todo, { desc = "Prev TODO (repeatable)" })
 end
