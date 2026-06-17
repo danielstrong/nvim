@@ -45,11 +45,27 @@ return {
                         {
                             "K",
                             function()
-                                return vim.lsp.buf.hover({
-                                    max_width = 120,
-                                    max_height = 480,
-                                    border = "rounded",
-                                })
+                                local origin = vim.api.nvim_get_current_buf()
+                                vim.lsp.buf.hover({ border = "rounded" })
+
+                                -- hover is async; poll a few ticks for the float window to appear,
+                                -- then attach a buffer-local K to close that specific float (mirrors H)
+                                local tries = 0
+                                local function attach()
+                                    tries = tries + 1
+                                    local win = vim.b[origin].lsp_floating_preview
+                                    if win and vim.api.nvim_win_is_valid(win) then
+                                        local fbuf = vim.api.nvim_win_get_buf(win)
+                                        vim.keymap.set("n", "K", function()
+                                            if vim.api.nvim_win_is_valid(win) then
+                                                vim.api.nvim_win_close(win, true)
+                                            end
+                                        end, { buffer = fbuf, nowait = true, desc = "Close Hover" })
+                                    elseif tries < 20 then
+                                        vim.defer_fn(attach, 15)
+                                    end
+                                end
+                                vim.schedule(attach)
                             end,
                             desc = "Hover",
                             has = "hover",

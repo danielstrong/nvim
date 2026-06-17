@@ -421,6 +421,7 @@ map("n", "H", function()
         end, { buffer = bufnr, nowait = true, desc = "Close Line Diagnostics" })
     end
 end, { desc = "Line Diagnostics" })
+
 map("n", "<localleader>da", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Trouble Workspae Diagnostics" })
 map("n", "<localleader>db", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", { desc = "Trouble Buffer Diagnostics" })
 map("n", "<localleader>dL", "<cmd>Trouble loclist toggle<cr>", { desc = "Trouble Location List" })
