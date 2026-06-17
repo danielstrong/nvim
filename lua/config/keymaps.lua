@@ -432,6 +432,78 @@ map("n", "<localleader>dc", function()
     local preview = #messages > 1 and (messages[1] .. " …") or text
     vim.notify("Copied: " .. preview, vim.log.levels.INFO)
 end, { desc = "Copy Line Diagnostics" })
+map("n", "<localleader>ds", function()
+    local root = vim.fs.root(0, { ".git", "package.json" }) or vim.fn.getcwd()
+    vim.notify("Running ESLint in " .. root .. " …", vim.log.levels.INFO)
+    vim.fn.setqflist({}, "r", { title = "ESLint", items = {} })
+    local cmd = { "npx", "eslint", ".", "--format", "json" }
+    local stdout, stderr = {}, {}
+    vim.fn.jobstart(cmd, {
+        cwd = root,
+        stdout_buffered = true,
+        stderr_buffered = true,
+        on_stdout = function(_, data)
+            if data then
+                vim.list_extend(stdout, data)
+            end
+        end,
+        on_stderr = function(_, data)
+            if data then
+                vim.list_extend(stderr, data)
+            end
+        end,
+        on_exit = function(_, code)
+            vim.schedule(function()
+                local raw = table.concat(stdout, "\n")
+                local items = {}
+                local ok, results = pcall(vim.json.decode, raw)
+                if ok and type(results) == "table" then
+                    local sev = { [1] = "W", [2] = "E" }
+                    for _, file in ipairs(results) do
+                        for _, m in ipairs(file.messages or {}) do
+                            table.insert(items, {
+                                filename = file.filePath,
+                                lnum = m.line or 1,
+                                col = m.column or 1,
+                                type = sev[m.severity] or "E",
+                                text = (m.ruleId and ("[" .. m.ruleId .. "] ") or "") .. (m.message or ""),
+                            })
+                        end
+                    end
+                end
+
+                local log = { "$ " .. table.concat(cmd, " ") .. "  (cwd: " .. root .. ", exit " .. code .. ")", "" }
+                if #stderr > 0 and not (ok and type(results) == "table") then
+                    table.insert(log, "--- stderr ---")
+                    vim.list_extend(log, stderr)
+                    table.insert(log, "")
+                end
+                if not ok then
+                    table.insert(log, "--- could not parse JSON; raw stdout follows ---")
+                    vim.list_extend(log, stdout)
+                end
+                local buf = vim.api.nvim_create_buf(false, true)
+                vim.bo[buf].bufhidden = "wipe"
+                vim.bo[buf].filetype = "log"
+                vim.api.nvim_buf_set_lines(buf, 0, -1, false, log)
+                vim.cmd("botright split")
+                vim.api.nvim_win_set_buf(0, buf)
+                vim.api.nvim_win_set_height(0, 15)
+
+                vim.fn.setqflist({}, "r", { title = "ESLint", items = items })
+                if #items > 0 then
+                    vim.cmd("copen")
+                    vim.notify(#items .. " ESLint issue(s) in quickfix", vim.log.levels.WARN)
+                elseif ok then
+                    vim.notify("ESLint: no issues", vim.log.levels.INFO)
+                else
+                    vim.notify("ESLint failed (see log buffer)", vim.log.levels.ERROR)
+                end
+            end)
+        end,
+    })
+end, { desc = "ESLint project to Quickfix" })
+
 map("n", "<localleader>fB", function()
     Snacks.picker.buffers()
 end, { desc = "Buffers" })
