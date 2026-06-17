@@ -89,6 +89,11 @@ return {
                 codeaction = { diff_opts = { ctxlen = 3 } },
                 codeaction_native = { diff_opts = { ctxlen = 3 } },
             },
+            -- actions = {
+            --     files = {
+            --         ["ctrl-t"] = require("trouble.sources.fzf").actions.open,
+            --     },
+            -- },
             keymap = {
                 builtin = {
                     ["<M-Esc>"] = "hide",

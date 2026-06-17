@@ -103,6 +103,18 @@ return {
         },
     },
     {
+        "folke/trouble.nvim",
+        opts = {
+            focus = true,
+            pinned = false, -- When pinned, the opened trouble window will be bound to the current buffer
+            warn_no_results = true, -- show a warning when there are no results
+            open_no_results = true, -- open the trouble window when there are no results
+            win = {
+                position = "bottom",
+            },
+        },
+    },
+    {
         "folke/which-key.nvim",
         lazy = true,
         opts = {
@@ -138,10 +150,10 @@ return {
             -- sort = { "alphanum", "order", "group", "mod", "local" },
             sort = { "alphanum", "order", "mod" },
             spec = {
-                { "c", group = "Replace Text" },
-                { "cr" },
-                { "Z", group = "File", mode = { "n", "v" } },
-                { "<localleader>a", group = "Actions", mode = { "n", "v" } },
+                { "c", group = "Replace Text", mode = { "n", "x" } },
+                { "cr", mode = { "n", "x" } },
+                { "Z", group = "File", mode = { "n", "x" } },
+                { "<localleader>a", group = "Actions", mode = { "n", "x" } },
                 {
                     "<localleader>b",
                     group = "Buffers",
@@ -149,18 +161,19 @@ return {
                         return require("which-key.extras").expand.buf()
                     end,
                 },
-                { "<localleader>d", group = "Diagnostics", mode = { "n", "v" } },
-                { "<localleader>f", group = "Fuzzy", mode = { "n", "v" } },
-                { "<localleader>g", group = "Git", mode = { "n", "v" } },
-                { "<localleader>h", group = "Hunk", mode = { "n", "v" } },
-                { "<localleader>n", group = "Nvim", mode = { "n", "v" } },
-                { "<localleader>N", group = "Nvim Raw", mode = { "n", "v" } },
-                { "<localleader>Q", group = "Quick", mode = { "n", "v" } },
-                { "<localleader>r", group = "Replace", mode = { "n", "v" } },
-                { "<localleader>z", group = "Session", mode = { "n", "v" } },
-                { "<localleader>W", group = "Save", mode = { "n", "v" } },
-                { "<localleader>t", group = "Tabs", mode = { "n", "v" } },
-                { "<localleader>u", group = "UI", mode = { "n", "v" } },
+                { "<localleader>d", group = "Diagnostics", mode = { "n", "x" } },
+                { "<localleader>f", group = "Fuzzy", mode = { "n", "x" } },
+                { "<localleader>g", group = "Git", mode = { "n", "x" } },
+                { "<localleader>h", group = "Hunk", mode = { "n", "x" } },
+                { "<localleader>k", group = "LSP", mode = { "n", "x" } },
+                { "<localleader>n", group = "Nvim", mode = { "n", "x" } },
+                { "<localleader>N", group = "Nvim Raw", mode = { "n", "x" } },
+                { "<localleader>Q", group = "Quick", mode = { "n", "x" } },
+                { "<localleader>r", group = "Replace", mode = { "n", "x" } },
+                { "<localleader>z", group = "Session", mode = { "n", "x" } },
+                { "<localleader>W", group = "Save", mode = { "n", "x" } },
+                { "<localleader>t", group = "Tabs", mode = { "n", "x" } },
+                { "<localleader>u", group = "UI", mode = { "n", "x" } },
                 {
                     "<localleader>w",
                     group = "Windows",
