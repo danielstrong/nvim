@@ -187,7 +187,7 @@ return {
         },
     },
     {
-        "rachartier/tiny-code-action.nvim",
+        "rachartier/tiny-code-action.nvim", -- improved code action picker that has previes of the output as you choose them, also allows to filter and sort the code actions
         dependencies = {
             -- optional picker via telescope
             -- { "nvim-telescope/telescope.nvim" },
@@ -317,7 +317,7 @@ return {
         end,
     },
     {
-        "nemanjamalesija/ts-expand-hover.nvim",
+        "nemanjamalesija/ts-expand-hover.nvim", -- supposed to be an alternative version of the hover that allows you to "zoom in" and "zoom out" of the typesciprt info in the hovers, doesnt seemt o work though
         ft = { "typescript", "typescriptreact" },
         opts = {
             keymaps = {
