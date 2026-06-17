@@ -70,6 +70,59 @@ return {
                             desc = "Hover",
                             has = "hover",
                         },
+                        {
+                            "gK",
+                            function()
+                                local origin = vim.api.nvim_get_current_buf()
+                                vim.lsp.buf.signature_help({ border = "rounded" })
+
+                                local tries = 0
+                                local function attach()
+                                    tries = tries + 1
+                                    local win = vim.b[origin].lsp_floating_preview
+                                    if win and vim.api.nvim_win_is_valid(win) then
+                                        local fbuf = vim.api.nvim_win_get_buf(win)
+                                        vim.keymap.set("n", "gK", function()
+                                            if vim.api.nvim_win_is_valid(win) then
+                                                vim.api.nvim_win_close(win, true)
+                                            end
+                                        end, { buffer = fbuf, nowait = true, desc = "Close Signature Help" })
+                                    elseif tries < 20 then
+                                        vim.defer_fn(attach, 15)
+                                    end
+                                end
+                                vim.schedule(attach)
+                            end,
+                            desc = "Signature Help",
+                            has = "signatureHelp",
+                        },
+                        {
+                            "<c-k>",
+                            function()
+                                local origin = vim.api.nvim_get_current_buf()
+                                vim.lsp.buf.signature_help({ border = "rounded" })
+
+                                local tries = 0
+                                local function attach()
+                                    tries = tries + 1
+                                    local win = vim.b[origin].lsp_floating_preview
+                                    if win and vim.api.nvim_win_is_valid(win) then
+                                        local fbuf = vim.api.nvim_win_get_buf(win)
+                                        vim.keymap.set("n", "gK", function()
+                                            if vim.api.nvim_win_is_valid(win) then
+                                                vim.api.nvim_win_close(win, true)
+                                            end
+                                        end, { buffer = fbuf, nowait = true, desc = "Close Signature Help" })
+                                    elseif tries < 20 then
+                                        vim.defer_fn(attach, 15)
+                                    end
+                                end
+                                vim.schedule(attach)
+                            end,
+                            mode = "i",
+                            desc = "Signature Help",
+                            has = "signatureHelp",
+                        },
                         { "<localleader>Kh", vim.lsp.buf.document_highlight, desc = "Document Highlight" },
                         { "<localleader>KH", vim.lsp.buf.clear_references, desc = "Clear Document Highlight" },
                         { "<localleader>af", vim.lsp.buf.format, desc = "LSP Format" },
