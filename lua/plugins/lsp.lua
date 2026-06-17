@@ -54,27 +54,27 @@ return {
                             desc = "Hover",
                             has = "hover",
                         },
-                        { "<localleader>ah", vim.lsp.buf.document_highlight, desc = "Document Highlight" },
-                        { "<localleader>aH", vim.lsp.buf.clear_references, desc = "Clear Document Highlight" },
+                        { "<localleader>Kh", vim.lsp.buf.document_highlight, desc = "Document Highlight" },
+                        { "<localleader>KH", vim.lsp.buf.clear_references, desc = "Clear Document Highlight" },
                         { "<localleader>af", vim.lsp.buf.format, desc = "LSP Format" },
-                        { "<localleader>ai", vim.lsp.buf.incoming_calls, desc = "LSP Incoming Calls" },
-                        { "<localleader>aI", vim.lsp.buf.outgoing_calls, desc = "LSP Outoging Calls" },
+                        { "<localleader>Ki", vim.lsp.buf.incoming_calls, desc = "LSP Incoming Calls" },
+                        { "<localleader>KI", vim.lsp.buf.outgoing_calls, desc = "LSP Outoging Calls" },
                         {
-                            "<localleader>at",
+                            "<localleader>Kt",
                             function()
                                 vim.lsp.buf.typehierarchy("subtypes")
                             end,
                             desc = "LSP Type Hierarchy Subtypes",
                         },
                         {
-                            "<localleader>aT",
+                            "<localleader>KT",
                             function()
                                 vim.lsp.buf.typehierarchy("supertypes")
                             end,
                             desc = "LSP Type Hierarchy Supertypes",
                         },
-                        { "<localleader>aw", vim.lsp.buf.list_workspace_folders, desc = "LSP List Workspace Folders" },
-                        { "<localleader>ao", vim.lsp.buf.workspace_symbol, desc = "LSP List Workspace Folders" },
+                        { "<localleader>Kw", vim.lsp.buf.list_workspace_folders, desc = "LSP List Workspace Folders" },
+                        { "<localleader>Ko", vim.lsp.buf.workspace_symbol, desc = "LSP List Workspace Folders" },
                         { "cQ", LazyVim.lsp.action.source, desc = "Source Action", has = "codeAction" },
                         -- { "cq", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "x" }, has = "codeAction" },
                         { "<localleader>ac", vim.lsp.codelens.run, desc = "Run Codelens", mode = { "n", "x" }, has = "codeLens" },

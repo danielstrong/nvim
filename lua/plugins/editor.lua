@@ -112,6 +112,14 @@ return {
             win = {
                 position = "bottom",
             },
+            modes = {
+                lsp_left = { mode = "lsp", win = { position = "left" } },
+                lsp_references_left = { mode = "lsp_references", win = { position = "left" } },
+                lsp_definitions_left = { mode = "lsp_definitions", win = { position = "left" } },
+                lsp_declarations_left = { mode = "lsp_declarations", win = { position = "left" } },
+                lsp_type_definitions_left = { mode = "lsp_type_definitions", win = { position = "left" } },
+                lsp_implementations_left = { mode = "lsp_implementations", win = { position = "left" } },
+            },
         },
     },
     {
@@ -166,6 +174,7 @@ return {
                 { "<localleader>g", group = "Git", mode = { "n", "x" } },
                 { "<localleader>h", group = "Hunk", mode = { "n", "x" } },
                 { "<localleader>k", group = "LSP", mode = { "n", "x" } },
+                { "<localleader>K", group = "LSP Buffer", mode = { "n", "x" } },
                 { "<localleader>n", group = "Nvim", mode = { "n", "x" } },
                 { "<localleader>N", group = "Nvim Raw", mode = { "n", "x" } },
                 { "<localleader>Q", group = "Quick", mode = { "n", "x" } },
