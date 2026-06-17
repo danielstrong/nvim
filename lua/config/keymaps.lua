@@ -411,7 +411,16 @@ map("n", "<localleader>kI", "<cmd>Trouble lsp_implementations_left toggle<cr>", 
 -- map("n", "<localleader>ko", "<cmd>Trouble lsp_command toggle win.position=left<cr>", { desc = "LSP Command" })
 
 map("n", "<localleader>dd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
-map("n", "H", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
+map("n", "H", function()
+    local bufnr, win = vim.diagnostic.open_float()
+    if bufnr and win then
+        vim.keymap.set("n", "H", function()
+            if vim.api.nvim_win_is_valid(win) then
+                vim.api.nvim_win_close(win, true)
+            end
+        end, { buffer = bufnr, nowait = true, desc = "Close Line Diagnostics" })
+    end
+end, { desc = "Line Diagnostics" })
 map("n", "<localleader>da", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Trouble Workspae Diagnostics" })
 map("n", "<localleader>db", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", { desc = "Trouble Buffer Diagnostics" })
 map("n", "<localleader>dL", "<cmd>Trouble loclist toggle<cr>", { desc = "Trouble Location List" })
@@ -454,7 +463,7 @@ end
 
 local function run_eslint(quiet)
     local root = vim.fs.root(0, { ".git", "package.json" }) or vim.fn.getcwd()
-    vim.notify("Running ESLint in " .. root .. " …", vim.log.levels.INFO)
+    vim.notify("Running ESLint" .. (quiet and "" or " (include warnings)") .. " in " .. root .. " …", vim.log.levels.INFO)
     vim.fn.setqflist({}, "r", { title = "ESLint", items = {} })
     local cmd = vim.list_extend(eslint_runner(root), { "eslint", ".", "--format", "json" })
     if quiet then
@@ -526,7 +535,7 @@ end, { desc = "ESLint project to Quickfix" })
 
 map("n", "<localleader>dS", function()
     run_eslint(false)
-end, { desc = "ESLint project to Quickfix (ignore warnings)" })
+end, { desc = "ESLint project to Quickfix (include warnings)" })
 
 map("n", "<localleader>nl", function()
     if not eslint_output_logs or #eslint_output_logs == 0 then
