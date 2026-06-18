@@ -56,4 +56,8 @@ require("lazy").setup({
             },
         },
     },
+    dev = {
+        path = vim.fn.stdpath("config") .. "/custom-plugins",
+        -- patterns = { "lazyflex" },
+    },
 })

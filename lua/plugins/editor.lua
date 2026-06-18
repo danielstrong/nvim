@@ -646,6 +646,22 @@ return {
         dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
     },
     {
+        "custom/githunks",
+        event = "LazyFile",
+        dev = true,
+        config = function()
+            local gh = require("githunks")
+
+            local function map(mode, l, r, desc)
+                vim.keymap.set(mode, l, r, { desc = desc, silent = true })
+            end
+            local repeat_move = require("repeatable_move")
+            local repeatable_next_ghunk, repeatable_prev_ghunk = repeat_move.make_repeatable_move_pair(gh.next, gh.prev)
+            map("n", "]g", repeatable_next_ghunk, "Next Hunk (repo-wide)")
+            map("n", "[g", repeatable_prev_ghunk, "Prev Hunk (repo-wide)")
+        end,
+    },
+    {
         "lewis6991/gitsigns.nvim",
         event = "LazyFile",
         opts = {
