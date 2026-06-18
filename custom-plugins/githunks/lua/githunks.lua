@@ -118,35 +118,37 @@ local function navigate(forward)
     end
 
     local cur = current_pos()
-    local target
+    local target, idx
 
     if not cur then
-        target = forward and hunks[1] or hunks[#hunks]
+        idx = forward and 1 or #hunks
+        target = hunks[idx]
     elseif forward then
-        for _, h in ipairs(hunks) do
+        for i, h in ipairs(hunks) do
             if is_after(h, cur) then
-                target = h
+                target, idx = h, i
                 break
             end
         end
-        if not target then
-            target = M.wrap and hunks[1] or nil
+        if not target and M.wrap then
+            target, idx = hunks[1], 1
         end
     else
         for i = #hunks, 1, -1 do
             local h = hunks[i]
             if not is_after(h, cur) and not (h.file == cur.file and h.lnum == cur.lnum) then
-                target = h
+                target, idx = h, i
                 break
             end
         end
-        if not target then
-            target = M.wrap and hunks[#hunks] or nil
+        if not target and M.wrap then
+            target, idx = hunks[#hunks], #hunks
         end
     end
 
     if target then
         goto_hunk(target)
+        vim.notify(string.format("Hunk %d of %d", idx, #hunks), vim.log.levels.INFO)
     end
 end
 
