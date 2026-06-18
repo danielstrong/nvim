@@ -95,6 +95,7 @@ opt.listchars = {
     precedes = "❮",
     multispace = "» ",
 }
+opt.textwidth = 80
 opt.mouse = "a" -- Enable mouse mode
 opt.number = true -- Print line number
 opt.pumblend = 10 -- Popup blend
