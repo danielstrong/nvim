@@ -659,6 +659,8 @@ return {
             local repeatable_next_ghunk, repeatable_prev_ghunk = repeat_move.make_repeatable_move_pair(gh.next, gh.prev)
             map({ "n", "x", "o" }, "]g", repeatable_next_ghunk, "Next Hunk (repo-wide)")
             map({ "n", "x", "o" }, "[g", repeatable_prev_ghunk, "Prev Hunk (repo-wide)")
+            map({ "n", "x", "o" }, "]G", gh.last, "Last Hunk (repo-wide)")
+            map({ "n", "x", "o" }, "[G", gh.first, "First Hunk (repo-wide)")
         end,
     },
     {

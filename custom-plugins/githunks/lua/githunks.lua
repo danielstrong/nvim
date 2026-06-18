@@ -114,7 +114,7 @@ local function goto_hunk(target, line)
     vim.cmd("normal! zz")
 end
 
-local function navigate(forward)
+local function navigate(direction)
     local hunks = collect_hunks()
     if hunks == nil then
         vim.notify("Not a git repository", vim.log.levels.WARN)
@@ -125,31 +125,38 @@ local function navigate(forward)
         return
     end
 
-    local cur = current_pos()
+    local forward = direction == "next" or direction == "last"
     local target, idx
 
-    if not cur then
-        idx = forward and 1 or #hunks
-        target = hunks[idx]
-    elseif forward then
-        for i, h in ipairs(hunks) do
-            if is_after(h, cur) then
-                target, idx = h, i
-                break
-            end
-        end
-        if not target and M.wrap then
-            target, idx = hunks[1], 1
-        end
+    if direction == "first" then
+        target, idx = hunks[1], 1
+    elseif direction == "last" then
+        target, idx = hunks[#hunks], #hunks
     else
-        for i = #hunks, 1, -1 do
-            if is_before(hunks[i], cur) then
-                target, idx = hunks[i], i
-                break
+        local cur = current_pos()
+        if not cur then
+            idx = forward and 1 or #hunks
+            target = hunks[idx]
+        elseif forward then
+            for i, h in ipairs(hunks) do
+                if is_after(h, cur) then
+                    target, idx = h, i
+                    break
+                end
             end
-        end
-        if not target and M.wrap then
-            target, idx = hunks[#hunks], #hunks
+            if not target and M.wrap then
+                target, idx = hunks[1], 1
+            end
+        else
+            for i = #hunks, 1, -1 do
+                if is_before(hunks[i], cur) then
+                    target, idx = hunks[i], i
+                    break
+                end
+            end
+            if not target and M.wrap then
+                target, idx = hunks[#hunks], #hunks
+            end
         end
     end
 
@@ -161,11 +168,19 @@ local function navigate(forward)
 end
 
 function M.next()
-    navigate(true)
+    navigate("next")
 end
 
 function M.prev()
-    navigate(false)
+    navigate("prev")
+end
+
+function M.first()
+    navigate("first")
+end
+
+function M.last()
+    navigate("last")
 end
 
 function M.setup()
