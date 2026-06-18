@@ -134,6 +134,7 @@ return {
                                     on_rename = function(_, _, ok)
                                         if ok then
                                             require("nvim-tree.api").tree.reload()
+                                            vim.cmd("wa")
                                         end
                                     end,
                                 })
@@ -147,6 +148,7 @@ return {
                             function()
                                 vim.cmd("wa")
                                 vim.lsp.buf.rename()
+                                vim.cmd("wa")
                             end,
                             desc = "LSP Rename Reference",
                             has = "rename",
