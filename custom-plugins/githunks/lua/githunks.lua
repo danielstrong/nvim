@@ -35,7 +35,8 @@ local function parse_diff(out, root, hunks)
                 start = tonumber(start)
                 count = tonumber(count) or 1
                 local lnum = (count == 0) and math.max(start, 1) or start
-                hunks[#hunks + 1] = { file = file, lnum = lnum }
+                local endln = (count == 0) and lnum or (start + count - 1)
+                hunks[#hunks + 1] = { file = file, lnum = lnum, endln = endln }
             end
         end
     end
@@ -61,7 +62,7 @@ local function collect_hunks()
     local untracked = git({ "ls-files", "--others", "--exclude-standard" }, root)
     for line in vim.gsplit(untracked or "", "\n", { plain = true }) do
         if line ~= "" then
-            hunks[#hunks + 1] = { file = root .. "/" .. line, lnum = 1 }
+            hunks[#hunks + 1] = { file = root .. "/" .. line, lnum = 1, endln = 1 }
         end
     end
 
@@ -96,13 +97,20 @@ local function is_after(h, cur)
     return h.lnum > cur.lnum
 end
 
-local function goto_hunk(target)
+local function is_before(h, cur)
+    if h.file ~= cur.file then
+        return h.file < cur.file
+    end
+    return h.endln < cur.lnum
+end
+
+local function goto_hunk(target, line)
     local cur = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":p")
     if cur ~= target.file then
         vim.cmd("edit " .. vim.fn.fnameescape(target.file))
     end
-    local lnum = math.min(target.lnum, vim.api.nvim_buf_line_count(0))
-    vim.api.nvim_win_set_cursor(0, { math.max(lnum, 1), 0 })
+    line = math.min(line, vim.api.nvim_buf_line_count(0))
+    vim.api.nvim_win_set_cursor(0, { math.max(line, 1), 0 })
     vim.cmd("normal! zz")
 end
 
@@ -135,9 +143,8 @@ local function navigate(forward)
         end
     else
         for i = #hunks, 1, -1 do
-            local h = hunks[i]
-            if not is_after(h, cur) and not (h.file == cur.file and h.lnum == cur.lnum) then
-                target, idx = h, i
+            if is_before(hunks[i], cur) then
+                target, idx = hunks[i], i
                 break
             end
         end
@@ -147,7 +154,8 @@ local function navigate(forward)
     end
 
     if target then
-        goto_hunk(target)
+        local line = forward and target.lnum or target.endln
+        goto_hunk(target, line)
         vim.notify(string.format("Hunk %d of %d", idx, #hunks), vim.log.levels.INFO)
     end
 end
