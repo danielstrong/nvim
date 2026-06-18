@@ -150,6 +150,7 @@ return {
                         {
                             "<localleader>rf",
                             function()
+                                vim.cmd("wa")
                                 Snacks.rename.rename_file({
                                     on_rename = function(_, _, ok)
                                         if ok then
@@ -162,7 +163,15 @@ return {
                             mode = { "n" },
                             has = { "workspace/didRenameFiles", "workspace/willRenameFiles" },
                         },
-                        { "<localleader>rc", vim.lsp.buf.rename, desc = "LSP Rename Reference", has = "rename" },
+                        {
+                            "<localleader>rc",
+                            function()
+                                vim.cmd("wa")
+                                vim.lsp.buf.rename()
+                            end,
+                            desc = "LSP Rename Reference",
+                            has = "rename",
+                        },
                     },
                 },
                 -- vtsls = {
