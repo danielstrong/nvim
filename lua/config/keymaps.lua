@@ -716,6 +716,12 @@ do
     map({ "n", "x", "o" }, "]w", repeatable_next_diag_warn, { desc = "Next Warning" })
     map({ "n", "x", "o" }, "[w", repeatable_prev_diag_warn, { desc = "Prev Warning" })
 
+    -- repo-wide git hunks (analogous to ]h / [h, but across the whole repo)
+    local gh = require("config.githunks")
+    local repeatable_next_ghunk, repeatable_prev_ghunk = repeat_move.make_repeatable_move_pair(gh.next, gh.prev)
+    map("n", "]g", repeatable_next_ghunk, { desc = "Next Hunk (repo-wide)" })
+    map("n", "[g", repeatable_prev_ghunk, { desc = "Prev Hunk (repo-wide)" })
+
     -- Turn whatever is currently mapped to [q / ]q into a repeatable pair,
     -- without hardcoding the underlying action.
     local function resolve_map_fn(lhs)
