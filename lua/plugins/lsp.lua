@@ -155,24 +155,26 @@ return {
                         },
                     },
                 },
-                -- vtsls = {
-                --     settings = {
-                --         vtsls = {
-                --             experimental = {
-                --                 -- don't abbreviate long inlay-hint types with "..."
-                --                 maxInlayHintLength = 100,
-                --             },
-                --         },
-                --         typescript = {
-                --             -- show full type signatures in hover instead of truncating
-                --             tsserver = {
-                --                 preferences = {
-                --                     noErrorTruncation = true,
-                --                 },
-                --             },
-                --         },
-                --     },
-                -- },
+                vtsls = {
+                    experimental = {
+                        maxInlayHintLength = 500,
+                    },
+                    settings = {
+                        typescript = {
+                            preferences = {
+                                -- use `import type` when a code action imports only a type
+                                preferTypeOnlyAutoImports = true,
+                                noErrorTruncation = true,
+                            },
+                        },
+                        javascript = {
+                            preferences = {
+                                preferTypeOnlyAutoImports = true,
+                                noErrorTruncation = true,
+                            },
+                        },
+                    },
+                },
             },
         },
     },
