@@ -2,7 +2,6 @@
 -- repository (staged + unstaged + untracked), crossing file boundaries.
 local M = {}
 
-vim.notify("custom.githunks custom plugin being loaded now")
 M.wrap = true
 
 local function git(args, cwd)
