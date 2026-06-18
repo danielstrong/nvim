@@ -1,3 +1,59 @@
+local function hover_help()
+    local origin = vim.api.nvim_get_current_buf()
+    vim.lsp.buf.hover({ border = "rounded" })
+
+    -- hover is async; poll a few ticks for the float window to appear,
+    -- then attach a buffer-local K to close that specific float (mirrors H)
+    local tries = 0
+    local function attach()
+        tries = tries + 1
+        local win = vim.b[origin].lsp_floating_preview
+        if win and vim.api.nvim_win_is_valid(win) then
+            local fbuf = vim.api.nvim_win_get_buf(win)
+            -- NOTE: this sits the conceal level of the float, might be able ot tweak ti further here..
+            -- vim.api.nvim_set_option_value("conceallevel", 0, { win = win })
+            local function close_hover_help()
+                if vim.api.nvim_win_is_valid(win) then
+                    vim.api.nvim_win_close(win, true)
+                end
+            end
+            vim.keymap.set("n", "L", close_hover_help, { buffer = fbuf, nowait = true, desc = "Close Hover" })
+            vim.keymap.set("n", "K", close_hover_help, { buffer = fbuf, nowait = true, desc = "Close Hover" })
+            vim.keymap.set("n", "H", close_hover_help, { buffer = fbuf, nowait = true, desc = "Close Hover" })
+            vim.keymap.set("n", "gK", close_hover_help, { buffer = fbuf, nowait = true, desc = "Close Hover" })
+        elseif tries < 20 then
+            vim.defer_fn(attach, 15)
+        end
+    end
+    vim.schedule(attach)
+end
+
+local function signature_help()
+    local origin = vim.api.nvim_get_current_buf()
+    vim.lsp.buf.signature_help({ border = "rounded" })
+
+    local tries = 0
+    local function attach()
+        tries = tries + 1
+        local win = vim.b[origin].lsp_floating_preview
+        if win and vim.api.nvim_win_is_valid(win) then
+            local fbuf = vim.api.nvim_win_get_buf(win)
+            local function close_sig_help()
+                if vim.api.nvim_win_is_valid(win) then
+                    vim.api.nvim_win_close(win, true)
+                end
+            end
+            vim.keymap.set("n", "L", close_sig_help, { buffer = fbuf, nowait = true, desc = "Close Signature Help" })
+            vim.keymap.set("n", "K", close_sig_help, { buffer = fbuf, nowait = true, desc = "Close Signature Help" })
+            vim.keymap.set("n", "H", close_sig_help, { buffer = fbuf, nowait = true, desc = "Close Signature Help" })
+            vim.keymap.set("n", "gK", close_sig_help, { buffer = fbuf, nowait = true, desc = "Close Signature Help" })
+        elseif tries < 20 then
+            vim.defer_fn(attach, 15)
+        end
+    end
+    vim.schedule(attach)
+end
+
 return {
     -- this fixes "vim" not being detected in lua config files
     -- { "folke/neodev.nvim", opts = {} },
@@ -42,87 +98,10 @@ return {
             servers = {
                 ["*"] = {
                     keys = {
-                        {
-                            "K",
-                            function()
-                                local origin = vim.api.nvim_get_current_buf()
-                                vim.lsp.buf.hover({ border = "rounded" })
-
-                                -- hover is async; poll a few ticks for the float window to appear,
-                                -- then attach a buffer-local K to close that specific float (mirrors H)
-                                local tries = 0
-                                local function attach()
-                                    tries = tries + 1
-                                    local win = vim.b[origin].lsp_floating_preview
-                                    if win and vim.api.nvim_win_is_valid(win) then
-                                        local fbuf = vim.api.nvim_win_get_buf(win)
-                                        vim.keymap.set("n", "K", function()
-                                            if vim.api.nvim_win_is_valid(win) then
-                                                vim.api.nvim_win_close(win, true)
-                                            end
-                                        end, { buffer = fbuf, nowait = true, desc = "Close Hover" })
-                                    elseif tries < 20 then
-                                        vim.defer_fn(attach, 15)
-                                    end
-                                end
-                                vim.schedule(attach)
-                            end,
-                            desc = "Hover",
-                            has = "hover",
-                        },
-                        {
-                            "gK",
-                            function()
-                                local origin = vim.api.nvim_get_current_buf()
-                                vim.lsp.buf.signature_help({ border = "rounded" })
-
-                                local tries = 0
-                                local function attach()
-                                    tries = tries + 1
-                                    local win = vim.b[origin].lsp_floating_preview
-                                    if win and vim.api.nvim_win_is_valid(win) then
-                                        local fbuf = vim.api.nvim_win_get_buf(win)
-                                        vim.keymap.set("n", "gK", function()
-                                            if vim.api.nvim_win_is_valid(win) then
-                                                vim.api.nvim_win_close(win, true)
-                                            end
-                                        end, { buffer = fbuf, nowait = true, desc = "Close Signature Help" })
-                                    elseif tries < 20 then
-                                        vim.defer_fn(attach, 15)
-                                    end
-                                end
-                                vim.schedule(attach)
-                            end,
-                            desc = "Signature Help",
-                            has = "signatureHelp",
-                        },
-                        {
-                            "<c-k>",
-                            function()
-                                local origin = vim.api.nvim_get_current_buf()
-                                vim.lsp.buf.signature_help({ border = "rounded" })
-
-                                local tries = 0
-                                local function attach()
-                                    tries = tries + 1
-                                    local win = vim.b[origin].lsp_floating_preview
-                                    if win and vim.api.nvim_win_is_valid(win) then
-                                        local fbuf = vim.api.nvim_win_get_buf(win)
-                                        vim.keymap.set("n", "gK", function()
-                                            if vim.api.nvim_win_is_valid(win) then
-                                                vim.api.nvim_win_close(win, true)
-                                            end
-                                        end, { buffer = fbuf, nowait = true, desc = "Close Signature Help" })
-                                    elseif tries < 20 then
-                                        vim.defer_fn(attach, 15)
-                                    end
-                                end
-                                vim.schedule(attach)
-                            end,
-                            mode = "i",
-                            desc = "Signature Help",
-                            has = "signatureHelp",
-                        },
+                        { "K", hover_help, desc = "Hover", has = "hover" },
+                        { "H", signature_help, desc = "Signature Help", has = "signatureHelp" },
+                        { "gK", signature_help, desc = "Signature Help", has = "signatureHelp" },
+                        { "<c-k>", hover_help, mode = "i", desc = "Signature Help", has = "signatureHelp" },
                         { "<localleader>Kh", vim.lsp.buf.document_highlight, desc = "Document Highlight" },
                         { "<localleader>KH", vim.lsp.buf.clear_references, desc = "Clear Document Highlight" },
                         { "<localleader>af", vim.lsp.buf.format, desc = "LSP Format" },

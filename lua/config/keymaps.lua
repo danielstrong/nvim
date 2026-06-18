@@ -410,14 +410,18 @@ map("n", "<localleader>kI", "<cmd>Trouble lsp_implementations_left toggle<cr>", 
 -- map("n", "<localleader>ko", "<cmd>Trouble lsp_command toggle win.position=left<cr>", { desc = "LSP Command" })
 
 map("n", "<localleader>dd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
-map("n", "H", function()
+map("n", "L", function()
     local bufnr, win = vim.diagnostic.open_float()
     if bufnr and win then
-        vim.keymap.set("n", "H", function()
+        local function closer_diag_hover()
             if vim.api.nvim_win_is_valid(win) then
                 vim.api.nvim_win_close(win, true)
             end
-        end, { buffer = bufnr, nowait = true, desc = "Close Line Diagnostics" })
+        end
+        vim.keymap.set("n", "L", closer_diag_hover, { buffer = bufnr, nowait = true, desc = "Close Line Diagnostics" })
+        vim.keymap.set("n", "H", closer_diag_hover, { buffer = bufnr, nowait = true, desc = "Close Line Diagnostics" })
+        vim.keymap.set("n", "K", closer_diag_hover, { buffer = bufnr, nowait = true, desc = "Close Line Diagnostics" })
+        vim.keymap.set("n", "gK", closer_diag_hover, { buffer = bufnr, nowait = true, desc = "Close Line Diagnostics" })
     end
 end, { desc = "Line Diagnostics" })
 
