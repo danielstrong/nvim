@@ -125,6 +125,7 @@ return {
     {
         "folke/which-key.nvim",
         lazy = true,
+        -- enabled = false,
         opts = {
             -- preset = "classic",
             -- preset = "modern",

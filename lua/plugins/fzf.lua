@@ -3,6 +3,9 @@ return {
         "ibhagwan/fzf-lua",
         opts = {
             fzf_bin = "sk",
+            oldfiles = {
+                include_current_session = true, -- includes current buffer files as oldfiles
+            },
             winopts = {
                 height = 0.95,
                 width = 0.95,
@@ -42,7 +45,8 @@ return {
                 },
             },
             defaults = {
-                header = false,
+                -- header = false,
+                -- no_header_i = true
                 formatter = "path.filename_first",
             },
             fzf_opts = {
@@ -97,7 +101,7 @@ return {
             keymap = {
                 builtin = {
                     ["<M-Esc>"] = "hide",
-                    ["<C-g>"] = "toggle-help",
+                    ["<C-q>"] = "toggle-help",
                     ["<C-z>"] = "toggle-fullscreen",
                     -- ["<C-w>"] = "toggle-preview-wrap",
                     ["<C-p>"] = "toggle-preview",
