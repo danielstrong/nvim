@@ -473,9 +473,11 @@ local function eslint_runner(root)
     return { "npx" }
 end
 
-local function run_eslint(quiet)
+local function run_eslint(quiet, on_done)
     local root = vim.fs.root(0, { ".git", "package.json" }) or vim.fn.getcwd()
+    -- if not on_done then
     vim.notify("Running ESLint" .. (quiet and "" or " (include warnings)") .. " in " .. root .. " …", vim.log.levels.INFO)
+    -- end
     vim.fn.setqflist({}, "r", { title = "ESLint", items = {} })
     local cmd = vim.list_extend(eslint_runner(root), { "eslint", ".", "--format", "json" })
     if quiet then
@@ -529,29 +531,27 @@ local function run_eslint(quiet)
                 append_check_log("ESLint", log)
 
                 vim.fn.setqflist({}, "r", { title = "ESLint", items = items })
-                if #items > 0 then
-                    vim.notify(#items .. " ESLint issue(s) in quickfix", vim.log.levels.WARN)
-                elseif ok then
-                    vim.notify("ESLint: no issues", vim.log.levels.INFO)
+                if not on_done then
+                    if #items > 0 then
+                        vim.notify(#items .. " ESLint issue(s) in quickfix", vim.log.levels.WARN)
+                    elseif ok then
+                        vim.notify("ESLint: no issues", vim.log.levels.INFO)
+                    else
+                        vim.notify("ESLint failed (<localleader>nl to view log)", vim.log.levels.ERROR)
+                    end
                 else
-                    vim.notify("ESLint failed (<localleader>nl to view log)", vim.log.levels.ERROR)
+                    on_done(ok, #items)
                 end
             end)
         end,
     })
 end
 
-map("n", "<localleader>ds", function()
-    run_eslint(true)
-end, { desc = "ESLint project to Quickfix" })
-
-map("n", "<localleader>dS", function()
-    run_eslint(false)
-end, { desc = "ESLint project to Quickfix (include warnings)" })
-
-local function run_tsc()
+local function run_tsc(on_done)
     local root = vim.fs.root(0, { ".git", "package.json" }) or vim.fn.getcwd()
+    -- if not on_done then
     vim.notify("Running tsc --noEmit in " .. root .. " …", vim.log.levels.INFO)
+    -- end
     vim.fn.setqflist({}, "r", { title = "TSC", items = {} })
     local cmd = vim.list_extend(eslint_runner(root), { "tsc", "--noEmit", "--pretty", "false" })
     local stdout, stderr = {}, {}
@@ -574,8 +574,7 @@ local function run_tsc()
                 local sev = { error = "E", warning = "W" }
                 local items = {}
                 for _, line in ipairs(stdout) do
-                    local file, lnum, col, severity, tscode, msg =
-                        line:match("^(.-)%((%d+),(%d+)%):%s+(%a+)%s+TS(%d+):%s+(.*)$")
+                    local file, lnum, col, severity, tscode, msg = line:match("^(.-)%((%d+),(%d+)%):%s+(%a+)%s+TS(%d+):%s+(.*)$")
                     if file then
                         if not file:match("^/") then
                             file = root .. "/" .. file
@@ -600,21 +599,50 @@ local function run_tsc()
                 append_check_log("TSC", log)
 
                 vim.fn.setqflist({}, "r", { title = "TSC", items = items })
-                if #items > 0 then
-                    vim.notify(#items .. " TSC issue(s) in quickfix", vim.log.levels.WARN)
-                elseif code == 0 then
-                    vim.notify("TSC: no issues", vim.log.levels.INFO)
+                if not on_done then
+                    if #items > 0 then
+                        vim.notify(#items .. " TSC issue(s) in quickfix", vim.log.levels.WARN)
+                    elseif code == 0 then
+                        vim.notify("TSC: no issues", vim.log.levels.INFO)
+                    else
+                        vim.notify("TSC failed (<localleader>nl to view log)", vim.log.levels.ERROR)
+                    end
                 else
-                    vim.notify("TSC failed (<localleader>nl to view log)", vim.log.levels.ERROR)
+                    on_done(code, #items)
                 end
             end)
         end,
     })
 end
 
-map("n", "<localleader>dx", function()
-    run_tsc()
-end, { desc = "TSC project to Quickfix" })
+-- Run TSC first; only run ESLint if tsc exits cleanly (code 0).
+local function run_checks(quiet)
+    vim.notify("Running project checks: tsc, eslint …", vim.log.levels.INFO)
+    run_tsc(function(tsc_code, tsc_count)
+        if tsc_code ~= 0 then
+            vim.notify("TSC found " .. tsc_count .. " issue(s); ESLint not run (<localleader>nl for log)", vim.log.levels.ERROR)
+            return
+        end
+        -- vim.notify("TSC clean — running ESLint" .. (quiet and "" or " (include warnings)") .. " …", vim.log.levels.INFO)
+        run_eslint(quiet, function(ok, esl_count)
+            if not ok then
+                vim.notify("TSC no issues; ESLint failed to run (<localleader>nl for log)", vim.log.levels.ERROR)
+            elseif esl_count > 0 then
+                vim.notify("TSC no issues; ESLint found " .. esl_count .. " issue(s) in quickfix", vim.log.levels.WARN)
+            else
+                vim.notify("TSC no issues; ESLint no issues", vim.log.levels.INFO)
+            end
+        end)
+    end)
+end
+
+map("n", "<localleader>ds", function()
+    run_checks(true)
+end, { desc = "TSC + ESLint to Quickfix" })
+
+map("n", "<localleader>dS", function()
+    run_checks(false)
+end, { desc = "TSC + ESLint to Quickfix (include warnings)" })
 
 map("n", "<localleader>nl", function()
     if not project_check_logs or #project_check_logs == 0 then
