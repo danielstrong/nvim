@@ -541,6 +541,16 @@ map("n", "<localleader>dS", function()
     run_eslint(false)
 end, { desc = "ESLint project to Quickfix (include warnings)" })
 
+local function run_tsc()
+    -- TODO: this should be similiar to run_eslint but it runs eslint --noEmit instead
+    -- the output should be saved to eslint_output_logs and that variable should be renamed to project_check_logs both eslint and tsc output logs should go to the same variable and it should append to the bottom instead of replace. everytime it appends a new log section it should add the time and if it is Eslint or TSC
+    -- issues found with tsc should be put into the quickfix list like it is done with eslint
+end
+
+map("n", "<localleader>dx", function()
+    run_tsc()
+end, { desc = "TSC project to Quickfix" })
+
 map("n", "<localleader>nl", function()
     if not eslint_output_logs or #eslint_output_logs == 0 then
         vim.notify("No ESLint logs yet", vim.log.levels.INFO)
