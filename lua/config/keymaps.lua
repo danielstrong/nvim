@@ -451,7 +451,15 @@ map("n", "<localleader>dc", function()
     local preview = #messages > 1 and (messages[1] .. " …") or text
     vim.notify("Copied: " .. preview, vim.log.levels.INFO)
 end, { desc = "Copy Line Diagnostics" })
-local eslint_output_logs = nil -- last run's full log lines (table of strings), or nil if never run
+local project_check_logs = nil -- shared, append-only log lines (table of strings) for ESLint + TSC, or nil if never run
+
+-- Append a titled, timestamped section to the shared project-check log.
+local function append_check_log(tool, lines)
+    project_check_logs = project_check_logs or {}
+    table.insert(project_check_logs, "=== " .. tool .. " @ " .. os.date("%Y-%m-%d %H:%M:%S") .. " ===")
+    vim.list_extend(project_check_logs, lines)
+    table.insert(project_check_logs, "")
+end
 
 -- Pick the binary runner based on the project's lockfile (falls back to npx).
 local function eslint_runner(root)
@@ -518,7 +526,7 @@ local function run_eslint(quiet)
                     table.insert(log, "--- could not parse JSON; raw stdout follows ---")
                     vim.list_extend(log, stdout)
                 end
-                eslint_output_logs = log
+                append_check_log("ESLint", log)
 
                 vim.fn.setqflist({}, "r", { title = "ESLint", items = items })
                 if #items > 0 then
@@ -542,9 +550,66 @@ map("n", "<localleader>dS", function()
 end, { desc = "ESLint project to Quickfix (include warnings)" })
 
 local function run_tsc()
-    -- TODO: this should be similiar to run_eslint but it runs eslint --noEmit instead
-    -- the output should be saved to eslint_output_logs and that variable should be renamed to project_check_logs both eslint and tsc output logs should go to the same variable and it should append to the bottom instead of replace. everytime it appends a new log section it should add the time and if it is Eslint or TSC
-    -- issues found with tsc should be put into the quickfix list like it is done with eslint
+    local root = vim.fs.root(0, { ".git", "package.json" }) or vim.fn.getcwd()
+    vim.notify("Running tsc --noEmit in " .. root .. " …", vim.log.levels.INFO)
+    vim.fn.setqflist({}, "r", { title = "TSC", items = {} })
+    local cmd = vim.list_extend(eslint_runner(root), { "tsc", "--noEmit", "--pretty", "false" })
+    local stdout, stderr = {}, {}
+    vim.fn.jobstart(cmd, {
+        cwd = root,
+        stdout_buffered = true,
+        stderr_buffered = true,
+        on_stdout = function(_, data)
+            if data then
+                vim.list_extend(stdout, data)
+            end
+        end,
+        on_stderr = function(_, data)
+            if data then
+                vim.list_extend(stderr, data)
+            end
+        end,
+        on_exit = function(_, code)
+            vim.schedule(function()
+                local sev = { error = "E", warning = "W" }
+                local items = {}
+                for _, line in ipairs(stdout) do
+                    local file, lnum, col, severity, tscode, msg =
+                        line:match("^(.-)%((%d+),(%d+)%):%s+(%a+)%s+TS(%d+):%s+(.*)$")
+                    if file then
+                        if not file:match("^/") then
+                            file = root .. "/" .. file
+                        end
+                        table.insert(items, {
+                            filename = file,
+                            lnum = tonumber(lnum) or 1,
+                            col = tonumber(col) or 1,
+                            type = sev[severity] or "E",
+                            text = "[TS" .. tscode .. "] " .. msg,
+                        })
+                    end
+                end
+
+                local log = { "$ " .. table.concat(cmd, " ") .. "  (cwd: " .. root .. ", exit " .. code .. ")", "" }
+                if #stderr > 0 then
+                    table.insert(log, "--- stderr ---")
+                    vim.list_extend(log, stderr)
+                    table.insert(log, "")
+                end
+                vim.list_extend(log, stdout)
+                append_check_log("TSC", log)
+
+                vim.fn.setqflist({}, "r", { title = "TSC", items = items })
+                if #items > 0 then
+                    vim.notify(#items .. " TSC issue(s) in quickfix", vim.log.levels.WARN)
+                elseif code == 0 then
+                    vim.notify("TSC: no issues", vim.log.levels.INFO)
+                else
+                    vim.notify("TSC failed (<localleader>nl to view log)", vim.log.levels.ERROR)
+                end
+            end)
+        end,
+    })
 end
 
 map("n", "<localleader>dx", function()
@@ -552,14 +617,14 @@ map("n", "<localleader>dx", function()
 end, { desc = "TSC project to Quickfix" })
 
 map("n", "<localleader>nl", function()
-    if not eslint_output_logs or #eslint_output_logs == 0 then
-        vim.notify("No ESLint logs yet", vim.log.levels.INFO)
+    if not project_check_logs or #project_check_logs == 0 then
+        vim.notify("No check logs yet", vim.log.levels.INFO)
         return
     end
     Snacks.win({
-        title = " ESLint Output ",
+        title = " Project Check Output ",
         title_pos = "center",
-        text = eslint_output_logs,
+        text = project_check_logs,
         ft = "log",
         width = 0.8,
         height = 0.8,
