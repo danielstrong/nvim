@@ -127,6 +127,7 @@ return {
         lazy = true,
         -- enabled = false,
         opts = {
+            delay = 0, -- show popup instantly, independent of timeoutlen
             -- preset = "classic",
             -- preset = "modern",
             preset = "helix",
@@ -159,8 +160,8 @@ return {
             -- sort = { "alphanum", "order", "group", "mod", "local" },
             sort = { "alphanum", "order", "mod" },
             spec = {
-                { "c", group = "Replace Text", mode = { "n", "x" } },
-                { "cr", mode = { "n", "x" } },
+                -- { "c", group = "Replace Text", mode = { "n", "x" } },
+                -- { "cr", mode = { "n" } },
                 { "Z", group = "File", mode = { "n", "x" } },
                 { "<localleader>a", group = "Actions", mode = { "n", "x" } },
                 {

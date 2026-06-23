@@ -123,9 +123,9 @@ return {
                         },
                         { "<localleader>Kw", vim.lsp.buf.list_workspace_folders, desc = "LSP List Workspace Folders" },
                         { "<localleader>Ko", vim.lsp.buf.workspace_symbol, desc = "LSP List Workspace Folders" },
-                        { "cQ", LazyVim.lsp.action.source, desc = "Source Action", has = "codeAction" },
-                        -- { "cq", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "x" }, has = "codeAction" },
-                        { "<localleader>ac", vim.lsp.codelens.run, desc = "Run Codelens", mode = { "n", "x" }, has = "codeLens" },
+                        { "<localleader>aQ", LazyVim.lsp.action.source, desc = "Source Action", has = "codeAction" },
+                        { "<localleader>aC", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "x" }, has = "codeAction" },
+                        { "<localleader>ad", vim.lsp.codelens.run, desc = "Run Codelens", mode = { "n", "x" }, has = "codeLens" },
                         {
                             "<localleader>rf",
                             function()
@@ -285,8 +285,7 @@ return {
         },
         config = function(_, opts)
             require("tiny-code-action").setup(opts)
-
-            vim.keymap.set({ "n", "x" }, "cq", function()
+            vim.keymap.set({ "n", "x" }, "<localleader>ac", function()
                 require("tiny-code-action").code_action({
                     -- sort = function(a, b)
                     --     local function get_priority(kind)
@@ -305,7 +304,7 @@ return {
                     --     return a_priority < b_priority
                     -- end,
                 })
-            end, { noremap = true, silent = true, desc = "Code" })
+            end, { noremap = true, nowait = true, silent = true, desc = "Code Action tiny" })
         end,
     },
     {

@@ -377,7 +377,7 @@ map("n", "<localleader>C", function()
     vim.notify("Copied: " .. abs)
 end, { desc = "copy absolute path" })
 
-map("n", "crt", '"_ciwtrue<Esc>', { desc = "Replace word with true" })
+map("n", "crt", '"_ciwtrue<Esc>', { nowait = true, noremap = true, desc = "Replace word with true" })
 map("n", "crf", '"_ciwfalse<Esc>', { desc = "Replace word with false" })
 map("n", "crn", '"_ciwnull<Esc>', { desc = "Replace word with null" })
 map("n", "cru", '"_ciwundefined<Esc>', { desc = "Replace word with undefined" })
