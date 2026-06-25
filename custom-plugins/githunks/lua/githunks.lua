@@ -42,7 +42,7 @@ local function parse_diff(out, root, hunks)
     end
 end
 
-local function collect_hunks()
+local function collect_hunks(unstaged_only)
     local root = repo_root()
     if not root then
         return nil
@@ -50,11 +50,17 @@ local function collect_hunks()
 
     local hunks = {}
 
-    -- Tracked changes (staged + unstaged) vs HEAD. Fall back to plain diff
-    -- when there are no commits yet (HEAD is invalid).
-    local diff = git({ "--no-pager", "diff", "-U0", "HEAD" }, root)
-    if not diff then
+    local diff
+    if unstaged_only then
+        -- Working tree vs index: unstaged changes only.
         diff = git({ "--no-pager", "diff", "-U0" }, root)
+    else
+        -- Tracked changes (staged + unstaged) vs HEAD. Fall back to plain diff
+        -- when there are no commits yet (HEAD is invalid).
+        diff = git({ "--no-pager", "diff", "-U0", "HEAD" }, root)
+        if not diff then
+            diff = git({ "--no-pager", "diff", "-U0" }, root)
+        end
     end
     parse_diff(diff, root, hunks)
 
@@ -114,8 +120,8 @@ local function goto_hunk(target, line)
     vim.cmd("normal! zz")
 end
 
-local function navigate(direction)
-    local hunks = collect_hunks()
+local function navigate(direction, unstaged_only)
+    local hunks = collect_hunks(unstaged_only)
     if hunks == nil then
         vim.notify("Not a git repository", vim.log.levels.WARN)
         return
@@ -181,6 +187,22 @@ end
 
 function M.last()
     navigate("last")
+end
+
+function M.next_unstaged()
+    navigate("next", true)
+end
+
+function M.prev_unstaged()
+    navigate("prev", true)
+end
+
+function M.first_unstaged()
+    navigate("first", true)
+end
+
+function M.last_unstaged()
+    navigate("last", true)
 end
 
 function M.setup()

@@ -668,11 +668,17 @@ return {
                 vim.keymap.set(mode, l, r, { desc = desc, silent = true })
             end
             local repeat_move = require("repeatable_move")
+            local repeatable_next_yhunk, repeatable_prev_yhunk = repeat_move.make_repeatable_move_pair(gh.next_unstaged, gh.prev_unstaged)
+            map({ "n", "x", "o" }, "]g", repeatable_next_yhunk, "Next Unstaged Hunk (repo-wide)")
+            map({ "n", "x", "o" }, "[g", repeatable_prev_yhunk, "Prev Unstaged Hunk (repo-wide)")
+            map({ "n", "x", "o" }, "]G", gh.last_unstaged, "Last Unstaged Hunk (repo-wide)")
+            map({ "n", "x", "o" }, "[G", gh.first_unstaged, "First Unstaged Hunk (repo-wide)")
+
             local repeatable_next_ghunk, repeatable_prev_ghunk = repeat_move.make_repeatable_move_pair(gh.next, gh.prev)
-            map({ "n", "x", "o" }, "]g", repeatable_next_ghunk, "Next Hunk (repo-wide)")
-            map({ "n", "x", "o" }, "[g", repeatable_prev_ghunk, "Prev Hunk (repo-wide)")
-            map({ "n", "x", "o" }, "]G", gh.last, "Last Hunk (repo-wide)")
-            map({ "n", "x", "o" }, "[G", gh.first, "First Hunk (repo-wide)")
+            map({ "n", "x", "o" }, "]y", repeatable_next_ghunk, "Next Hunk (repo-wide)")
+            map({ "n", "x", "o" }, "[y", repeatable_prev_ghunk, "Prev Hunk (repo-wide)")
+            map({ "n", "x", "o" }, "]Y", gh.last, "Last Hunk (repo-wide)")
+            map({ "n", "x", "o" }, "[Y", gh.first, "First Hunk (repo-wide)")
         end,
     },
     {
@@ -680,6 +686,7 @@ return {
         event = "LazyFile",
         opts = {
             current_line_blame = false,
+            word_diff = false,
             current_line_blame_opts = {
                 delay = 0,
             },
@@ -732,11 +739,20 @@ return {
                 map("n", "[H", function()
                     gs.nav_hunk("first")
                 end, "First Hunk")
-                map({ "n", "x" }, "<localleader>hs", ":Gitsigns stage_hunk<CR>", "Stage Hunk")
-                map({ "n", "x" }, "<localleader>hr", ":Gitsigns reset_hunk<CR>", "Reset Hunk")
-                map("n", "<localleader>hS", gs.stage_buffer, "Stage Buffer")
-                map("n", "<localleader>hu", gs.undo_stage_hunk, "Undo Stage Hunk")
+                map("n", "<localleader>hy", gs.stage_hunk, "Stage Hunk")
+                map("v", "<localleader>hy", function()
+                    gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
+                end, "Stage Hunk (Visual)")
+                map("n", "<localleader>hr", gs.reset_hunk, "Reset Hunk")
+                map("v", "<localleader>hr", function()
+                    gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
+                end, "Reset Hunk (Visual)")
+                map("n", "<localleader>hY", gs.stage_buffer, "Stage Buffer")
+
+                map("n", "<localleader>hn", gs.undo_stage_hunk, "Undo Stage Hunk")
+
                 map("n", "<localleader>hR", gs.reset_buffer, "Reset Buffer")
+
                 map("n", "<localleader>he", gs.preview_hunk_inline, "Hunk Diff Preview Inline")
                 map("n", "<localleader>hh", gs.preview_hunk, "Hunk Diff Hover")
                 map("n", "<localleader>hB", function()
@@ -781,6 +797,17 @@ return {
                         end,
                     })
                     :map("<localleader>ub")
+                Snacks.toggle
+                    .new({
+                        name = "Word Diff",
+                        get = function()
+                            return require("gitsigns.config").config.word_diff
+                        end,
+                        set = function()
+                            gs.toggle_word_diff()
+                        end,
+                    })
+                    :map("<localleader>uh")
 
                 local function close_gitsigns_diff()
                     vim.cmd("diffoff!")
