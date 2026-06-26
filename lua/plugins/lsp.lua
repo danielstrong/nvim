@@ -166,11 +166,25 @@ return {
                                 preferTypeOnlyAutoImports = true,
                                 noErrorTruncation = true,
                             },
+                            diagnostics = {
+                                ignoredCodes = {
+                                    6133, -- declared but never read vars
+                                    6196, -- declared but never read types
+                                    6138, -- declared but never read props
+                                },
+                            },
                         },
                         javascript = {
                             preferences = {
                                 preferTypeOnlyAutoImports = true,
                                 noErrorTruncation = true,
+                            },
+                            diagnostics = {
+                                ignoredCodes = {
+                                    6133, -- declared but never read vars
+                                    6196, -- declared but never read types
+                                    6138, -- declared but never read props
+                                },
                             },
                         },
                     },
