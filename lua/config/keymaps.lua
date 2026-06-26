@@ -596,8 +596,6 @@ do
     map({ "n", "x", "o" }, "]w", repeatable_next_diag_warn, { desc = "Next Warning" })
     map({ "n", "x", "o" }, "[w", repeatable_prev_diag_warn, { desc = "Prev Warning" })
 
-    -- Turn whatever is currently mapped to [q / ]q into a repeatable pair,
-    -- without hardcoding the underlying action.
     local function resolve_map_fn(lhs)
         local m = vim.fn.maparg(lhs, "n", false, true)
         if type(m) == "table" and m.callback then
@@ -644,13 +642,9 @@ do
     make_bracket_mappings_repeatable("b")
     make_bracket_mappings_repeatable("l")
     make_bracket_mappings_repeatable("m")
-    make_bracket_mappings_repeatable("q")
     make_bracket_mappings_repeatable("s")
     make_bracket_mappings_repeatable("t")
     make_mappings_repeatable("gt", "gT")
-    -- local repeatable_next_qf, repeatable_prev_qf = repeat_move.make_repeatable_move_pair(resolve_map_fn("]q"), resolve_map_fn("[q"))
-    -- map(map_modes("]q"), "]q", repeatable_next_qf, { desc = map_desc("]q") })
-    -- map(map_modes("[q"), "[q", repeatable_prev_qf, { desc = map_desc("[q") })
 
     -- local repeatable_next_todo, repeatable_prev_todo = repeat_move.make_repeatable_move_pair(resolve_map_fn("]t"), resolve_map_fn("[t"))
     -- map(map_modes("]t"), "]t", repeatable_next_todo, { desc = map_desc("]t") })
