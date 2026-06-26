@@ -29,8 +29,7 @@ end
 local repeatable_qf_next, repeatable_qf_prev
 local function ensure_qf_repeatable()
     if not repeatable_qf_next then
-        repeatable_qf_next, repeatable_qf_prev =
-            require("repeatable_move").make_repeatable_move_pair(trouble_qf_next, trouble_qf_prev)
+        repeatable_qf_next, repeatable_qf_prev = require("repeatable_move").make_repeatable_move_pair(trouble_qf_next, trouble_qf_prev)
     end
 end
 
@@ -1009,7 +1008,7 @@ return {
                 },
                 list = {
                     selection = {
-                        preselect = true,
+                        preselect = false,
                         auto_insert = true,
                     },
                     cycle = { from_top = true, from_bottom = true },

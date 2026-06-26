@@ -70,6 +70,15 @@ vim.api.nvim_create_autocmd("TextYankPost", {
     end,
 })
 
+-- Use visual mode (not select mode) for snippet placeholder selections
+-- vim.api.nvim_create_autocmd("ModeChanged", {
+--     group = augroup("snippet_visual_mode"),
+--     pattern = { "*:s", "*:S", "*:\x13" }, -- entering select / S-line / S-block
+--     callback = function()
+--         vim.api.nvim_feedkeys(vim.keycode("<C-g>"), "n", false)
+--     end,
+-- })
+
 vim.api.nvim_create_autocmd("VimEnter", {
     group = augroup("startup_md_wrap_spell"),
     callback = function()
