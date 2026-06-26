@@ -658,6 +658,28 @@ return {
         dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
     },
     {
+        "custom/project-check",
+        event = "LazyFile",
+        dev = true,
+        config = function()
+            local pc = require("project-check")
+
+            local function map(mode, l, r, desc)
+                vim.keymap.set(mode, l, r, { desc = desc, silent = true })
+            end
+
+            map({ "n", "x", "o" }, "<localleader>ds", function()
+                pc.run_checks(true)
+            end, "TSC + ESLint to Quickfix")
+
+            map({ "n", "x", "o" }, "<localleader>dS", function()
+                pc.run_checks(false)
+            end, "TSC + ESLint to Quickfix (include warnings)")
+
+            map({ "n", "x", "o" }, "<localleader>nl", pc.view_project_check_logs, "View Project Check logs")
+        end,
+    },
+    {
         "custom/githunks",
         event = "LazyFile",
         dev = true,
