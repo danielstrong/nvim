@@ -23,7 +23,16 @@ local function eslint_runner(root)
 end
 
 local function run_eslint(quiet, on_done)
-    local root = vim.fs.root(0, { ".git", "package.json" }) or vim.fn.getcwd()
+    local root = vim.fs.root(0, { "package.json" })
+    if not root then
+        if not on_done then
+            vim.notify("No package.json found can not run Project Check", vim.log.levels.ERROR)
+        else
+            append_check_log("ESLint", { "No package.json found can not run eslint" })
+            on_done(false, -1)
+        end
+        return
+    end
     -- if not on_done then
     vim.notify("Running ESLint" .. (quiet and "" or " (include warnings)") .. " in " .. root .. " …", vim.log.levels.INFO)
     -- end
@@ -97,10 +106,17 @@ local function run_eslint(quiet, on_done)
 end
 
 local function run_tsc(on_done)
-    local root = vim.fs.root(0, { ".git", "package.json" }) or vim.fn.getcwd()
-    -- if not on_done then
+    local root = vim.fs.root(0, { "package.json" })
+    if not root then
+        if not on_done then
+            vim.notify("No package.json found can not run Project Check", vim.log.levels.ERROR)
+        else
+            append_check_log("TSC", { "No package.json found can not run tsc" })
+            on_done(10, -1)
+        end
+        return
+    end
     vim.notify("Running tsc --noEmit in " .. root .. " …", vim.log.levels.INFO)
-    -- end
     vim.fn.setqflist({}, "r", { title = "TSC", items = {} })
     local cmd = vim.list_extend(eslint_runner(root), { "tsc", "--noEmit", "--pretty", "false" })
     local stdout, stderr = {}, {}
@@ -169,7 +185,11 @@ function M.run_checks(quiet)
     vim.notify("Running project checks: tsc, eslint …", vim.log.levels.INFO)
     run_tsc(function(tsc_code, tsc_count)
         if tsc_code ~= 0 then
-            vim.notify("TSC found " .. tsc_count .. " issue(s); ESLint not run (<localleader>nl for log)", vim.log.levels.ERROR)
+            if tsc_count >= 0 then
+                vim.notify("TSC found " .. tsc_count .. " issue(s); ESLint not run (<localleader>nl for log)", vim.log.levels.ERROR)
+            else
+                vim.notify("TSC failed; ESLint not run (<localleader>nl for log)", vim.log.levels.ERROR)
+            end
             return
         end
         -- vim.notify("TSC clean — running ESLint" .. (quiet and "" or " (include warnings)") .. " …", vim.log.levels.INFO)
