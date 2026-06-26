@@ -1,38 +1,3 @@
-local function trouble_qf_next()
-    if require("trouble").is_open() then
-        require("trouble").next({ skip_groups = true, jump = true })
-    else
-        local ok, err = pcall(vim.cmd.cnext)
-        if not ok then
-            local ok2, err2 = pcall(vim.cmd, "cc 1")
-            if not ok2 then
-                vim.notify("No quickfix list errors", vim.log.levels.ERROR)
-            end
-        end
-    end
-end
-
-local function trouble_qf_prev()
-    if require("trouble").is_open() then
-        require("trouble").prev({ skip_groups = true, jump = true })
-    else
-        local ok, err = pcall(vim.cmd.cprev)
-        if not ok then
-            local ok2, err2 = pcall(vim.cmd, "cc 1")
-            if not ok2 then
-                vim.notify("No quickfix list errors", vim.log.levels.ERROR)
-            end
-        end
-    end
-end
-
-local repeatable_qf_next, repeatable_qf_prev
-local function ensure_qf_repeatable()
-    if not repeatable_qf_next then
-        repeatable_qf_next, repeatable_qf_prev = require("repeatable_move").make_repeatable_move_pair(trouble_qf_next, trouble_qf_prev)
-    end
-end
-
 return {
     {
         -- this shows just the lsp and is smaller and less annoying
@@ -171,25 +136,46 @@ return {
             { "<localleader>dq", "<cmd>Trouble qflist toggle<cr>", desc = "Quickfix List (Trouble)" },
             { "<localleader>dt", "<cmd>Trouble todo toggle<cr>", desc = "Todo (Trouble)" },
             { "<localleader>dT", "<cmd>Trouble todo toggle filter = {tag = {TODO,FIX,FIXME}}<cr>", desc = "TODO/FIX/FIXME Filtered (Trouble)" },
-            {
-                "[q",
-                function()
-                    ensure_qf_repeatable()
-                    repeatable_qf_prev()
-                end,
-                mode = { "n", "x", "o" },
-                desc = "Previous Trouble/Quickfix Item",
-            },
-            {
-                "]q",
-                function()
-                    ensure_qf_repeatable()
-                    repeatable_qf_next()
-                end,
-                mode = { "n", "x", "o" },
-                desc = "Next Trouble/Quickfix Item",
-            },
+            -- bare triggers: loading runs config() which sets the real handlers, then the key is replayed
+            -- { "[q", mode = { "n", "x", "o" }, desc = "Previous Trouble/Quickfix Item" },
+            -- { "]q", mode = { "n", "x", "o" }, desc = "Next Trouble/Quickfix Item" },
         },
+        config = function(_, opts)
+            require("trouble").setup(opts)
+
+            local function trouble_qf_next()
+                if require("trouble").is_open() then
+                    require("trouble").next({ skip_groups = true, jump = true })
+                else
+                    local ok = pcall(vim.cmd.cnext)
+                    if not ok then
+                        local ok2 = pcall(vim.cmd, "cc 1")
+                        if not ok2 then
+                            vim.notify("No quickfix list errors", vim.log.levels.ERROR)
+                        end
+                    end
+                end
+            end
+
+            local function trouble_qf_prev()
+                if require("trouble").is_open() then
+                    require("trouble").prev({ skip_groups = true, jump = true })
+                else
+                    local ok = pcall(vim.cmd.cprev)
+                    if not ok then
+                        local ok2 = pcall(vim.cmd, "cc 1")
+                        if not ok2 then
+                            vim.notify("No quickfix list errors", vim.log.levels.ERROR)
+                        end
+                    end
+                end
+            end
+
+            local repeatable_qf_next, repeatable_qf_prev = require("repeatable_move").make_repeatable_move_pair(trouble_qf_next, trouble_qf_prev)
+
+            vim.keymap.set({ "n", "x", "o" }, "[q", repeatable_qf_prev, { desc = "Previous Trouble/Quickfix Item" })
+            vim.keymap.set({ "n", "x", "o" }, "]q", repeatable_qf_next, { desc = "Next Trouble/Quickfix Item" })
+        end,
     },
     {
         "folke/which-key.nvim",
