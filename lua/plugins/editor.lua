@@ -1,4 +1,4 @@
-local trouble_qf_next = function()
+local function trouble_qf_next()
     if require("trouble").is_open() then
         require("trouble").next({ skip_groups = true, jump = true })
     else
@@ -12,7 +12,7 @@ local trouble_qf_next = function()
     end
 end
 
-local trouble_qf_prev = function()
+local function trouble_qf_prev()
     if require("trouble").is_open() then
         require("trouble").prev({ skip_groups = true, jump = true })
     else
