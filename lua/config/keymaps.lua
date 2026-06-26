@@ -401,14 +401,6 @@ map("n", "<localleader>nq", function()
     vim.cmd(qf_open and "cclose" or "copen")
 end, { desc = "Toggle Quickfix" })
 
-map("n", "<localleader>kl", "<cmd>Trouble lsp_left toggle<cr>", { desc = "LSP Toggle" })
-map("n", "<localleader>kr", "<cmd>Trouble lsp_references_left toggle<cr>", { desc = "LSP References" })
-map("n", "<localleader>kd", "<cmd>Trouble lsp_definitions_left toggle<cr>", { desc = "LSP Definitions" })
-map("n", "<localleader>kD", "<cmd>Trouble lsp_declarations_left toggle<cr>", { desc = "LSP Declarations" })
-map("n", "<localleader>ky", "<cmd>Trouble lsp_type_definitions_left toggle<cr>", { desc = "LSP Type Definitions" })
-map("n", "<localleader>kI", "<cmd>Trouble lsp_implementations_left toggle<cr>", { desc = "LSP Implementations" })
--- map("n", "<localleader>ko", "<cmd>Trouble lsp_command toggle win.position=left<cr>", { desc = "LSP Command" })
-
 map("n", "<localleader>dd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
 map("n", "L", function()
     local bufnr, win = vim.diagnostic.open_float()
@@ -425,12 +417,6 @@ map("n", "L", function()
     end
 end, { desc = "Line Diagnostics" })
 
-map("n", "<localleader>da", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Trouble Workspae Diagnostics" })
-map("n", "<localleader>db", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", { desc = "Trouble Buffer Diagnostics" })
-map("n", "<localleader>dL", "<cmd>Trouble loclist toggle<cr>", { desc = "Trouble Location List" })
-map("n", "<localleader>dq", "<cmd>Trouble qflist toggle<cr>", { desc = "Trouble Quickfix List" })
-map("n", "<localleader>dt", "<cmd>Trouble todo toggle<cr>", { desc = "Trouble Todo" })
-map("n", "<localleader>dT", "<cmd>Trouble todo toggle filter = {tag = {TODO,FIX,FIXME}}<cr>", { desc = "Trouble TODO/FIX/FIXME Filtered" })
 map("n", "<localleader>dc", function()
     local diags = vim.diagnostic.get(0, { lnum = vim.fn.line(".") - 1 })
     if #diags == 0 then

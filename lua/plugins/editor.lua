@@ -104,21 +104,71 @@ return {
     },
     {
         "folke/trouble.nvim",
+        cmd = { "Trouble" },
         opts = {
             focus = true,
             pinned = false, -- When pinned, the opened trouble window will be bound to the current buffer
             warn_no_results = true, -- show a warning when there are no results
             open_no_results = true, -- open the trouble window when there are no results
-            win = {
-                position = "bottom",
-            },
+
+            position = "bottom",
             modes = {
-                lsp_left = { mode = "lsp", win = { position = "left" } },
-                lsp_references_left = { mode = "lsp_references", win = { position = "left" } },
-                lsp_definitions_left = { mode = "lsp_definitions", win = { position = "left" } },
-                lsp_declarations_left = { mode = "lsp_declarations", win = { position = "left" } },
-                lsp_type_definitions_left = { mode = "lsp_type_definitions", win = { position = "left" } },
-                lsp_implementations_left = { mode = "lsp_implementations", win = { position = "left" } },
+                lsp = {
+                    win = { position = "bottom" },
+                },
+                symbols = {
+                    win = { type = "split", position = "bottom" },
+                },
+            },
+        },
+        keys = {
+            { "<localleader>kl", "<cmd>Trouble lsp toggle<cr>", desc = "LSP references/definitions/... (Trouble)" },
+            { "<localleader>kr", "<cmd>Trouble lsp_references toggle<cr>", desc = "LSP references (Trouble)" },
+            { "<localleader>kd", "<cmd>Trouble lsp_definitions toggle<cr>", desc = "LSP definitions (Trouble)" },
+            { "<localleader>kD", "<cmd>Trouble lsp_declarations toggle<cr>", desc = "LSP declarations (Trouble)" },
+            { "<localleader>ky", "<cmd>Trouble lsp_type_definitions toggle<cr>", desc = "LSP type definitions (Trouble)" },
+            { "<localleader>kI", "<cmd>Trouble lsp_implementations toggle<cr>", desc = "LSP implementations (Trouble)" },
+            { "<localleader>ks", "<cmd>Trouble symbols toggle focus=true<cr>", desc = "Symbols (Trouble)" },
+
+            { "<localleader>da", "<cmd>Trouble diagnostics toggle<cr>", desc = "Workspae Diagnostics (Trouble)" },
+            { "<localleader>db", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", desc = "Buffer Diagnostics (Trouble)" },
+            { "<localleader>dL", "<cmd>Trouble loclist toggle<cr>", desc = "Location List (Trouble)" },
+            { "<localleader>dq", "<cmd>Trouble qflist toggle<cr>", desc = "Quickfix List (Trouble)" },
+            { "<localleader>dt", "<cmd>Trouble todo toggle<cr>", desc = "Todo (Trouble)" },
+            { "<localleader>dT", "<cmd>Trouble todo toggle filter = {tag = {TODO,FIX,FIXME}}<cr>", desc = "TODO/FIX/FIXME Filtered (Trouble)" },
+            {
+                "[q",
+                function()
+                    if require("trouble").is_open() then
+                        require("trouble").prev({ skip_groups = true, jump = true })
+                    else
+                        local ok, err = pcall(vim.cmd.cprev)
+                        if not ok then
+                            local ok2, err2 = pcall(vim.cmd, "cc 1")
+                            if not ok2 then
+                                vim.notify("No quickfix list errors", vim.log.levels.ERROR)
+                            end
+                        end
+                    end
+                end,
+                desc = "Previous Trouble/Quickfix Item",
+            },
+            {
+                "]q",
+                function()
+                    if require("trouble").is_open() then
+                        require("trouble").next({ skip_groups = true, jump = true })
+                    else
+                        local ok, err = pcall(vim.cmd.cnext)
+                        if not ok then
+                            local ok2, err2 = pcall(vim.cmd, "cc 1")
+                            if not ok2 then
+                                vim.notify("No quickfix list errors", vim.log.levels.ERROR)
+                            end
+                        end
+                    end
+                end,
+                desc = "Next Trouble/Quickfix Item",
             },
         },
     },
