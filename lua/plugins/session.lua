@@ -61,8 +61,8 @@ return {
         enabled = true,
         lazy = false,
         keys = {
-            { "<localleader>zw", "<cmd>AutoSession save<CR>", mode = { "n", "v" }, desc = "Session Save" },
-            { "<localleader>zW", ":AutoSession save ", mode = { "n", "v" }, desc = "Session Save with name" },
+            { "<localleader>zw", "<cmd>AutoSession save<CR>", mode = { "n", "x" }, desc = "Session Save" },
+            { "<localleader>zW", ":AutoSession save ", mode = { "n", "x" }, desc = "Session Save with name" },
             {
                 "<localleader>zs",
                 function()
@@ -75,7 +75,7 @@ return {
                         as.save_session(name)
                     end)
                 end,
-                mode = { "n", "v" },
+                mode = { "n", "x" },
                 desc = "Session Clone",
             },
             {
@@ -97,11 +97,11 @@ return {
                         as.save_session(name)
                     end)
                 end,
-                mode = { "n", "v" },
+                mode = { "n", "x" },
                 desc = "Session Clone (current file only)",
             },
-            { "<localleader>zr", "<cmd>AutoSession restore<CR>", mode = { "n", "v" }, desc = "Session Restore" },
-            { "<localleader>zR", ":AutoSession restore ", mode = { "n", "v" }, desc = "Session Restore with name" },
+            { "<localleader>zr", "<cmd>AutoSession restore<CR>", mode = { "n", "x" }, desc = "Session Restore" },
+            { "<localleader>zR", ":AutoSession restore ", mode = { "n", "x" }, desc = "Session Restore with name" },
             {
                 "<localleader>zl",
                 function()
@@ -113,14 +113,14 @@ return {
                     end
                     as.restore_session_file(cur, { show_message = true })
                 end,
-                mode = { "n", "v" },
+                mode = { "n", "x" },
                 desc = "Session Reload",
             },
-            { "<localleader>ze", "<cmd>AutoSession search<CR>", mode = { "n", "v" }, desc = "Session Search" },
-            { "<localleader>zd", "<cmd>AutoSession deletePicker<CR>", mode = { "n", "v" }, desc = "Session Delete Picker" },
-            { "<localleader>zf", "<cmd>AutoSession delete<CR>", mode = { "n", "v" }, desc = "Session Delete" },
-            { "<localleader>zF", ":AutoSession delete ", mode = { "n", "v" }, desc = "Session Delete with name" },
-            { "<localleader>zD", "<cmd>AutoSession purgeOrphaned<CR>", mode = { "n", "v" }, desc = "Session Purge Orphaned" },
+            { "<localleader>ze", "<cmd>AutoSession search<CR>", mode = { "n", "x" }, desc = "Session Search" },
+            { "<localleader>zd", "<cmd>AutoSession deletePicker<CR>", mode = { "n", "x" }, desc = "Session Delete Picker" },
+            { "<localleader>zf", "<cmd>AutoSession delete<CR>", mode = { "n", "x" }, desc = "Session Delete" },
+            { "<localleader>zF", ":AutoSession delete ", mode = { "n", "x" }, desc = "Session Delete with name" },
+            { "<localleader>zD", "<cmd>AutoSession purgeOrphaned<CR>", mode = { "n", "x" }, desc = "Session Purge Orphaned" },
             {
                 "<localleader>zK",
                 function()
@@ -135,11 +135,11 @@ return {
                     end)
                     vim.notify("Session: " .. name, vim.log.levels.INFO)
                 end,
-                mode = { "n", "v" },
+                mode = { "n", "x" },
                 desc = "Session Show Name",
             },
-            { "<localleader>zt", "<cmd>AutoSession enable<CR>", mode = { "n", "v" }, desc = "Session Enable Autosave" },
-            { "<localleader>zT", "<cmd>AutoSession disable<CR>", mode = { "n", "v" }, desc = "Session Disable Autosave" },
+            { "<localleader>zt", "<cmd>AutoSession enable<CR>", mode = { "n", "x" }, desc = "Session Enable Autosave" },
+            { "<localleader>zT", "<cmd>AutoSession disable<CR>", mode = { "n", "x" }, desc = "Session Disable Autosave" },
         },
         config = function()
             require("auto-session").setup({

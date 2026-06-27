@@ -235,6 +235,7 @@ return {
                     expand = function()
                         return require("which-key.extras").expand.buf()
                     end,
+                    mode = { "n", "x" },
                 },
                 { "<localleader>d", group = "Diagnostics", mode = { "n", "x" } },
                 { "<localleader>f", group = "Fuzzy", mode = { "n", "x" } },
@@ -274,9 +275,10 @@ return {
                         end
                         return ret
                     end,
+                    mode = { "n", "x" },
                 },
-                { "<localleader>=", group = "Fix Indention", mode = { "n", "v" } },
-                { "<localleader>=z", group = "Formatters", mode = { "n", "v" } },
+                { "<localleader>=", group = "Fix Indention", mode = { "n", "x" } },
+                { "<localleader>=z", group = "Formatters", mode = { "n", "x" } },
             },
         },
         keys = {
@@ -723,15 +725,15 @@ return {
                 vim.keymap.set(mode, l, r, { desc = desc, silent = true })
             end
 
-            map({ "n", "x", "o" }, "<localleader>ds", function()
+            map("n", "<localleader>ds", function()
                 pc.run_checks(true)
             end, "TSC + ESLint to Quickfix")
 
-            map({ "n", "x", "o" }, "<localleader>dS", function()
+            map("n", "<localleader>dS", function()
                 pc.run_checks(false)
             end, "TSC + ESLint to Quickfix (include warnings)")
 
-            map({ "n", "x", "o" }, "<localleader>nl", pc.view_project_check_logs, "View Project Check logs")
+            map("n", "<localleader>nl", pc.view_project_check_logs, "View Project Check logs")
         end,
     },
     {
@@ -817,11 +819,11 @@ return {
                     gs.nav_hunk("first")
                 end, "First Hunk")
                 map("n", "<localleader>hy", gs.stage_hunk, "Stage Hunk")
-                map("v", "<localleader>hy", function()
+                map("x", "<localleader>hy", function()
                     gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
                 end, "Stage Hunk (Visual)")
                 map("n", "<localleader>hr", gs.reset_hunk, "Reset Hunk")
-                map("v", "<localleader>hr", function()
+                map("x", "<localleader>hr", function()
                     gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
                 end, "Reset Hunk (Visual)")
                 map("n", "<localleader>hY", gs.stage_buffer, "Stage Buffer")
@@ -936,7 +938,7 @@ return {
                     end
                 end, "Diff This (against last commit)")
 
-                map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
+                map({ "x", "o" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
             end,
         },
     },

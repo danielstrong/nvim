@@ -66,7 +66,7 @@ vim.api.nvim_del_augroup_by_name("lazyvim_highlight_yank")
 vim.api.nvim_create_autocmd("TextYankPost", {
     group = augroup("highlight_yank"),
     callback = function()
-        (vim.hl or vim.highlight).on_yank({ higroup = "IncSearch", timeout = 400, on_macro = true, on_visual = true })
+        (vim.hl or vim.highlight).on_yank({ higroup = "IncSearch", timeout = 250, on_macro = true, on_visual = true })
     end,
 })
 

@@ -2,6 +2,17 @@
 -- Default keymaps that are always set:
 -- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- ~/.local/share/nvim/lazy/LazyVim/lua/lazyvim/config/keymaps.lua
+-- "n"    Normal
+-- "s"    Select
+-- "x"    Visual
+-- "o"    Operator-pending
+-- "i"    Insert
+-- "c"    Command-line
+-- "t"    Terminal
+-- ""     Normal, Visual, Select, Operator-pending
+-- "v"    Visual and Select
+-- "m"    Insert and Command-line
+-- "l"    Insert, Command-line, Lang-Arg
 
 local map = vim.keymap.set
 
@@ -15,59 +26,65 @@ map("n", "<localleader>r/", ":%s//<C-r>//gc<left><left><left>", { noremap = true
 -- to use: put cursor over target word, use this keymap, then type in replacement text
 map("n", "<localleader>rn", 'b"hyiw:%s!<C-r>h!!gc<left><left><left><C-r>h', { noremap = true, desc = "Find and replace word incremental" })
 -- to use: visually select the target word, use this keymap, the type in replacement text
-map("v", "<localleader>rn", '"hy:%s!<C-r>h!!gc<left><left><left><C-r>h', { noremap = true, desc = "Find and replace visually incremental" })
+map("x", "<localleader>rn", '"hy:%s!<C-r>h!!gc<left><left><left><C-r>h', { noremap = true, desc = "Find and replace visually incremental" })
 
 -- Rename All
 -- to use: put cursor over target word, use this keymap, then type in replacement text
 map("n", "<localleader>ra", 'b"hyiw:%s!<C-r>h!!g<left><left><C-r>h', { noremap = true, desc = "Find and replace word all" })
 -- to use: visually select the target word, use this keymap, the type in replacement text
-map("v", "<localleader>ra", '"hy:%s!<C-r>h!!g<left><left><C-r>h', { noremap = true, desc = "Find and replace visually all" })
+map("x", "<localleader>ra", '"hy:%s!<C-r>h!!g<left><left><C-r>h', { noremap = true, desc = "Find and replace visually all" })
 
 map("n", "#", "gcc", { remap = true, desc = "toggle line comment" })
-map("v", "#", "gc", { remap = true, desc = "toggle comment" })
+map("x", "#", "gc", { remap = true, desc = "toggle comment" })
 
-map({ "n", "v" }, "x", '"_x')
-map({ "n", "v" }, "X", '"_X')
-map({ "n", "v" }, "<localleader>vb", "<C-v>", { desc = "enter visual block mode" })
+map({ "n", "x" }, "x", '"_x')
+map({ "n", "x" }, "X", '"_X')
+map({ "n", "x" }, "<localleader>vb", "<C-v>", { desc = "enter visual block mode" })
 
-map({ "n", "v" }, "<localleader>tn", "<cmd>tabnew<cr>", { desc = "Tab new" })
-map({ "n", "v" }, "<localleader>ts", "<cmd>tab split<cr>", { desc = "open current buffer into new tab" })
-map({ "n", "v" }, "<localleader>tx", "<cmd>tabclose<cr>", { desc = "Tab close" })
-map({ "n", "v" }, "<localleader>tX", "<cmd>tabonly<cr>", { desc = "kill other tabs" })
-map({ "n", "v" }, "<localleader>te", "<cmd>tabnext #<cr>", { desc = "navigate tab to last accessed" })
-map({ "n", "v" }, "<localleader>t[", "<cmd>tabprev<cr>", { desc = "navigate tab to left" })
-map({ "n", "v" }, "<localleader>t]", "<cmd>tabnext<cr>", { desc = "navigate tab to right" })
-map({ "n", "v" }, "<localleader>th", "<cmd>tabprev<cr>", { desc = "navigate tab to left" })
-map({ "n", "v" }, "<localleader>tl", "<cmd>tabnext<cr>", { desc = "navigate tab to right" })
-map({ "n", "v" }, "<localleader>t1", "<cmd>1tabnext<cr>", { desc = "navigate to tab 1" })
-map({ "n", "v" }, "<localleader>t2", "<cmd>2tabnext<cr>", { desc = "navigate to tab 2" })
-map({ "n", "v" }, "<localleader>t3", "<cmd>3tabnext<cr>", { desc = "navigate to tab 3" })
-map({ "n", "v" }, "<localleader>t4", "<cmd>4tabnext<cr>", { desc = "navigate to tab 4" })
-map({ "n", "v" }, "<localleader>t5", "<cmd>5tabnext<cr>", { desc = "navigate to tab 5" })
-map({ "n", "v" }, "<localleader>t6", "<cmd>6tabnext<cr>", { desc = "navigate to tab 6" })
-map({ "n", "v" }, "<localleader>t7", "<cmd>7tabnext<cr>", { desc = "navigate to tab 7" })
-map({ "n", "v" }, "<localleader>t8", "<cmd>8tabnext<cr>", { desc = "navigate to tab 8" })
-map({ "n", "v" }, "<localleader>t9", "<cmd>9tabnext<cr>", { desc = "navigate to tab 9" })
-map({ "n", "v" }, "<localleader>t0", "<cmd>tabfirst<cr>", { desc = "navigate tab first" })
-map({ "n", "v" }, "<localleader>t$", "<cmd>tablast<cr>", { desc = "navigate tab last" })
-map({ "n", "v" }, "<localleader>tm[", "<cmd>-tabmove<cr>", { desc = "move tab to left" })
-map({ "n", "v" }, "<localleader>tm]", "<cmd>+tabmove<cr>", { desc = "move tab to right" })
-map({ "n", "v" }, "<localleader>tmh", "<cmd>-tabmove<cr>", { desc = "move tab to left" })
-map({ "n", "v" }, "<localleader>tml", "<cmd>+tabmove<cr>", { desc = "move tab to right" })
-map({ "n", "v" }, "<localleader>tm1", "<cmd>tabmove 0<cr>", { desc = "move tab to 1" })
-map({ "n", "v" }, "<localleader>tm2", "<cmd>tabmove 2<cr>", { desc = "move tab to 2" })
-map({ "n", "v" }, "<localleader>tm3", "<cmd>tabmove 3<cr>", { desc = "move tab to 3" })
-map({ "n", "v" }, "<localleader>tm4", "<cmd>tabmove 4<cr>", { desc = "move tab to 4" })
-map({ "n", "v" }, "<localleader>tm5", "<cmd>tabmove 5<cr>", { desc = "move tab to 5" })
-map({ "n", "v" }, "<localleader>tm6", "<cmd>tabmove 6<cr>", { desc = "move tab to 6" })
-map({ "n", "v" }, "<localleader>tm7", "<cmd>tabmove 7<cr>", { desc = "move tab to 7" })
-map({ "n", "v" }, "<localleader>tm8", "<cmd>tabmove 8<cr>", { desc = "move tab to 8" })
-map({ "n", "v" }, "<localleader>tm9", "<cmd>tabmove 9<cr>", { desc = "move tab to 9" })
-map({ "n", "v" }, "<localleader>tm0", "<cmd>tabmove 0<cr>", { desc = "move tab to first" })
-map({ "n", "v" }, "<localleader>tm$", "<cmd>tabmove $<cr>", { desc = "move tab to end" })
-map({ "n", "v" }, "<localleader>tm#", "<cmd>tabmove #<cr>", { desc = "move tab after last accessed" })
+map("n", "<localleader>wt", "<cmd>tab split<cr>", { desc = "split tab" })
+map("n", "<localleader>wS", "<C-W>v", { desc = "Split Window Right" })
+map("n", "<localleader>wd", "<C-W>c", { desc = "Delete Window" })
+map("n", "<localleader>wn", "<C-W>x", { desc = "Swap current window with next" })
+map("n", "<localleader>we", "<cmd>wincmd p<CR>", { silent = true, desc = "Previous window split" })
 
-map({ "n", "v" }, "<localleader>tr", function()
+map({ "n", "x" }, "<localleader>tn", "<cmd>tabnew<cr>", { desc = "Tab new" })
+map({ "n", "x" }, "<localleader>ts", "<cmd>tab split<cr>", { desc = "open current buffer into new tab" })
+map({ "n", "x" }, "<localleader>tx", "<cmd>tabclose<cr>", { desc = "Tab close" })
+map({ "n", "x" }, "<localleader>tX", "<cmd>tabonly<cr>", { desc = "kill other tabs" })
+map({ "n", "x" }, "<localleader>te", "<cmd>tabnext #<cr>", { desc = "navigate tab to last accessed" })
+map({ "n", "x" }, "<localleader>t[", "<cmd>tabprev<cr>", { desc = "navigate tab to left" })
+map({ "n", "x" }, "<localleader>t]", "<cmd>tabnext<cr>", { desc = "navigate tab to right" })
+map({ "n", "x" }, "<localleader>th", "<cmd>tabprev<cr>", { desc = "navigate tab to left" })
+map({ "n", "x" }, "<localleader>tl", "<cmd>tabnext<cr>", { desc = "navigate tab to right" })
+map({ "n", "x" }, "<localleader>t1", "<cmd>1tabnext<cr>", { desc = "navigate to tab 1" })
+map({ "n", "x" }, "<localleader>t2", "<cmd>2tabnext<cr>", { desc = "navigate to tab 2" })
+map({ "n", "x" }, "<localleader>t3", "<cmd>3tabnext<cr>", { desc = "navigate to tab 3" })
+map({ "n", "x" }, "<localleader>t4", "<cmd>4tabnext<cr>", { desc = "navigate to tab 4" })
+map({ "n", "x" }, "<localleader>t5", "<cmd>5tabnext<cr>", { desc = "navigate to tab 5" })
+map({ "n", "x" }, "<localleader>t6", "<cmd>6tabnext<cr>", { desc = "navigate to tab 6" })
+map({ "n", "x" }, "<localleader>t7", "<cmd>7tabnext<cr>", { desc = "navigate to tab 7" })
+map({ "n", "x" }, "<localleader>t8", "<cmd>8tabnext<cr>", { desc = "navigate to tab 8" })
+map({ "n", "x" }, "<localleader>t9", "<cmd>9tabnext<cr>", { desc = "navigate to tab 9" })
+map({ "n", "x" }, "<localleader>t0", "<cmd>tabfirst<cr>", { desc = "navigate tab first" })
+map({ "n", "x" }, "<localleader>t$", "<cmd>tablast<cr>", { desc = "navigate tab last" })
+map({ "n", "x" }, "<localleader>tm[", "<cmd>-tabmove<cr>", { desc = "move tab to left" })
+map({ "n", "x" }, "<localleader>tm]", "<cmd>+tabmove<cr>", { desc = "move tab to right" })
+map({ "n", "x" }, "<localleader>tmh", "<cmd>-tabmove<cr>", { desc = "move tab to left" })
+map({ "n", "x" }, "<localleader>tml", "<cmd>+tabmove<cr>", { desc = "move tab to right" })
+map({ "n", "x" }, "<localleader>tm1", "<cmd>tabmove 0<cr>", { desc = "move tab to 1" })
+map({ "n", "x" }, "<localleader>tm2", "<cmd>tabmove 2<cr>", { desc = "move tab to 2" })
+map({ "n", "x" }, "<localleader>tm3", "<cmd>tabmove 3<cr>", { desc = "move tab to 3" })
+map({ "n", "x" }, "<localleader>tm4", "<cmd>tabmove 4<cr>", { desc = "move tab to 4" })
+map({ "n", "x" }, "<localleader>tm5", "<cmd>tabmove 5<cr>", { desc = "move tab to 5" })
+map({ "n", "x" }, "<localleader>tm6", "<cmd>tabmove 6<cr>", { desc = "move tab to 6" })
+map({ "n", "x" }, "<localleader>tm7", "<cmd>tabmove 7<cr>", { desc = "move tab to 7" })
+map({ "n", "x" }, "<localleader>tm8", "<cmd>tabmove 8<cr>", { desc = "move tab to 8" })
+map({ "n", "x" }, "<localleader>tm9", "<cmd>tabmove 9<cr>", { desc = "move tab to 9" })
+map({ "n", "x" }, "<localleader>tm0", "<cmd>tabmove 0<cr>", { desc = "move tab to first" })
+map({ "n", "x" }, "<localleader>tm$", "<cmd>tabmove $<cr>", { desc = "move tab to end" })
+map({ "n", "x" }, "<localleader>tm#", "<cmd>tabmove #<cr>", { desc = "move tab after last accessed" })
+
+map({ "n", "x" }, "<localleader>tr", function()
     local current = vim.t.tab_name or ""
     vim.ui.input({ prompt = "Tab name: ", default = current }, function(name)
         if name == nil then
@@ -133,10 +150,6 @@ function _G.TabLineSplits()
     end
     return s .. "%#TabLineFill#%T"
 end
-
-map("n", "<localleader>ws", "<C-W>s", { desc = "Split Window Below", remap = true })
-map("n", "<localleader>wv", "<C-W>v", { desc = "Split Window Right", remap = true })
-map("n", "<localleader>wd", "<C-W>c", { desc = "Delete Window", remap = true })
 
 local function real_win_count()
     local count = 0
@@ -217,8 +230,8 @@ local function real_delete_buffer_without_closing_nvim()
     end
 end
 
-map({ "n", "v" }, "<localleader>q", real_delete_buffer_without_closing_nvim, { desc = "close buffer" })
-map({ "n", "v" }, "<localleader>bc", function()
+map({ "n", "x" }, "<localleader>q", real_delete_buffer_without_closing_nvim, { desc = "close buffer" })
+map({ "n", "x" }, "<localleader>bo", function()
     local shown = {}
     for _, win in ipairs(vim.api.nvim_list_wins()) do
         shown[vim.api.nvim_win_get_buf(win)] = true
@@ -233,15 +246,15 @@ map({ "n", "v" }, "<localleader>bc", function()
     end
     vim.notify(("Deleted %d buffer%s"):format(deleted, deleted == 1 and "" or "s"))
 end, { desc = "kill unshown buffers" })
-map({ "n", "v" }, "<localleader>bx", "<cmd>bn | bd #<cr>", { desc = "kill buffer" })
-map({ "n", "v" }, "<localleader>bo", "<cmd>%bd |e# | bd#<cr>", { desc = "only buffer" })
-map({ "n", "v" }, "<localleader>l", "<cmd>e<cr>", { desc = "reload buffer" })
-map({ "n", "v" }, "<localleader>bl", "<cmd>e<cr>", { desc = "reload buffer" })
-map({ "n", "v" }, "<localleader>bD", function()
+map({ "n", "x" }, "<localleader>bO", "<cmd>%bd |e# | bd#<cr>", { desc = "only buffer" })
+map({ "n", "x" }, "<localleader>bx", "<cmd>bn | bd #<cr>", { desc = "kill buffer" })
+map({ "n", "x" }, "<localleader>l", "<cmd>e<cr>", { desc = "reload buffer" })
+map({ "n", "x" }, "<localleader>bl", "<cmd>e<cr>", { desc = "reload buffer" })
+map({ "n", "x" }, "<localleader>bD", function()
     Snacks.bufdelete()
 end, { desc = "buffer delete" })
-map({ "n", "v" }, "<localleader>bd", "<cmd>bd<cr>", { desc = "buffer delete" })
-map({ "n", "v" }, "<localleader>be", "<cmd>b#<cr>", { desc = "switch to last buffer" })
+map({ "n", "x" }, "<localleader>bd", "<cmd>bd<cr>", { desc = "buffer delete" })
+map({ "n", "x" }, "<localleader>be", "<cmd>b#<cr>", { desc = "switch to last buffer" })
 local function reload_all_buffers()
     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
         if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].buftype == "" and vim.api.nvim_buf_get_name(buf) ~= "" then
@@ -251,32 +264,32 @@ local function reload_all_buffers()
         end
     end
 end
-map({ "n", "v" }, "<localleader>bL", reload_all_buffers, { desc = "reload all buffers" })
-map({ "n", "v" }, "<localleader>L", reload_all_buffers, { desc = "reload all buffers" })
+map({ "n", "x" }, "<localleader>bL", reload_all_buffers, { desc = "reload all buffers" })
+map({ "n", "x" }, "<localleader>L", reload_all_buffers, { desc = "reload all buffers" })
 
-map({ "n", "v" }, "ZZ", "<cmd>x<cr>", { desc = "save quit file" })
-map({ "n", "v" }, "ZX", real_quit_window, { desc = "quit window" })
-map({ "n", "v" }, "ZC", "<cmd>qa<cr>", { desc = "quit all save session" })
-map({ "n", "v" }, "ZV", "<cmd>wqa<cr>", { desc = "save quit all" })
-map({ "n", "v" }, "ZQ", "<cmd>q<cr>", { desc = "quit window save session" })
+map({ "n", "x" }, "ZZ", "<cmd>x<cr>", { desc = "save quit file" })
+map({ "n", "x" }, "ZX", real_quit_window, { desc = "quit window" })
+map({ "n", "x" }, "ZC", "<cmd>qa<cr>", { desc = "quit all save session" })
+map({ "n", "x" }, "ZV", "<cmd>wqa<cr>", { desc = "save quit all" })
+map({ "n", "x" }, "ZQ", "<cmd>q<cr>", { desc = "quit window save session" })
 
-map({ "n", "v" }, "<localleader>QQ", "<cmd>AutoSession disable<CR><cmd>qa<cr>", { desc = "quit all disable session" }) -- TODO dont have this save sesion..
-map({ "n", "v" }, "<localleader>QA", "<cmd>qa<cr>", { desc = "quit all save session" }) -- TODO dont have this save sesion..
-map({ "n", "v" }, "<localleader>QW", "<cmd>wqa<cr>", { desc = "quit save all save session" }) -- TODO dont have this save sesion..
-map({ "n", "v" }, "<localleader>x", real_quit_window_without_closing_nvim, { desc = "Close Window" })
-map({ "n", "v" }, "<localleader>X", "<cmd>qa<cr>", { desc = "quit all save session" })
+map({ "n", "x" }, "<localleader>QQ", "<cmd>AutoSession disable<CR><cmd>qa<cr>", { desc = "quit all disable session" }) -- TODO dont have this save sesion..
+map({ "n", "x" }, "<localleader>QA", "<cmd>qa<cr>", { desc = "quit all save session" }) -- TODO dont have this save sesion..
+map({ "n", "x" }, "<localleader>QW", "<cmd>wqa<cr>", { desc = "quit save all save session" }) -- TODO dont have this save sesion..
+map({ "n", "x" }, "<localleader>x", real_quit_window_without_closing_nvim, { desc = "Close Window" })
+map({ "n", "x" }, "<localleader>X", "<cmd>qa<cr>", { desc = "quit all save session" })
 
-map({ "n", "v" }, "<localleader>s", "<cmd>w<cr>", { desc = "Save Buffer" })
-map({ "n", "v" }, "<localleader>S", "<cmd>wa<cr>", { desc = "Save All Buffers" })
-map({ "n", "v" }, "<localleader>Ws", "<cmd>w<cr>", { desc = "Save Buffer" })
-map({ "n", "v" }, "<localleader>WS", "<cmd>wa<cr>", { desc = "Save All Buffers" })
-map({ "n", "v" }, "<localleader>We", "<cmd>noautocmd w<cr>", { desc = "save buffer no format" })
-map({ "n", "v" }, "<localleader>WE", "<cmd>noautocmd wa<cr>", { desc = "save all files no format" })
+map({ "n", "x" }, "<localleader>s", "<cmd>w<cr>", { desc = "Save Buffer" })
+map({ "n", "x" }, "<localleader>S", "<cmd>wa<cr>", { desc = "Save All Buffers" })
+map({ "n", "x" }, "<localleader>Ws", "<cmd>w<cr>", { desc = "Save Buffer" })
+map({ "n", "x" }, "<localleader>WS", "<cmd>wa<cr>", { desc = "Save All Buffers" })
+map({ "n", "x" }, "<localleader>We", "<cmd>noautocmd w<cr>", { desc = "save buffer no format" })
+map({ "n", "x" }, "<localleader>WE", "<cmd>noautocmd wa<cr>", { desc = "save all files no format" })
 
-map({ "n", "v" }, "<localleader>Nn", "<cmd>messages<cr>", { desc = "Messages" })
-map({ "n", "v" }, '<localleader>N"', "<cmd>registers<cr>", { desc = "Registers" })
-map({ "n", "v" }, "<localleader>Nj", "<cmd>jumps<cr>", { desc = "Jumps" })
-map({ "n", "v" }, "<localleader>N'", "<cmd>marks<cr>", { desc = "Marks" })
+map({ "n", "x" }, "<localleader>Nn", "<cmd>messages<cr>", { desc = "Messages" })
+map({ "n", "x" }, '<localleader>N"', "<cmd>registers<cr>", { desc = "Registers" })
+map({ "n", "x" }, "<localleader>Nj", "<cmd>jumps<cr>", { desc = "Jumps" })
+map({ "n", "x" }, "<localleader>N'", "<cmd>marks<cr>", { desc = "Marks" })
 
 -- map("n", "<localleader>D", "<cmd>Ex<cr>", { desc = "Explore" })
 -- map("n", "<localleader>d", "<cmd>Lexplore<cr>", { desc = "Explore Bar" })
@@ -292,7 +305,7 @@ map("i", "<C-down>", "<Esc><cmd>m +1<CR>gi", { desc = "Move line down" })
 map("i", "<C-up>", "<Esc><cmd>m -2<CR>gi", { desc = "Move line up" })
 
 map("n", "<CR>", "O<Esc>j", { desc = "Insert blank line above" })
-map("v", "<CR>", "y", { desc = "Yank selection" })
+map("x", "<CR>", "y", { desc = "Yank selection" })
 -- map("x", "<localleader>p", '"_dP', { desc = "Paste without yank" })
 
 -- Paste forced characterwise (inline).
@@ -316,7 +329,7 @@ map("n", "zP", function()
     paste_charwise(false)
 end, { desc = "Paste before characterwise inline" })
 
-map("n", "<Home>", "^", { remap = true, desc = "Go to beginning of line" })
+map({ "n", "v", "o" }, "<Home>", "^", { remap = true, desc = "Go to beginning of line" })
 -- map("n", "<Home>", function()
 --     local cur_col = vim.fn.col(".")
 --     vim.cmd("normal! ^")
@@ -327,7 +340,7 @@ map("n", "<Home>", "^", { remap = true, desc = "Go to beginning of line" })
 --     end
 -- end, { desc = "Go to beginning of line (smart home)" })
 
-map("n", "S", "s$", { remap = true, desc = "Stamp to end of line" })
+map({ "n", "x", "o" }, "S", "s$", { remap = true, desc = "Stamp to end of line" })
 
 -- map("n", "yiy", "my^vg_y`y", { desc = "Yank trimmed line (characterwise)" })
 map({ "x", "o" }, "iy", function()
@@ -359,19 +372,16 @@ end, { desc = "Text object: entire file (trimmed)" })
 
 map("n", "<Space>", "i<Space><ESC>l", { desc = "Insert space" })
 map("n", "<BS>", "i<BS><Esc>l", { desc = "Delete character before cursor" })
-
-map("i", "<Insert>", "<Esc><Right>", { desc = "Exit insert mode (disable replace)" })
-
-map("n", "<C-w>e", "<cmd>wincmd p<CR>", { silent = true, desc = "Previous window split" })
+-- map("i", "<Insert>", "<Esc><Right>", { desc = "Exit insert mode (disable replace)" })
 
 -- map("n", "<localleader>c", "<cmd>let @+ = fnamemodify(expand('%'), ':.')<CR><cmd>echo 'Copied: ' . fnamemodify(expand('%'), ':.')<CR>", { desc = "copy relative path" })
 -- map("n", "<localleader>C", "<cmd>let @+ = expand('%:p')<CR><cmd>echo 'Copied: ' . expand('%:p')<CR>", { desc = "copy absolute path" })
-map("n", "<localleader>c", function()
+map({ "n", "x" }, "<localleader>c", function()
     local rel = vim.fn.fnamemodify(vim.fn.expand("%"), ":.")
     vim.fn.setreg("+", rel)
     vim.notify("Copied: " .. rel)
 end, { desc = "copy relative path" })
-map("n", "<localleader>C", function()
+map({ "n", "x" }, "<localleader>C", function()
     local abs = vim.fn.expand("%:p")
     vim.fn.setreg("+", abs)
     vim.notify("Copied: " .. abs)
@@ -471,7 +481,9 @@ Snacks.toggle
             if state then
                 vim.cmd("LspStart eslint")
             else
-                vim.lsp.stop_client(vim.lsp.get_clients({ name = "eslint", bufnr = 0 }))
+                for _, client in ipairs(vim.lsp.get_clients({ name = "eslint", bufnr = 0 })) do
+                    client:stop()
+                end
             end
         end,
     })
@@ -645,8 +657,4 @@ do
     make_bracket_mappings_repeatable("s")
     make_bracket_mappings_repeatable("t")
     make_mappings_repeatable("gt", "gT")
-
-    -- local repeatable_next_todo, repeatable_prev_todo = repeat_move.make_repeatable_move_pair(resolve_map_fn("]t"), resolve_map_fn("[t"))
-    -- map(map_modes("]t"), "]t", repeatable_next_todo, { desc = map_desc("]t") })
-    -- map(map_modes("[t"), "[t", repeatable_prev_todo, { desc = map_desc("[t") })
 end
