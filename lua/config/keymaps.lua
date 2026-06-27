@@ -47,6 +47,7 @@ map({ "n", "x" }, "<localleader>wx", "<C-W>c", { desc = "Close Window" })
 map({ "n", "x" }, "<localleader>wO", "<C-W>o", { desc = "Only Window" })
 map({ "n", "x" }, "<localleader>we", "<cmd>wincmd p<CR>", { silent = true, desc = "Previous window split" })
 map({ "n", "x" }, "<localleader>wmn", "<C-W>x", { desc = "Swap current window with next" })
+map({ "n", "x" }, "<localleader>wmr", "<C-W>r", { desc = "Rotate  Windows" })
 
 map({ "n", "x" }, "<localleader>tn", "<cmd>tabnew<cr>", { desc = "Tab new" })
 map({ "n", "x" }, "<localleader>ts", "<cmd>tab split<cr>", { desc = "open current buffer into new tab" })

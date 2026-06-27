@@ -715,6 +715,34 @@ return {
         dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
     },
     {
+        "custom/window-move",
+        event = "LazyFile",
+        dev = true,
+        config = function()
+            local wm = require("window-move")
+
+            local function map(mode, l, r, desc)
+                vim.keymap.set(mode, l, r, { desc = desc, silent = true })
+            end
+
+            map({ "n", "x" }, "<localleader>wmk", function()
+                wm.window_move("up")
+            end, "Move Window Up")
+
+            map({ "n", "x" }, "<localleader>wmj", function()
+                wm.window_move("down")
+            end, "Move Window Down")
+
+            map({ "n", "x" }, "<localleader>wmh", function()
+                wm.window_move("left")
+            end, "Move Window Left")
+
+            map({ "n", "x" }, "<localleader>wml", function()
+                wm.window_move("right")
+            end, "Move Window Right")
+        end,
+    },
+    {
         "custom/project-check",
         event = "LazyFile",
         dev = true,
