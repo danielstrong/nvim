@@ -250,6 +250,7 @@ return {
                 { "<localleader>z", group = "Session", mode = { "n", "x" } },
                 { "<localleader>W", group = "Save", mode = { "n", "x" } },
                 { "<localleader>t", group = "Tabs", mode = { "n", "x" } },
+                { "<localleader>tm", group = "Move Tab", mode = { "n", "x" } },
                 { "<localleader>u", group = "UI", mode = { "n", "x" } },
                 {
                     "<localleader>w",
@@ -270,6 +271,33 @@ return {
                                     end,
                                     desc = name,
                                     icon = { cat = "file", name = name },
+                                }
+                            end
+                        end
+                        return ret
+                    end,
+                    mode = { "n", "x" },
+                },
+                {
+                    "<localleader>wm",
+                    group = "Move Window",
+                    expand = function()
+                        local extras = require("which-key.extras")
+                        local wm = require("window-move")
+                        local ret = {}
+                        for i = 1, vim.fn.winnr("$") do
+                            local win = vim.fn.win_getid(i)
+                            if vim.api.nvim_win_get_config(win).relative == "" then
+                                local buf = vim.api.nvim_win_get_buf(win)
+                                local name = extras.bufname(buf)
+                                ret[#ret + 1] = {
+                                    tostring(i),
+                                    function()
+                                        wm.window_swap_to(i)
+                                    end,
+                                    desc = "Move to " .. name,
+                                    icon = { cat = "file", name = name },
+                                    mode = { "n", "x" },
                                 }
                             end
                         end
@@ -740,12 +768,6 @@ return {
             map({ "n", "x" }, "<localleader>wml", function()
                 wm.window_move("right")
             end, "Move Window Right")
-
-            for i = 1, 9 do
-                map({ "n", "x" }, "<localleader>wm" .. i, function()
-                    wm.window_swap_to(i)
-                end, "Swap Window With " .. i)
-            end
         end,
     },
     {
