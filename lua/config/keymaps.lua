@@ -43,8 +43,8 @@ map({ "n", "x" }, "<localleader>vb", "<C-v>", { desc = "enter visual block mode"
 
 map({ "n", "x" }, "<localleader>wt", "<cmd>tab split<cr>", { desc = "Split Window to Tab" })
 map({ "n", "x" }, "<localleader>wS", "<C-W>v", { desc = "Split Window Right" })
-map({ "n", "x" }, "<localleader>wO", "<C-W>o", { desc = "Only Window" })
 map({ "n", "x" }, "<localleader>wx", "<C-W>c", { desc = "Close Window" })
+map({ "n", "x" }, "<localleader>wO", "<C-W>o", { desc = "Only Window" })
 map({ "n", "x" }, "<localleader>we", "<cmd>wincmd p<CR>", { silent = true, desc = "Previous window split" })
 map({ "n", "x" }, "<localleader>wmn", "<C-W>x", { desc = "Swap current window with next" })
 
