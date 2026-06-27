@@ -114,13 +114,32 @@ local setWindowOptions = function(window, options)
     end
 end
 
+local swap_windows = function(currentWindow, targetWindow)
+    local currentBuffer = api.nvim_win_get_buf(currentWindow)
+    local currentWindowOptions = getAllWindowOptions(currentWindow)
+    local currentCursor = api.nvim_win_get_cursor(currentWindow)
+
+    local targetBuffer = api.nvim_win_get_buf(targetWindow)
+    local targetWindowOptions = getAllWindowOptions(targetWindow)
+    local targetCursor = api.nvim_win_get_cursor(targetWindow)
+
+    api.nvim_win_set_buf(targetWindow, currentBuffer)
+    api.nvim_win_set_buf(currentWindow, targetBuffer)
+
+    setWindowOptions(currentWindow, targetWindowOptions)
+    setWindowOptions(targetWindow, currentWindowOptions)
+
+    api.nvim_win_set_cursor(currentWindow, targetCursor)
+    api.nvim_win_set_cursor(targetWindow, currentCursor)
+
+    -- This should check the 'textlock' before calling set_current_window
+    pcall(api.nvim_set_current_win, targetWindow)
+end
+
 local M = {}
 
 M.window_move = function(direction)
-    local currentBuffer = api.nvim_get_current_buf()
     local currentWindow = api.nvim_get_current_win()
-    local currentWindowOptionr = getAllWindowOptions(currentWindow)
-    local currentCursor = api.nvim_win_get_cursor(currentWindow)
 
     local cursor = getCursorPosition(direction)
 
@@ -134,21 +153,16 @@ M.window_move = function(direction)
         targetWindow = collisionWithAnyWindow(cursor)
     end
 
-    local targetBuffer = api.nvim_win_get_buf(targetWindow.id)
-    local targetWindowOptions = getAllWindowOptions(targetWindow.id)
-    local targetCursor = api.nvim_win_get_cursor(targetWindow.id)
+    swap_windows(currentWindow, targetWindow.id)
+end
 
-    api.nvim_win_set_buf(targetWindow.id, currentBuffer)
-    api.nvim_win_set_buf(currentWindow, targetBuffer)
-
-    setWindowOptions(currentWindow, targetWindowOptions)
-    setWindowOptions(targetWindow.id, currentWindowOptionr)
-
-    api.nvim_win_set_cursor(currentWindow, targetCursor)
-    api.nvim_win_set_cursor(targetWindow.id, currentCursor)
-
-    -- This should check the 'textlock' before calling set_current_window
-    pcall(api.nvim_set_current_win, targetWindow.id)
+M.window_swap_to = function(winnr)
+    local targetWindow = vim.fn.win_getid(winnr)
+    local currentWindow = api.nvim_get_current_win()
+    if targetWindow == 0 or targetWindow == currentWindow then
+        return
+    end
+    swap_windows(currentWindow, targetWindow)
 end
 
 return M

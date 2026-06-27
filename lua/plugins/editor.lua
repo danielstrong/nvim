@@ -740,6 +740,12 @@ return {
             map({ "n", "x" }, "<localleader>wml", function()
                 wm.window_move("right")
             end, "Move Window Right")
+
+            for i = 1, 9 do
+                map({ "n", "x" }, "<localleader>wm" .. i, function()
+                    wm.window_swap_to(i)
+                end, "Swap Window With " .. i)
+            end
         end,
     },
     {
