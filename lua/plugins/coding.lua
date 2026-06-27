@@ -24,13 +24,13 @@ return {
         end,
         opts = {
             mappings = {
-                add = "gsa", -- Add surrounding in Normal and Visual modes
-                delete = "gsd", -- Delete surrounding
-                find = "gsf", -- Find surrounding (to the right)
-                find_left = "gsF", -- Find surrounding (to the left)
-                highlight = "gsh", -- Highlight surrounding
-                replace = "gsr", -- Replace surrounding
-                update_n_lines = "gsn", -- Update `n_lines`
+                replace = "csr", -- Replace surrounding
+                add = "csa", -- Add surrounding in Normal and Visual modes
+                delete = "csd", -- Delete surrounding
+                find = "gHf", -- Find surrounding (to the right)
+                find_left = "gHF", -- Find surrounding (to the left)
+                highlight = "gHH", -- Highlight surrounding
+                update_n_lines = "gHn", -- Update `n_lines`
             },
         },
     },
