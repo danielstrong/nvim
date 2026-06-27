@@ -34,12 +34,12 @@ map("n", "<localleader>ra", 'b"hyiw:%s!<C-r>h!!g<left><left><C-r>h', { noremap =
 -- to use: visually select the target word, use this keymap, the type in replacement text
 map("x", "<localleader>ra", '"hy:%s!<C-r>h!!g<left><left><C-r>h', { noremap = true, desc = "Find and replace visually all" })
 
-map("n", "#", "gcc", { remap = true, desc = "toggle line comment" })
-map("x", "#", "gc", { remap = true, desc = "toggle comment" })
+map("n", "#", "gcc", { remap = true, desc = "Toggle line comment" })
+map("x", "#", "gc", { remap = true, desc = "Toggle comment" })
 
 map({ "n", "x" }, "x", '"_x')
 map({ "n", "x" }, "X", '"_X')
-map({ "n", "x" }, "<localleader>vb", "<C-v>", { desc = "enter visual block mode" })
+map({ "n", "x" }, "<localleader>vb", "<C-v>", { desc = "Enter visual block mode" })
 
 map({ "n", "x" }, "<localleader>wt", "<cmd>tab split<cr>", { desc = "Split Window to Tab" })
 map({ "n", "x" }, "<localleader>wS", "<C-W>v", { desc = "Split Window Right" })
