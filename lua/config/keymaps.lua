@@ -55,6 +55,7 @@ map({ "n", "x" }, "<localleader>wmK", "<C-W>K", { desc = "Move Window Far Top" }
 
 map({ "n", "x" }, "<localleader>tn", "<cmd>tabnew<cr>", { desc = "Tab new" })
 map({ "n", "x" }, "<localleader>tw", "<cmd>tab split<cr>", { desc = "Open current window into new tab" })
+map({ "n", "x" }, "<localleader>ts", "<cmd>tab split<cr>", { desc = "Open current window into new tab" })
 map({ "n", "x" }, "<localleader>tW", "<C-W>T", { desc = "Break out window into new tab" })
 map({ "n", "x" }, "<localleader>tx", "<cmd>tabclose<cr>", { desc = "Tab close" })
 map({ "n", "x" }, "<localleader>tO", "<cmd>tabonly<cr>", { desc = "Kill other tabs" })

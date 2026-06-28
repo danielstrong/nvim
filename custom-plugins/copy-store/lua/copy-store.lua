@@ -86,7 +86,7 @@ local function sanitize_name(input)
     return base .. "." .. ext
 end
 
--- Opens a centered Snacks float backed by a NORMAL file buffer at `path`.
+-- Opens a centered native float backed by a NORMAL file buffer at `path`.
 -- For a new copy, `lines` seeds the (not-yet-on-disk) buffer and `modified=true`.
 -- For editing, omit lines/modified; the file is loaded from disk as-is.
 -- Saving/quitting use the user's normal global keybinds (no custom maps/autocmds).
@@ -103,17 +103,33 @@ local function open_editor_float(opts)
         vim.bo[buf].modified = opts.modified == true
     end
 
-    Snacks.win({
-        buf = buf,
+    if vim.bo[buf].filetype == "" then
+        vim.bo[buf].filetype = "markdown"
+    end
+
+    local width = math.floor(vim.o.columns * 0.8)
+    local height = math.floor(vim.o.lines * 0.8)
+    local row = math.floor((vim.o.lines - height) / 2)
+    local col = math.floor((vim.o.columns - width) / 2)
+
+    local win = vim.api.nvim_open_win(buf, true, {
+        relative = "editor",
+        width = width,
+        height = height,
+        row = row,
+        col = col,
+        -- style = "minimal",
+        border = "rounded",
         title = opts.title or " Copy Store ",
         title_pos = "center",
-        width = 0.8,
-        height = 0.8,
-        border = "rounded",
-        enter = true,
-        ft = "markdown",
-        wo = { number = true, relativenumber = false, wrap = true },
     })
+
+    vim.wo[win].number = true
+    vim.wo[win].relativenumber = false
+    vim.wo[win].wrap = true
+    vim.wo[win].spell = true
+    -- vim.wo[win].winhighlight = "NormalFloat:Normal,FloatBorder:Normal"
+    vim.wo[win].winhighlight = "NormalFloat:Normal"
 end
 
 -- Prompt for a name in `dir`, sanitize, re-prompt on invalid/collision, then
