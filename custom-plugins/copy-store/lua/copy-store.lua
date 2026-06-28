@@ -1,5 +1,12 @@
 local M = {}
 
+local state = { extra_dirs = {} }
+
+function M.setup(opts)
+    opts = opts or {}
+    state.extra_dirs = opts.extra_dirs or {}
+end
+
 local function copies_dir()
     return vim.fn.stdpath("config") .. "/custom-plugins/copy-store/copies"
 end
@@ -8,19 +15,43 @@ local function ensure_dir()
     vim.fn.mkdir(copies_dir(), "p")
 end
 
-local function list_copy_files()
-    local dir = copies_dir()
-    if vim.fn.isdirectory(dir) == 0 then
-        return {}
-    end
-    local names = {}
-    for _, path in ipairs(vim.fn.globpath(dir, "*", false, true)) do
-        if vim.fn.isdirectory(path) == 0 then
-            table.insert(names, vim.fn.fnamemodify(path, ":t"))
+-- Ordered list of absolute source dirs: copies_dir() first, then each
+-- configured extra dir with ~ expanded. Missing extra dirs warn and are skipped.
+local function source_dirs()
+    local dirs = { copies_dir() }
+    for _, dir in ipairs(state.extra_dirs) do
+        local expanded = vim.fn.expand(dir)
+        if vim.fn.isdirectory(expanded) == 1 then
+            table.insert(dirs, expanded)
+        else
+            vim.notify("copy-store: extra dir not found: " .. dir, vim.log.levels.WARN)
         end
     end
-    table.sort(names)
-    return names
+    return dirs
+end
+
+-- Absolute path of copies_dir(), normalized, with a trailing slash.
+local function copies_root()
+    return vim.fn.fnamemodify(copies_dir(), ":p")
+end
+
+local function is_in_copies(path)
+    local full = vim.fn.fnamemodify(path, ":p")
+    return full:sub(1, #copies_root()) == copies_root()
+end
+
+-- Absolute file paths gathered recursively from every source dir.
+local function list_copy_files()
+    local paths = {}
+    for _, dir in ipairs(source_dirs()) do
+        for _, path in ipairs(vim.fn.globpath(dir, "**/*", false, true)) do
+            if vim.fn.isdirectory(path) == 0 then
+                table.insert(paths, path)
+            end
+        end
+    end
+    table.sort(paths)
+    return paths
 end
 
 local function file_exists(name)
@@ -61,6 +92,9 @@ local function open_editor_float(opts)
     local lines = opts.lines or {}
     local self_name = opts.self_name
     local default_name = opts.default_name
+    -- When set and outside copies_dir(), saving writes here in place (no prompt).
+    local save_path = opts.save_path
+    local in_place = save_path ~= nil and not is_in_copies(save_path)
 
     local win = Snacks.win({
         title = opts.title or " Copy Store ",
@@ -88,6 +122,16 @@ local function open_editor_float(opts)
         win:close()
     end
 
+    -- In-place save for extra-dir files: write straight to save_path, no prompt.
+    local function save_in_place()
+        local content = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+        vim.fn.writefile(content, save_path)
+        vim.bo[buf].modified = false
+        vim.notify("Saved " .. vim.fn.fnamemodify(save_path, ":t"), vim.log.levels.INFO)
+        close()
+    end
+
+    -- Name-prompt save for new copies and files inside copies_dir().
     local function save_flow(default)
         vim.ui.input({ prompt = "Save copy as: ", default = default }, function(input)
             if input == nil then
@@ -110,13 +154,21 @@ local function open_editor_float(opts)
         end)
     end
 
-    -- :w / :wq / :x / ZZ route through the save-flow (acwrite => no real write).
+    local function do_save()
+        if in_place then
+            save_in_place()
+        else
+            save_flow(default_name)
+        end
+    end
+
+    -- :w / :wq / :x / ZZ route through the save logic (acwrite => no real write).
     local saving = false
     vim.api.nvim_create_autocmd("BufWriteCmd", {
         buffer = buf,
         callback = function()
             saving = true
-            save_flow(default_name)
+            do_save()
         end,
     })
 
@@ -135,9 +187,7 @@ local function open_editor_float(opts)
     })
 
     local map_opts = { buffer = buf, silent = true, nowait = true }
-    vim.keymap.set("n", "ZZ", function()
-        save_flow(default_name)
-    end, map_opts)
+    vim.keymap.set("n", "ZZ", do_save, map_opts)
     vim.keymap.set("n", "ZX", close, map_opts)
     vim.keymap.set("n", "<localleader>x", close, map_opts)
 end
@@ -171,21 +221,30 @@ function M.edit_copy_store_entry()
 
     require("fzf-lua").fzf_exec(files, {
         prompt = "Edit Copy> ",
-        cwd = copies_dir(),
         previewer = "builtin",
+        fzf_opts = { ["--delimiter"] = "/", ["--with-nth"] = "-1" },
         actions = {
             ["default"] = function(selected)
                 if not selected or #selected == 0 then
                     return
                 end
-                local name = selected[1]
-                local content = vim.fn.readfile(copies_dir() .. "/" .. name)
-                open_editor_float({
-                    title = " Edit: " .. name .. " ",
-                    lines = content,
-                    self_name = name,
-                    default_name = name,
-                })
+                local path = selected[1]
+                local name = vim.fn.fnamemodify(path, ":t")
+                local content = vim.fn.readfile(path)
+                if is_in_copies(path) then
+                    open_editor_float({
+                        title = " Edit: " .. name .. " ",
+                        lines = content,
+                        self_name = name,
+                        default_name = name,
+                    })
+                else
+                    open_editor_float({
+                        title = " Edit: " .. name .. " ",
+                        lines = content,
+                        save_path = path,
+                    })
+                end
             end,
         },
     })
@@ -214,20 +273,19 @@ function M.paste_copy_store_entry()
 
     require("fzf-lua").fzf_exec(files, {
         prompt = "Paste Copy> ",
-        cwd = copies_dir(),
         previewer = "builtin",
-        fzf_opts = { ["--multi"] = true },
+        fzf_opts = { ["--multi"] = true, ["--delimiter"] = "/", ["--with-nth"] = "-1" },
         actions = {
             ["default"] = function(selected)
                 if not selected or #selected == 0 then
                     return
                 end
                 local combined = {}
-                for i, name in ipairs(selected) do
+                for i, path in ipairs(selected) do
                     if i > 1 then
                         table.insert(combined, "")
                     end
-                    for _, line in ipairs(vim.fn.readfile(copies_dir() .. "/" .. name)) do
+                    for _, line in ipairs(vim.fn.readfile(path)) do
                         table.insert(combined, line)
                     end
                 end

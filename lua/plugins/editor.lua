@@ -751,6 +751,13 @@ return {
         config = function()
             local cs = require("copy-store")
 
+            cs.setup({
+                -- Extra absolute dirs (~ allowed) to read copies from for paste/edit.
+                -- New copies always save into the nvim copies/ dir; extra-dir files
+                -- edit in place. Example: extra_dirs = { "~/my-prompts" }
+                extra_dirs = { "~/.claude/custom-system-prompts" },
+            })
+
             local function map(mode, l, r, desc)
                 vim.keymap.set(mode, l, r, { desc = desc, silent = true })
             end
