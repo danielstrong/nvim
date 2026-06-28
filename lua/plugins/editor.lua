@@ -752,9 +752,10 @@ return {
             local cs = require("copy-store")
 
             cs.setup({
-                -- Extra absolute dirs (~ allowed) to read copies from for paste/edit.
-                -- New copies always save into the nvim copies/ dir; extra-dir files
-                -- edit in place. Example: extra_dirs = { "~/my-prompts" }
+                -- Extra absolute dirs (~ allowed) that act as full copy stores:
+                -- they're listed for paste/edit and offered as save targets, so
+                -- copies can be created and renamed in them just like the nvim
+                -- copies/ dir. Example: extra_dirs = { "~/my-prompts" }
                 extra_dirs = { "~/.claude/custom-system-prompts" },
             })
 
