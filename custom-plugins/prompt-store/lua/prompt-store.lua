@@ -40,7 +40,7 @@ local function sanitize_name(input)
         base = input
         ext = "md"
     end
-    base = base:gsub("[^%w%-]", "")
+    base = base:gsub("[^%w%-]", "-")
     base = base:gsub("%-+", "-")
     base = base:gsub("^%-+", ""):gsub("%-+$", "")
     if base == "" then
@@ -171,6 +171,8 @@ function M.edit_prompt_store_entry()
 
     require("fzf-lua").fzf_exec(files, {
         prompt = "Edit Prompt> ",
+        cwd = prompts_dir(),
+        previewer = "builtin",
         actions = {
             ["default"] = function(selected)
                 if not selected or #selected == 0 then
@@ -212,6 +214,8 @@ function M.paste_prompt_store_entry()
 
     require("fzf-lua").fzf_exec(files, {
         prompt = "Paste Prompt> ",
+        cwd = prompts_dir(),
+        previewer = "builtin",
         fzf_opts = { ["--multi"] = true },
         actions = {
             ["default"] = function(selected)
