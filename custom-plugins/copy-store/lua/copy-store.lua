@@ -269,13 +269,12 @@ function M.edit_copy_store_entry()
     })
 end
 
-function M.paste_copy_store_entry()
+-- Captures the paste target BEFORE the picker opens (mode, cursor, selection).
+local function capture_paste_ctx()
     local mode = vim.fn.mode()
     local is_visual = mode == "v" or mode == "V" or mode == "\22"
-
     local buf = vim.api.nvim_get_current_buf()
     local cursor_line = vim.api.nvim_win_get_cursor(0)[1]
-
     local sel_start, sel_end
     if is_visual then
         -- leave visual mode so '< '> marks are set
@@ -283,6 +282,38 @@ function M.paste_copy_store_entry()
         sel_start = vim.api.nvim_buf_get_mark(buf, "<")[1]
         sel_end = vim.api.nvim_buf_get_mark(buf, ">")[1]
     end
+    return {
+        buf = buf,
+        cursor_line = cursor_line,
+        is_visual = is_visual,
+        sel_start = sel_start,
+        sel_end = sel_end,
+    }
+end
+
+-- Reads each absolute path, joins with blank lines + a leading blank line, and
+-- inserts below the cursor (or replaces the selection) using the captured ctx.
+local function paste_paths(paths, ctx)
+    local combined = {}
+    for i, path in ipairs(paths) do
+        if i > 1 then
+            table.insert(combined, "")
+        end
+        for _, line in ipairs(vim.fn.readfile(path)) do
+            table.insert(combined, line)
+        end
+    end
+    table.insert(combined, 1, "")
+
+    if ctx.is_visual then
+        vim.api.nvim_buf_set_lines(ctx.buf, ctx.sel_start - 1, ctx.sel_end, false, combined)
+    else
+        vim.api.nvim_buf_set_lines(ctx.buf, ctx.cursor_line, ctx.cursor_line, false, combined)
+    end
+end
+
+function M.paste_copy_store_entry()
+    local ctx = capture_paste_ctx()
 
     local entries = list_copy_entries()
     if #entries == 0 then
@@ -299,22 +330,35 @@ function M.paste_copy_store_entry()
                 if not selected or #selected == 0 then
                     return
                 end
-                local combined = {}
-                for i, entry in ipairs(selected) do
-                    if i > 1 then
-                        table.insert(combined, "")
-                    end
-                    for _, line in ipairs(vim.fn.readfile(entry_path(entry))) do
-                        table.insert(combined, line)
-                    end
+                local paths = {}
+                for _, entry in ipairs(selected) do
+                    table.insert(paths, entry_path(entry))
                 end
-                table.insert(combined, 1, "")
+                paste_paths(paths, ctx)
+            end,
+        },
+    })
+end
 
-                if is_visual then
-                    vim.api.nvim_buf_set_lines(buf, sel_start - 1, sel_end, false, combined)
-                else
-                    vim.api.nvim_buf_set_lines(buf, cursor_line, cursor_line, false, combined)
+function M.paste_cwd_entry()
+    local ctx = capture_paste_ctx()
+
+    require("fzf-lua").files({
+        prompt = "Paste from CWD> ",
+        cwd = vim.fn.getcwd(),
+        cmd = "fd --type f -e md -e txt",
+        fzf_opts = { ["--multi"] = true },
+        actions = {
+            ["default"] = function(selected, opts)
+                if not selected or #selected == 0 then
+                    return
                 end
+                local fzf_path = require("fzf-lua.path")
+                local paths = {}
+                for _, entry in ipairs(selected) do
+                    table.insert(paths, fzf_path.entry_to_file(entry, opts).path)
+                end
+                paste_paths(paths, ctx)
             end,
         },
     })

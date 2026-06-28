@@ -767,6 +767,8 @@ return {
             map({ "n", "x" }, "<localleader>oe", cs.edit_copy_store_entry, "Modify Copy from Copy Store")
 
             map({ "n", "x" }, "<localleader>op", cs.paste_copy_store_entry, "Paste Copy from Copy Store")
+
+            map({ "n", "x" }, "<localleader>oi", cs.paste_cwd_entry, "Paste Copy from CWD")
         end,
     },
     {
