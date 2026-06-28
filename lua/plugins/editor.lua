@@ -756,7 +756,10 @@ return {
                 -- they're listed for paste/edit and offered as save targets, so
                 -- copies can be created and renamed in them just like the nvim
                 -- copies/ dir. Example: extra_dirs = { "~/my-prompts" }
-                extra_dirs = { "~/.claude/custom-system-prompts" },
+                extra_dirs = vim.g.is_mac and {
+                    "~/.claude/custom-system-prompts",
+                    "~/.config/clp/context",
+                } or nil,
             })
 
             local function map(mode, l, r, desc)

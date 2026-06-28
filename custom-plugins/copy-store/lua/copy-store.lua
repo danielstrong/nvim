@@ -60,6 +60,12 @@ local function entry_path(entry)
     return entry:match("\t(.+)$") or entry
 end
 
+local function copy_store_fmt_from(entry)
+    local nbsp = require("fzf-lua.utils").nbsp
+    local display, path = entry:match("^(.-)%\t(.+)$")
+    return path and (display .. nbsp .. path) or entry
+end
+
 local function file_exists(dir, name)
     return vim.fn.filereadable(dir .. "/" .. name) == 1
 end
@@ -129,7 +135,7 @@ local function open_editor_float(opts)
     vim.wo[win].wrap = true
     vim.wo[win].spell = true
     -- vim.wo[win].winhighlight = "NormalFloat:Normal,FloatBorder:Normal"
-    vim.wo[win].winhighlight = "NormalFloat:Normal"
+    -- vim.wo[win].winhighlight = "NormalFloat:Normal"
 end
 
 -- Prompt for a name in `dir`, sanitize, re-prompt on invalid/collision, then
@@ -188,16 +194,6 @@ function M.create_copy_store_entry()
     end)
 end
 
-local function copy_preview()
-    return {
-        type = "cmd",
-        field_index = "{}",
-        fn = function(items)
-            return "cat " .. vim.fn.shellescape(entry_path(items[1]))
-        end,
-    }
-end
-
 function M.edit_copy_store_entry()
     local entries = list_copy_entries()
     if #entries == 0 then
@@ -207,7 +203,8 @@ function M.edit_copy_store_entry()
 
     require("fzf-lua").fzf_exec(entries, {
         prompt = "Edit Copy> ",
-        preview = copy_preview(),
+        previewer = "builtin",
+        _fmt = { from = copy_store_fmt_from },
         fzf_opts = { ["--delimiter"] = "\t", ["--with-nth"] = "1", ["--nth"] = "1" },
         actions = {
             ["default"] = function(selected)
@@ -279,7 +276,8 @@ function M.paste_copy_store_entry()
 
     require("fzf-lua").fzf_exec(entries, {
         prompt = "Paste Copy> ",
-        preview = copy_preview(),
+        previewer = "builtin",
+        _fmt = { from = copy_store_fmt_from },
         fzf_opts = { ["--multi"] = true, ["--delimiter"] = "\t", ["--with-nth"] = "1", ["--nth"] = "1" },
         actions = {
             ["default"] = function(selected)
