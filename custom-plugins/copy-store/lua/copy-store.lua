@@ -1,15 +1,15 @@
 local M = {}
 
-local function prompts_dir()
-    return vim.fn.stdpath("config") .. "/custom-plugins/prompt-store/prompts"
+local function copies_dir()
+    return vim.fn.stdpath("config") .. "/custom-plugins/copy-store/copies"
 end
 
 local function ensure_dir()
-    vim.fn.mkdir(prompts_dir(), "p")
+    vim.fn.mkdir(copies_dir(), "p")
 end
 
-local function list_prompt_files()
-    local dir = prompts_dir()
+local function list_copy_files()
+    local dir = copies_dir()
     if vim.fn.isdirectory(dir) == 0 then
         return {}
     end
@@ -24,7 +24,7 @@ local function list_prompt_files()
 end
 
 local function file_exists(name)
-    return vim.fn.filereadable(prompts_dir() .. "/" .. name) == 1
+    return vim.fn.filereadable(copies_dir() .. "/" .. name) == 1
 end
 
 local function sanitize_name(input)
@@ -51,7 +51,7 @@ end
 
 local function write_file(name, lines)
     ensure_dir()
-    vim.fn.writefile(lines, prompts_dir() .. "/" .. name)
+    vim.fn.writefile(lines, copies_dir() .. "/" .. name)
 end
 
 -- Opens a centered float seeded with `lines`. On ZZ/:wq runs the save-flow;
@@ -63,7 +63,7 @@ local function open_editor_float(opts)
     local default_name = opts.default_name
 
     local win = Snacks.win({
-        title = opts.title or " Prompt Store ",
+        title = opts.title or " Copy Store ",
         title_pos = "center",
         width = 0.8,
         height = 0.8,
@@ -77,7 +77,7 @@ local function open_editor_float(opts)
     local buf = win.buf
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
     vim.bo[buf].modified = false
-    vim.api.nvim_buf_set_name(buf, "prompt-store://" .. (self_name or "new"))
+    vim.api.nvim_buf_set_name(buf, "copy-store://" .. (self_name or "new"))
 
     local closed = false
     local function close()
@@ -89,7 +89,7 @@ local function open_editor_float(opts)
     end
 
     local function save_flow(default)
-        vim.ui.input({ prompt = "Save prompt as: ", default = default }, function(input)
+        vim.ui.input({ prompt = "Save copy as: ", default = default }, function(input)
             if input == nil then
                 return
             end
@@ -142,7 +142,7 @@ local function open_editor_float(opts)
     vim.keymap.set("n", "<localleader>x", close, map_opts)
 end
 
-function M.create_prompt_store_entry()
+function M.create_copy_store_entry()
     local mode = vim.fn.mode()
     local lines
 
@@ -155,23 +155,23 @@ function M.create_prompt_store_entry()
     end
 
     open_editor_float({
-        title = " New Prompt ",
+        title = " New Copy ",
         lines = lines,
         self_name = nil,
         default_name = nil,
     })
 end
 
-function M.edit_prompt_store_entry()
-    local files = list_prompt_files()
+function M.edit_copy_store_entry()
+    local files = list_copy_files()
     if #files == 0 then
-        vim.notify("No prompts yet", vim.log.levels.INFO)
+        vim.notify("No copies yet", vim.log.levels.INFO)
         return
     end
 
     require("fzf-lua").fzf_exec(files, {
-        prompt = "Edit Prompt> ",
-        cwd = prompts_dir(),
+        prompt = "Edit Copy> ",
+        cwd = copies_dir(),
         previewer = "builtin",
         actions = {
             ["default"] = function(selected)
@@ -179,7 +179,7 @@ function M.edit_prompt_store_entry()
                     return
                 end
                 local name = selected[1]
-                local content = vim.fn.readfile(prompts_dir() .. "/" .. name)
+                local content = vim.fn.readfile(copies_dir() .. "/" .. name)
                 open_editor_float({
                     title = " Edit: " .. name .. " ",
                     lines = content,
@@ -191,7 +191,7 @@ function M.edit_prompt_store_entry()
     })
 end
 
-function M.paste_prompt_store_entry()
+function M.paste_copy_store_entry()
     local mode = vim.fn.mode()
     local is_visual = mode == "v" or mode == "V" or mode == "\22"
 
@@ -206,15 +206,15 @@ function M.paste_prompt_store_entry()
         sel_end = vim.api.nvim_buf_get_mark(buf, ">")[1]
     end
 
-    local files = list_prompt_files()
+    local files = list_copy_files()
     if #files == 0 then
-        vim.notify("No prompts yet", vim.log.levels.INFO)
+        vim.notify("No copies yet", vim.log.levels.INFO)
         return
     end
 
     require("fzf-lua").fzf_exec(files, {
-        prompt = "Paste Prompt> ",
-        cwd = prompts_dir(),
+        prompt = "Paste Copy> ",
+        cwd = copies_dir(),
         previewer = "builtin",
         fzf_opts = { ["--multi"] = true },
         actions = {
@@ -227,10 +227,11 @@ function M.paste_prompt_store_entry()
                     if i > 1 then
                         table.insert(combined, "")
                     end
-                    for _, line in ipairs(vim.fn.readfile(prompts_dir() .. "/" .. name)) do
+                    for _, line in ipairs(vim.fn.readfile(copies_dir() .. "/" .. name)) do
                         table.insert(combined, line)
                     end
                 end
+                table.insert(combined, 1, "")
 
                 if is_visual then
                     vim.api.nvim_buf_set_lines(buf, sel_start - 1, sel_end, false, combined)

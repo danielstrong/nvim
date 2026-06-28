@@ -245,7 +245,7 @@ return {
                 { "<localleader>K", group = "LSP Buffer", mode = { "n", "x" } },
                 { "<localleader>n", group = "Nvim", mode = { "n", "x" } },
                 { "<localleader>N", group = "Nvim Raw", mode = { "n", "x" } },
-                { "<localleader>o", group = "Prompt Store", mode = { "n", "x" } },
+                { "<localleader>o", group = "Copy Store", mode = { "n", "x" } },
                 { "<localleader>Q", group = "Quick", mode = { "n", "x" } },
                 { "<localleader>r", group = "Replace", mode = { "n", "x" } },
                 { "<localleader>z", group = "Session", mode = { "n", "x" } },
@@ -744,22 +744,22 @@ return {
         dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
     },
     {
-        "custom/prompt-store",
+        "custom/copy-store",
         event = "LazyFile",
         dev = true,
         dependencies = { "ibhagwan/fzf-lua" },
         config = function()
-            local ps = require("prompt-store")
+            local cs = require("copy-store")
 
             local function map(mode, l, r, desc)
                 vim.keymap.set(mode, l, r, { desc = desc, silent = true })
             end
 
-            map({ "n", "x" }, "<localleader>on", ps.create_prompt_store_entry, "Create New Prompt for Prompt Store")
+            map({ "n", "x" }, "<localleader>on", cs.create_copy_store_entry, "Create New Copy for Copy Store")
 
-            map({ "n", "x" }, "<localleader>oe", ps.edit_prompt_store_entry, "Modify Prompt from Prompt Store")
+            map({ "n", "x" }, "<localleader>oe", cs.edit_copy_store_entry, "Modify Copy from Copy Store")
 
-            map({ "n", "x" }, "<localleader>op", ps.paste_prompt_store_entry, "Paste Prompt from Prompt Store")
+            map({ "n", "x" }, "<localleader>op", cs.paste_copy_store_entry, "Paste Copy from Copy Store")
         end,
     },
     {
