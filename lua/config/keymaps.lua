@@ -389,10 +389,20 @@ map("n", "<BS>", "i<BS><Esc>l", { desc = "Delete character before cursor" })
 local function line_suffix()
     local line1 = vim.fn.line("v")
     local line2 = vim.fn.line(".")
+    local lo = math.min(line1, line2)
+    local hi = math.max(line1, line2)
+    local bufnr = vim.api.nvim_get_current_buf()
+    local ns = vim.api.nvim_create_namespace("yank_path_flash")
+    for lnum = lo - 1, hi - 1 do
+        vim.api.nvim_buf_set_extmark(bufnr, ns, lnum, 0, { end_row = lnum + 1, hl_group = "DiffAdd", hl_eol = true })
+    end
+    vim.defer_fn(function()
+        vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
+    end, 250)
     if line1 == line2 then
         return ":" .. line2
     else
-        return ":" .. math.min(line1, line2) .. "-" .. math.max(line1, line2)
+        return ":" .. lo .. "-" .. hi
     end
 end
 
