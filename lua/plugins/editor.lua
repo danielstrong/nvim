@@ -743,6 +743,24 @@ return {
         dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
     },
     {
+        "custom/prompt-store",
+        event = "LazyFile",
+        dev = true,
+        config = function()
+            local ps = require("prompt-store")
+
+            local function map(mode, l, r, desc)
+                vim.keymap.set(mode, l, r, { desc = desc, silent = true })
+            end
+
+            map({ "n", "x" }, "<localleader>on", ps.create_prompt_store_entry, "Create New Prompt for Prompt Store")
+
+            map({ "n", "x" }, "<localleader>oe", ps.edit_prompt_store_entry, "Modify Prompt from Prompt Store")
+
+            map({ "n", "x" }, "<localleader>op", ps.paste_prompt_store_entry, "Paste Prompt from Prompt Store")
+        end,
+    },
+    {
         "custom/window-move",
         event = "LazyFile",
         dev = true,

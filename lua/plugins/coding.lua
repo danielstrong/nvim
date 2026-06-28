@@ -24,9 +24,9 @@ return {
         end,
         opts = {
             mappings = {
-                replace = "csr", -- Replace surrounding
-                add = "csa", -- Add surrounding in Normal and Visual modes
-                delete = "csd", -- Delete surrounding
+                replace = "gsr", -- Replace surrounding
+                add = "gsa", -- Add surrounding in Normal and Visual modes
+                delete = "gsd", -- Delete surrounding
                 find = "gHf", -- Find surrounding (to the right)
                 find_left = "gHF", -- Find surrounding (to the left)
                 highlight = "gHH", -- Highlight surrounding
