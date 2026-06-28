@@ -245,6 +245,7 @@ return {
                 { "<localleader>K", group = "LSP Buffer", mode = { "n", "x" } },
                 { "<localleader>n", group = "Nvim", mode = { "n", "x" } },
                 { "<localleader>N", group = "Nvim Raw", mode = { "n", "x" } },
+                { "<localleader>o", group = "Prompt Store", mode = { "n", "x" } },
                 { "<localleader>Q", group = "Quick", mode = { "n", "x" } },
                 { "<localleader>r", group = "Replace", mode = { "n", "x" } },
                 { "<localleader>z", group = "Session", mode = { "n", "x" } },
