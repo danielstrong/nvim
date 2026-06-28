@@ -328,13 +328,15 @@ local function paste_charwise(after)
     vim.api.nvim_put(lines, "c", after, true)
 end
 
-map("n", "zp", function()
+map("n", "zip", function()
     paste_charwise(true)
 end, { desc = "Paste characterwise inline" })
 
-map("n", "zP", function()
+map("n", "ziP", function()
     paste_charwise(false)
 end, { desc = "Paste before characterwise inline" })
+map("n", "zop", "<cmd>pu<cr>", { desc = "Paste linewise" })
+map("n", "zoP", "<cmdpu!<cr>", { desc = "Paste linewise" })
 
 map({ "n", "v", "o" }, "<Home>", "^", { remap = true, desc = "Go to beginning of line" })
 -- map("n", "<Home>", function()
@@ -383,16 +385,54 @@ map("n", "<BS>", "i<BS><Esc>l", { desc = "Delete character before cursor" })
 
 -- map("n", "<localleader>c", "<cmd>let @+ = fnamemodify(expand('%'), ':.')<CR><cmd>echo 'Copied: ' . fnamemodify(expand('%'), ':.')<CR>", { desc = "copy relative path" })
 -- map("n", "<localleader>C", "<cmd>let @+ = expand('%:p')<CR><cmd>echo 'Copied: ' . expand('%:p')<CR>", { desc = "copy absolute path" })
-map({ "n", "x" }, "<localleader>c", function()
-    local rel = vim.fn.fnamemodify(vim.fn.expand("%"), ":.")
-    vim.fn.setreg("+", rel)
-    vim.notify("Copied: " .. rel)
+
+local function line_suffix()
+    local line1 = vim.fn.line("v")
+    local line2 = vim.fn.line(".")
+    if line1 == line2 then
+        return ":" .. line2
+    else
+        return ":" .. math.min(line1, line2) .. "-" .. math.max(line1, line2)
+    end
+end
+
+local function copy_to_clipboard(text)
+    vim.fn.setreg("+", text)
+    vim.notify("Copied: " .. text)
+end
+
+map({ "n" }, "<localleader>c", function()
+    copy_to_clipboard(vim.fn.fnamemodify(vim.fn.expand("%"), ":."))
 end, { desc = "copy relative path" })
-map({ "n", "x" }, "<localleader>C", function()
-    local abs = vim.fn.expand("%:p")
-    vim.fn.setreg("+", abs)
-    vim.notify("Copied: " .. abs)
+
+map({ "n" }, "<localleader>C", function()
+    copy_to_clipboard(vim.fn.expand("%:p"))
 end, { desc = "copy absolute path" })
+
+map({ "x" }, "<localleader>c", function()
+    copy_to_clipboard(vim.fn.fnamemodify(vim.fn.expand("%"), ":.") .. line_suffix())
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "nx", false)
+end, { desc = "copy relative path with line number" })
+
+map({ "n", "x" }, "<localleader>vc", function()
+    copy_to_clipboard(vim.fn.fnamemodify(vim.fn.expand("%"), ":.") .. line_suffix())
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "nx", false)
+end, { desc = "copy relative path with line number" })
+
+map({ "n", "x" }, "<localleader>vC", function()
+    copy_to_clipboard(vim.fn.expand("%:p") .. line_suffix())
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "nx", false)
+end, { desc = "copy absolute path with line number" })
+
+map({ "n", "x" }, "<localleader>y", function()
+    copy_to_clipboard(vim.fn.fnamemodify(vim.fn.expand("%"), ":.") .. line_suffix())
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "nx", false)
+end, { desc = "copy relative path with line number" })
+
+map({ "n", "x" }, "<localleader>Y", function()
+    copy_to_clipboard(vim.fn.expand("%:p") .. line_suffix())
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "nx", false)
+end, { desc = "copy absolute path with line number" })
 
 map("n", "crt", '"_ciwtrue<Esc>', { nowait = true, noremap = true, desc = "Replace word with true" })
 map("n", "crf", '"_ciwfalse<Esc>', { desc = "Replace word with false" })
