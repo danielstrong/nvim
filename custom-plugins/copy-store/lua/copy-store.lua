@@ -15,19 +15,21 @@ local function ensure_dir()
     vim.fn.mkdir(copies_dir(), "p")
 end
 
--- Ordered list of absolute source dirs: copies_dir() first, then each
--- configured extra dir with ~ expanded. Missing extra dirs warn and are skipped.
+-- Ordered list of source dirs as { dir = <expanded abs>, label = <string> }.
+-- copies_dir() first (label "copies"), then each configured extra dir with ~
+-- expanded (label = the original configured string). Missing extra dirs warn
+-- and are skipped.
 local function source_dirs()
-    local dirs = { copies_dir() }
+    local sources = { { dir = copies_dir(), label = "copies" } }
     for _, dir in ipairs(state.extra_dirs) do
         local expanded = vim.fn.expand(dir)
         if vim.fn.isdirectory(expanded) == 1 then
-            table.insert(dirs, expanded)
+            table.insert(sources, { dir = expanded, label = dir })
         else
             vim.notify("copy-store: extra dir not found: " .. dir, vim.log.levels.WARN)
         end
     end
-    return dirs
+    return sources
 end
 
 -- Absolute path of copies_dir(), normalized, with a trailing slash.
@@ -40,18 +42,25 @@ local function is_in_copies(path)
     return full:sub(1, #copies_root()) == copies_root()
 end
 
--- Absolute file paths gathered recursively from every source dir.
-local function list_copy_files()
-    local paths = {}
-    for _, dir in ipairs(source_dirs()) do
-        for _, path in ipairs(vim.fn.globpath(dir, "**/*", false, true)) do
+-- fzf entries gathered recursively from every source dir, as tab-joined
+-- "<filename  (label)>\t<absolute-path>" strings. Field 1 is shown; field 2
+-- (the path) is recovered in actions/preview.
+local function list_copy_entries()
+    local entries = {}
+    for _, src in ipairs(source_dirs()) do
+        for _, path in ipairs(vim.fn.globpath(src.dir, "**/*", false, true)) do
             if vim.fn.isdirectory(path) == 0 then
-                table.insert(paths, path)
+                local display = vim.fn.fnamemodify(path, ":t") .. "  (" .. src.label .. ")"
+                table.insert(entries, display .. "\t" .. path)
             end
         end
     end
-    table.sort(paths)
-    return paths
+    table.sort(entries)
+    return entries
+end
+
+local function entry_path(entry)
+    return entry:match("\t(.+)$") or entry
 end
 
 local function file_exists(name)
@@ -212,23 +221,33 @@ function M.create_copy_store_entry()
     })
 end
 
+local function copy_preview()
+    return {
+        type = "cmd",
+        field_index = "{}",
+        fn = function(items)
+            return "cat " .. vim.fn.shellescape(entry_path(items[1]))
+        end,
+    }
+end
+
 function M.edit_copy_store_entry()
-    local files = list_copy_files()
-    if #files == 0 then
+    local entries = list_copy_entries()
+    if #entries == 0 then
         vim.notify("No copies yet", vim.log.levels.INFO)
         return
     end
 
-    require("fzf-lua").fzf_exec(files, {
+    require("fzf-lua").fzf_exec(entries, {
         prompt = "Edit Copy> ",
-        previewer = "builtin",
-        fzf_opts = { ["--delimiter"] = "/", ["--with-nth"] = "-1" },
+        preview = copy_preview(),
+        fzf_opts = { ["--delimiter"] = "\t", ["--with-nth"] = "1", ["--nth"] = "1" },
         actions = {
             ["default"] = function(selected)
                 if not selected or #selected == 0 then
                     return
                 end
-                local path = selected[1]
+                local path = entry_path(selected[1])
                 local name = vim.fn.fnamemodify(path, ":t")
                 local content = vim.fn.readfile(path)
                 if is_in_copies(path) then
@@ -265,27 +284,27 @@ function M.paste_copy_store_entry()
         sel_end = vim.api.nvim_buf_get_mark(buf, ">")[1]
     end
 
-    local files = list_copy_files()
-    if #files == 0 then
+    local entries = list_copy_entries()
+    if #entries == 0 then
         vim.notify("No copies yet", vim.log.levels.INFO)
         return
     end
 
-    require("fzf-lua").fzf_exec(files, {
+    require("fzf-lua").fzf_exec(entries, {
         prompt = "Paste Copy> ",
-        previewer = "builtin",
-        fzf_opts = { ["--multi"] = true, ["--delimiter"] = "/", ["--with-nth"] = "-1" },
+        preview = copy_preview(),
+        fzf_opts = { ["--multi"] = true, ["--delimiter"] = "\t", ["--with-nth"] = "1", ["--nth"] = "1" },
         actions = {
             ["default"] = function(selected)
                 if not selected or #selected == 0 then
                     return
                 end
                 local combined = {}
-                for i, path in ipairs(selected) do
+                for i, entry in ipairs(selected) do
                     if i > 1 then
                         table.insert(combined, "")
                     end
-                    for _, line in ipairs(vim.fn.readfile(path)) do
+                    for _, line in ipairs(vim.fn.readfile(entry_path(entry))) do
                         table.insert(combined, line)
                     end
                 end
