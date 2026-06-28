@@ -747,6 +747,7 @@ return {
         "custom/prompt-store",
         event = "LazyFile",
         dev = true,
+        dependencies = { "ibhagwan/fzf-lua" },
         config = function()
             local ps = require("prompt-store")
 
