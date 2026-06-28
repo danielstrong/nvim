@@ -11,10 +11,6 @@ local function copies_dir()
     return vim.fn.stdpath("config") .. "/custom-plugins/copy-store/copies"
 end
 
-local function ensure_dir(dir)
-    vim.fn.mkdir(dir, "p")
-end
-
 -- Ordered list of source dirs as { dir = <expanded abs>, label = <string> }.
 -- copies_dir() first (label "copies"), then each configured extra dir with ~
 -- expanded (label = the original configured string). Missing extra dirs warn
@@ -90,22 +86,25 @@ local function sanitize_name(input)
     return base .. "." .. ext
 end
 
-local function write_file(dir, name, lines)
-    ensure_dir(dir)
-    vim.fn.writefile(lines, dir .. "/" .. name)
-end
-
--- Opens a centered float seeded with `lines`. On ZZ/:wq runs the save-flow
--- (choose dir, then name); on ZX/:q/<localleader>x discards. `orig_path` (or
--- nil for a new copy) is the file being edited, used to default the dir/name,
--- allow overwriting itself, and delete the original on move/rename.
+-- Opens a centered Snacks float backed by a NORMAL file buffer at `path`.
+-- For a new copy, `lines` seeds the (not-yet-on-disk) buffer and `modified=true`.
+-- For editing, omit lines/modified; the file is loaded from disk as-is.
+-- Saving/quitting use the user's normal global keybinds (no custom maps/autocmds).
 local function open_editor_float(opts)
-    local lines = opts.lines or {}
-    local orig_path = opts.orig_path
-    local orig_dir = orig_path and vim.fn.fnamemodify(orig_path, ":h") or nil
-    local orig_name = orig_path and vim.fn.fnamemodify(orig_path, ":t") or nil
+    local buf = vim.fn.bufadd(opts.path)
+    vim.fn.bufload(buf)
+    vim.bo[buf].buftype = ""
+    vim.bo[buf].bufhidden = "wipe"
+    vim.bo[buf].modifiable = true
+    vim.bo[buf].swapfile = false
 
-    local win = Snacks.win({
+    if opts.lines then
+        vim.api.nvim_buf_set_lines(buf, 0, -1, false, opts.lines)
+        vim.bo[buf].modified = opts.modified == true
+    end
+
+    Snacks.win({
+        buf = buf,
         title = opts.title or " Copy Store ",
         title_pos = "center",
         width = 0.8,
@@ -114,118 +113,33 @@ local function open_editor_float(opts)
         enter = true,
         ft = "markdown",
         wo = { number = true, relativenumber = false, wrap = true },
-        bo = { modifiable = true, buftype = "acwrite" },
     })
+end
 
-    local buf = win.buf
-    vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-    vim.bo[buf].modified = false
-    vim.api.nvim_buf_set_name(buf, "copy-store://" .. (orig_name or "new"))
-
-    local closed = false
-    local function close()
-        if closed then
+-- Prompt for a name in `dir`, sanitize, re-prompt on invalid/collision, then
+-- mkdir the dir and open the seeded float at the chosen path (unsaved).
+local function new_copy_name_flow(dir, lines)
+    vim.ui.input({ prompt = "Save copy as: " }, function(input)
+        if input == nil then
             return
         end
-        closed = true
-        win:close()
-    end
-
-    -- Prompt for a name in `dir`, then write. Re-prompts on invalid/colliding
-    -- name. When editing and the typed name is unchanged, the original name is
-    -- kept verbatim (no sanitize); otherwise the name is sanitized. On a path
-    -- change (different dir and/or name) the original file is deleted (move).
-    local function name_flow(dir, default)
-        vim.ui.input({ prompt = "Save copy as: ", default = default }, function(input)
-            if input == nil then
-                return
-            end
-            local name
-            if orig_name and vim.trim(input) == orig_name then
-                name = orig_name
-            else
-                name = sanitize_name(input)
-                if not name then
-                    vim.notify("Invalid name", vim.log.levels.ERROR)
-                    return name_flow(dir, default)
-                end
-            end
-            local new_path = vim.fn.fnamemodify(dir .. "/" .. name, ":p")
-            local same_as_orig = orig_path ~= nil and new_path == vim.fn.fnamemodify(orig_path, ":p")
-            if file_exists(dir, name) and not same_as_orig then
-                vim.notify("'" .. name .. "' already exists, choose another name", vim.log.levels.ERROR)
-                return name_flow(dir, name)
-            end
-            local content = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-            write_file(dir, name, content)
-            if orig_path and not same_as_orig then
-                vim.fn.delete(orig_path)
-            end
-            vim.bo[buf].modified = false
-            vim.notify("Saved " .. name, vim.log.levels.INFO)
-            close()
-        end)
-    end
-
-    -- Choose target dir (skip the picker when there's only one), then name.
-    -- When editing, the file's current dir is listed first, marked "(current)".
-    local function do_save()
-        local targets = save_target_dirs()
-        if orig_dir then
-            for i, t in ipairs(targets) do
-                if vim.fn.fnamemodify(t.dir, ":p") == vim.fn.fnamemodify(orig_dir, ":p") then
-                    t.label = t.label .. " (current)"
-                    table.insert(targets, 1, table.remove(targets, i))
-                    break
-                end
-            end
+        local name = sanitize_name(input)
+        if not name then
+            vim.notify("Invalid name", vim.log.levels.ERROR)
+            return new_copy_name_flow(dir, lines)
         end
-
-        if #targets == 1 then
-            return name_flow(targets[1].dir, orig_name)
+        if file_exists(dir, name) then
+            vim.notify("'" .. name .. "' already exists, choose another name", vim.log.levels.ERROR)
+            return new_copy_name_flow(dir, lines)
         end
-
-        vim.ui.select(targets, {
-            prompt = "Save in:",
-            format_item = function(t)
-                return t.label
-            end,
-        }, function(choice)
-            if choice == nil then
-                return
-            end
-            name_flow(choice.dir, orig_name)
-        end)
-    end
-
-    -- :w / :wq / :x / ZZ route through the save logic (acwrite => no real write).
-    local saving = false
-    vim.api.nvim_create_autocmd("BufWriteCmd", {
-        buffer = buf,
-        callback = function()
-            saving = true
-            do_save()
-        end,
-    })
-
-    -- :q / ZX / <localleader>x discard. QuitPre fires before :q closes the win.
-    -- For :wq the BufWriteCmd above runs first and sets `saving`, so the
-    -- following QuitPre is skipped and the save-flow controls the close.
-    vim.api.nvim_create_autocmd("QuitPre", {
-        buffer = buf,
-        callback = function()
-            if saving then
-                saving = false
-                return
-            end
-            close()
-        end,
-    })
-
-    local map_opts = { buffer = buf, silent = true, nowait = true }
-    vim.keymap.set("n", "ZZ", do_save, map_opts)
-    vim.keymap.set("n", "ZX", close, map_opts)
-    vim.keymap.set("n", "<localleader>x", close, map_opts)
+        vim.fn.mkdir(dir, "p")
+        open_editor_float({
+            title = " New Copy ",
+            path = dir .. "/" .. name,
+            lines = lines,
+            modified = true,
+        })
+    end)
 end
 
 function M.create_copy_store_entry()
@@ -240,11 +154,22 @@ function M.create_copy_store_entry()
         lines = { vim.api.nvim_get_current_line() }
     end
 
-    open_editor_float({
-        title = " New Copy ",
-        lines = lines,
-        orig_path = nil,
-    })
+    local targets = save_target_dirs()
+    if #targets == 1 then
+        return new_copy_name_flow(targets[1].dir, lines)
+    end
+
+    vim.ui.select(targets, {
+        prompt = "Save in:",
+        format_item = function(t)
+            return t.label
+        end,
+    }, function(choice)
+        if choice == nil then
+            return
+        end
+        new_copy_name_flow(choice.dir, lines)
+    end)
 end
 
 local function copy_preview()
@@ -275,11 +200,9 @@ function M.edit_copy_store_entry()
                 end
                 local path = entry_path(selected[1])
                 local name = vim.fn.fnamemodify(path, ":t")
-                local content = vim.fn.readfile(path)
                 open_editor_float({
                     title = " Edit: " .. name .. " ",
-                    lines = content,
-                    orig_path = path,
+                    path = path,
                 })
             end,
         },
