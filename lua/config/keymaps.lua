@@ -412,38 +412,37 @@ local function copy_to_clipboard(text)
     vim.notify("Copied: " .. text)
 end
 
-map({ "n" }, "<localleader>c", function()
+local function copy_rel_path_to_clipboard()
     copy_to_clipboard(vim.fn.fnamemodify(vim.fn.expand("%"), ":."))
-end, { desc = "copy relative path" })
+end
 
-map({ "n" }, "<localleader>C", function()
+local function copy_rel_path_with_line_numbers_to_clipboard()
+    copy_to_clipboard(vim.fn.fnamemodify(vim.fn.expand("%"), ":.") .. line_suffix())
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "nx", false)
+end
+
+local function copy_abs_path_to_clipboard()
     copy_to_clipboard(vim.fn.expand("%:p"))
-end, { desc = "copy absolute path" })
+end
 
-map({ "x" }, "<localleader>c", function()
-    copy_to_clipboard(vim.fn.fnamemodify(vim.fn.expand("%"), ":.") .. line_suffix())
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "nx", false)
-end, { desc = "copy relative path with line number" })
-
-map({ "n", "x" }, "<localleader>vc", function()
-    copy_to_clipboard(vim.fn.fnamemodify(vim.fn.expand("%"), ":.") .. line_suffix())
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "nx", false)
-end, { desc = "copy relative path with line number" })
-
-map({ "n", "x" }, "<localleader>vC", function()
+local function copy_abs_path_with_line_numbers_to_clipboard()
     copy_to_clipboard(vim.fn.expand("%:p") .. line_suffix())
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "nx", false)
-end, { desc = "copy absolute path with line number" })
+end
 
-map({ "n", "x" }, "<localleader>y", function()
-    copy_to_clipboard(vim.fn.fnamemodify(vim.fn.expand("%"), ":.") .. line_suffix())
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "nx", false)
-end, { desc = "copy relative path with line number" })
+map("n", "<localleader>c", copy_rel_path_to_clipboard, { desc = "copy relative path" })
+map("x", "<localleader>c", copy_rel_path_with_line_numbers_to_clipboard, { desc = "copy relative path with line number" })
+map({ "n", "x" }, "<localleader>vc", copy_rel_path_with_line_numbers_to_clipboard, { desc = "copy relative path with line number" })
+map("n", "<localleader>y", copy_rel_path_to_clipboard, { desc = "copy relative path" })
+map("x", "<localleader>y", copy_rel_path_with_line_numbers_to_clipboard, { desc = "copy relative path with line number" })
+map({ "n", "x" }, "<localleader>vy", copy_rel_path_with_line_numbers_to_clipboard, { desc = "copy relative path with line number" })
 
-map({ "n", "x" }, "<localleader>Y", function()
-    copy_to_clipboard(vim.fn.expand("%:p") .. line_suffix())
-    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "nx", false)
-end, { desc = "copy absolute path with line number" })
+map("n", "<localleader>C", copy_abs_path_to_clipboard, { desc = "copy absolute path" })
+map("x", "<localleader>C", copy_abs_path_with_line_numbers_to_clipboard, { desc = "copy absolute path with line number" })
+map({ "n", "x" }, "<localleader>vC", copy_abs_path_with_line_numbers_to_clipboard, { desc = "copy absolute path with line number" })
+map("n", "<localleader>Y", copy_abs_path_to_clipboard, { desc = "copy absolute path" })
+map("x", "<localleader>Y", copy_abs_path_with_line_numbers_to_clipboard, { desc = "copy absolute path with line number" })
+map({ "n", "x" }, "<localleader>vY", copy_abs_path_with_line_numbers_to_clipboard, { desc = "copy absolute path with line number" })
 
 map("n", "crt", '"_ciwtrue<Esc>', { nowait = true, noremap = true, desc = "Replace word with true" })
 map("n", "crf", '"_ciwfalse<Esc>', { desc = "Replace word with false" })
