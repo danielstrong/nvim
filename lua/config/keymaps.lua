@@ -329,15 +329,15 @@ local function paste_charwise(after)
     vim.api.nvim_put(lines, "c", after, true)
 end
 
-map("n", "zip", function()
+map("n", "zhp", function()
     paste_charwise(true)
 end, { desc = "Paste characterwise inline" })
 
-map("n", "ziP", function()
+map("n", "zhP", function()
     paste_charwise(false)
 end, { desc = "Paste before characterwise inline" })
-map("n", "zop", "<cmd>pu<cr>", { desc = "Paste linewise" })
-map("n", "zoP", "<cmdpu!<cr>", { desc = "Paste linewise" })
+map("n", "zlp", "<cmd>pu<cr>", { desc = "Paste linewise" })
+map("n", "zlP", "<cmdpu!<cr>", { desc = "Paste linewise" })
 
 map({ "n", "v", "o" }, "<Home>", "^", { remap = true, desc = "Go to beginning of line" })
 -- map("n", "<Home>", function()
