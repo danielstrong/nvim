@@ -17,6 +17,7 @@
 local map = vim.keymap.set
 
 map("n", "=zj", "<cmd>%!jq .<CR>", { noremap = true, desc = "Format JSON with jq" })
+map("n", "=zg", "mggg=G'g", { noremap = true, desc = "Format JSON with jq" })
 
 -- Search and Replace
 -- to use: yank the replacement text, search the target text, then use this keymap

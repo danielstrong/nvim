@@ -122,7 +122,7 @@ opt.splitbelow = true -- Put new windows below current
 opt.splitkeep = "screen"
 opt.splitright = true -- Put new windows right of current
 opt.statuscolumn = [[%!v:lua.LazyVim.statuscolumn()]]
-opt.tabstop = 4 -- Number of spaces tabs count for — how many columns wide an actual <Tab> character (\t) is displayed as. Purely visual for existing tabs in the file.
+opt.tabstop = 2 -- Number of spaces tabs count for — how many columns wide an actual <Tab> character (\t) is displayed as. Purely visual for existing tabs in the file.
 opt.softtabstop = 2 -- Number of spaces tabs count for — how many columns the <Tab> key and <BS> move/delete in insert mode, when editing. With your config (expandtab likely on elsewhere), pressing Tab inserts spaces up to this width, and Backspace removes that many as if it were one tabstop.
 opt.shiftwidth = 2 -- Size of an indent — how many columns autoindent operations use: >>, <<, ==, and smartindent/autoindent behavior. This is what controls indent width when Neovim auto-indents code.
 --  In short: tabstop = display width of literal tabs, softtabstop = editing behavior for the Tab/Backspace keys, shiftwidth = indentation commands. All three are set to 4 here so they behave consistently, but they're independent settings that can diverge
