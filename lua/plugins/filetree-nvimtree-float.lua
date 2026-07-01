@@ -97,22 +97,27 @@ return {
                     vim.cmd("vertical diffsplit " .. vim.fn.fnameescape(files[2]))
                 end, { buffer = bufnr, noremap = true, silent = true, desc = "Diff marked files" })
 
-                vim.keymap.set("n", "<localleader>c", function()
+                local function copy_rel_path_to_clipboard()
                     local node = api.tree.get_node_under_cursor()
                     if node and node.absolute_path then
                         local rel = vim.fn.fnamemodify(node.absolute_path, ":.")
                         vim.fn.setreg("+", rel)
                         vim.notify("Copied: " .. rel)
                     end
-                end, { buffer = bufnr, noremap = true, silent = true, desc = "NvimTree copy relative path" })
+                end
 
-                vim.keymap.set("n", "<localleader>C", function()
+                local function copy_abs_path_to_clipboard()
                     local node = api.tree.get_node_under_cursor()
                     if node and node.absolute_path then
                         vim.fn.setreg("+", node.absolute_path)
                         vim.notify("Copied: " .. node.absolute_path)
                     end
-                end, { buffer = bufnr, noremap = true, silent = true, desc = "NvimTree copy absolute path" })
+                end
+
+                vim.keymap.set("n", "<localleader>c", copy_rel_path_to_clipboard, { buffer = bufnr, noremap = true, silent = true, desc = "NvimTree copy relative path" })
+                vim.keymap.set("n", "<localleader>C", copy_abs_path_to_clipboard, { buffer = bufnr, noremap = true, silent = true, desc = "NvimTree copy absolute path" })
+                vim.keymap.set("n", "<localleader>y", copy_rel_path_to_clipboard, { buffer = bufnr, noremap = true, silent = true, desc = "NvimTree copy relative path" })
+                vim.keymap.set("n", "<localleader>Y", copy_abs_path_to_clipboard, { buffer = bufnr, noremap = true, silent = true, desc = "NvimTree copy absolute path" })
 
                 vim.keymap.set("n", "gf", api.tree.search_node, { buffer = bufnr, noremap = true, silent = true, desc = "Search" })
                 vim.keymap.set("n", "<C-s>", api.node.run.system, { buffer = bufnr, noremap = true, silent = true, desc = "Run System" })

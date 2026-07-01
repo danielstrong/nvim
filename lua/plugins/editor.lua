@@ -1004,11 +1004,11 @@ return {
                 vim.keymap.set(mode, l, r, { desc = desc, silent = true })
             end
 
-            map("n", "<localleader>ds", function()
+            map("n", "<localleader>dw", function()
                 pc.run_checks(true)
             end, "TSC + ESLint to Quickfix")
 
-            map("n", "<localleader>dS", function()
+            map("n", "<localleader>dW", function()
                 pc.run_checks(false)
             end, "TSC + ESLint to Quickfix (include warnings)")
 
