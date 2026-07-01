@@ -8,13 +8,27 @@ return {
             "nvim-tree/nvim-web-devicons",
         },
         keys = {
+            {
+                "<localleader>e",
+                function()
+                    require("nvim-tree.api").tree.toggle()
+                end,
+                desc = "Toggle NvimTree Float",
+            },
+            {
+                "<localleader>E",
+                function()
+                    require("nvim-tree.api").tree.toggle({ find_file = true })
+                end,
+                desc = "Toggle NvimTree Float on current",
+            },
             -- Keymap to toggle the NvimTree
             {
                 "<localleader>wd",
                 function()
-                    require("nvim-tree.api").tree.toggle()
+                    require("nvim-tree.api").tree.toggle() --  TODO: this needs to open as a sidebar instad of float
                 end,
-                desc = "Focus NvimTree",
+                desc = "Toggle NvimTree Sidebar",
             },
             -- Keymap to open NvimTree to the current file's location
             {
@@ -25,10 +39,10 @@ return {
                         require("nvim-tree.api").tree.close()
                     else
                         --     require("nvim-tree.api").tree.focus()
-                        require("nvim-tree.api").tree.find_file({ open = true, focus = true })
+                        require("nvim-tree.api").tree.find_file({ open = true, focus = true }) -- TODO: this needs to open as a sidebar instad of float
                     end
                 end,
-                desc = "Focus NvimTree on current",
+                desc = "Focus NvimTree Sidebar on current",
             },
         },
         -- actions = {
