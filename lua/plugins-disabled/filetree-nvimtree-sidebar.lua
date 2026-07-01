@@ -216,7 +216,7 @@ return {
                 },
                 view = {
                     float = {
-                        enable = true,
+                        enable = false,
                     },
                     width = 48,
                 },
