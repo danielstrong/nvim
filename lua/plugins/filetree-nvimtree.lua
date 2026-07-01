@@ -10,7 +10,7 @@ return {
         keys = {
             -- Keymap to toggle the NvimTree
             {
-                "<localleader>E",
+                "<localleader>e",
                 function()
                     local view = require("nvim-tree.view")
                     if view.is_visible() and view.get_winnr() == vim.api.nvim_get_current_win() then
@@ -23,7 +23,7 @@ return {
             },
             -- Keymap to open NvimTree to the current file's location
             {
-                "<localleader>e",
+                "<localleader>E",
                 function()
                     local view = require("nvim-tree.view")
                     if view.is_visible() and view.get_winnr() == vim.api.nvim_get_current_win() then
@@ -216,7 +216,7 @@ return {
                 },
                 view = {
                     float = {
-                        enable = false,
+                        enable = true,
                     },
                     width = 48,
                 },
