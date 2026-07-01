@@ -961,6 +961,8 @@ return {
             map({ "n", "x" }, "<localleader>jp", cs.paste_copy_store_entry, "Paste Copy from Copy Store")
 
             map({ "n", "x" }, "<localleader>jP", cs.paste_cwd_entry, "Paste Copy from CWD")
+
+            map({ "n", "x" }, "<localleader>jO", cs.edit_cwd_entry, "Modify Copy from CWD")
         end,
     },
     {

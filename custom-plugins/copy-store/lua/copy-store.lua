@@ -222,6 +222,28 @@ function M.edit_copy_store_entry()
     })
 end
 
+function M.edit_cwd_entry()
+    require("fzf-lua").files({
+        prompt = "Edit from CWD> ",
+        cwd = vim.fn.getcwd(),
+        cmd = "fd --type f -e md -e txt",
+        actions = {
+            ["default"] = function(selected, opts)
+                if not selected or #selected == 0 then
+                    return
+                end
+                local fzf_path = require("fzf-lua.path")
+                local path = fzf_path.entry_to_file(selected[1], opts).path
+                local name = vim.fn.fnamemodify(path, ":t")
+                open_editor_float({
+                    title = " Edit: " .. name .. " ",
+                    path = path,
+                })
+            end,
+        },
+    })
+end
+
 -- Captures the paste target BEFORE the picker opens (mode, cursor, selection).
 local function capture_paste_ctx()
     local mode = vim.fn.mode()

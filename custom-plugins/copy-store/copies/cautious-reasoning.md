@@ -6,4 +6,3 @@ Rules:
 3. Use conditional reasoning, not prescriptions.
 4. For each claim, say what would falsify it and give confidence
 5. Assume survivorship, hindsight bias, and incomplete information
-
