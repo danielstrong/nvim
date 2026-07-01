@@ -13,23 +13,18 @@ return {
                 "<localleader>wd",
                 function()
                     require("nvim-tree.api").tree.toggle()
-                    -- local view = require("nvim-tree.view")
-                    -- if view.is_visible() and view.get_winnr() == vim.api.nvim_get_current_win() then
-                    --     require("nvim-tree.api").tree.close()
-                    -- else
-                    --     require("nvim-tree.api").tree.focus()
-                    -- end
                 end,
                 desc = "Focus NvimTree",
             },
             -- Keymap to open NvimTree to the current file's location
             {
-                "<localleader>wd",
+                "<localleader>wD",
                 function()
                     local view = require("nvim-tree.view")
                     if view.is_visible() and view.get_winnr() == vim.api.nvim_get_current_win() then
                         require("nvim-tree.api").tree.close()
                     else
+                        --     require("nvim-tree.api").tree.focus()
                         require("nvim-tree.api").tree.find_file({ open = true, focus = true })
                     end
                 end,
