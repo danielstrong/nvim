@@ -10,15 +10,21 @@ return {
         keys = {
             -- Keymap to toggle the NvimTree
             {
-                "<localleader>e",
+                "<localleader>wd",
                 function()
                     require("nvim-tree.api").tree.toggle()
+                    -- local view = require("nvim-tree.view")
+                    -- if view.is_visible() and view.get_winnr() == vim.api.nvim_get_current_win() then
+                    --     require("nvim-tree.api").tree.close()
+                    -- else
+                    --     require("nvim-tree.api").tree.focus()
+                    -- end
                 end,
                 desc = "Focus NvimTree",
             },
             -- Keymap to open NvimTree to the current file's location
             {
-                "<localleader>E",
+                "<localleader>wd",
                 function()
                     local view = require("nvim-tree.view")
                     if view.is_visible() and view.get_winnr() == vim.api.nvim_get_current_win() then
