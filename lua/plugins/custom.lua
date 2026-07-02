@@ -132,24 +132,30 @@ return {
                 dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
             },
         },
-        config = function()
+        keys = function()
             local gh = require("githunks")
-
-            local function map(mode, l, r, desc)
-                vim.keymap.set(mode, l, r, { desc = desc, silent = true })
-            end
             local repeat_move = require("repeatable_move")
-            local repeatable_next_yhunk, repeatable_prev_yhunk = repeat_move.make_repeatable_move_pair(gh.next_unstaged, gh.prev_unstaged)
-            map({ "n", "x", "o" }, "]g", repeatable_next_yhunk, "Next Unstaged Hunk (repo-wide)")
-            map({ "n", "x", "o" }, "[g", repeatable_prev_yhunk, "Prev Unstaged Hunk (repo-wide)")
-            map({ "n", "x", "o" }, "]G", gh.last_unstaged, "Last Unstaged Hunk (repo-wide)")
-            map({ "n", "x", "o" }, "[G", gh.first_unstaged, "First Unstaged Hunk (repo-wide)")
-
-            local repeatable_next_ghunk, repeatable_prev_ghunk = repeat_move.make_repeatable_move_pair(gh.next, gh.prev)
-            map({ "n", "x", "o" }, "]y", repeatable_next_ghunk, "Next Hunk (repo-wide)")
-            map({ "n", "x", "o" }, "[y", repeatable_prev_ghunk, "Prev Hunk (repo-wide)")
-            map({ "n", "x", "o" }, "]Y", gh.last, "Last Hunk (repo-wide)")
-            map({ "n", "x", "o" }, "[Y", gh.first, "First Hunk (repo-wide)")
+            local repeatable_next_unstagedhunk, repeatable_prev_unstagedhunk = repeat_move.make_repeatable_move_pair(gh.next_unstaged, gh.prev_unstaged)
+            -- vim.keymap.set({ "n", "x", "o" }, "]g", repeatable_next_unstagedhunk, { desc = "Next Unstaged Hunk (repo-wide)" })
+            -- vim.keymap.set({ "n", "x", "o" }, "[g", repeatable_prev_unstagedhunk, { desc = "Prev Unstaged Hunk (repo-wide)" })
+            -- vim.keymap.set({ "n", "x", "o" }, "]G", gh.last_unstaged, { desc = "Last Unstaged Hunk (repo-wide)" })
+            -- vim.keymap.set({ "n", "x", "o" }, "[G", gh.first_unstaged, { desc = "First Unstaged Hunk (repo-wide)" })
+            --
+            local repeatable_next_allhunk, repeatable_prev_allhunk = repeat_move.make_repeatable_move_pair(gh.next, gh.prev)
+            -- vim.keymap.set({ "n", "x", "o" }, "]y", repeatable_next_allhunk, { desc = "Next Hunk (repo-wide)" })
+            -- vim.keymap.set({ "n", "x", "o" }, "[y", repeatable_prev_allhunk, { desc = "Prev Hunk (repo-wide)" })
+            -- vim.keymap.set({ "n", "x", "o" }, "]Y", gh.last, { desc = "Last Hunk (repo-wide)" })
+            -- vim.keymap.set({ "n", "x", "o" }, "[Y", gh.first, { desc = "First Hunk (repo-wide)" })
+            return {
+                { "]g", repeatable_next_unstagedhunk, mode = { "n", "x", "o" }, desc = "Next Unstaged Hunk (repo-wide)" },
+                { "[g", repeatable_prev_unstagedhunk, mode = { "n", "x", "o" }, desc = "Prev Unstaged Hunk (repo-wide)" },
+                { "]G", gh.last_unstaged, mode = { "n", "x", "o" }, desc = "Last Unstaged Hunk (repo-wide)" },
+                { "[G", gh.first_unstaged, mode = { "n", "x", "o" }, desc = "First Unstaged Hunk (repo-wide)" },
+                { "]y", repeatable_next_allhunk, mode = { "n", "x", "o" }, desc = "Next Hunk (repo-wide)" },
+                { "[y", repeatable_prev_allhunk, mode = { "n", "x", "o" }, desc = "Prev Hunk (repo-wide)" },
+                { "]Y", gh.last, mode = { "n", "x", "o" }, desc = "Last Hunk (repo-wide)" },
+                { "[Y", gh.first, mode = { "n", "x", "o" }, desc = "First Hunk (repo-wide)" },
+            }
         end,
     },
 }
