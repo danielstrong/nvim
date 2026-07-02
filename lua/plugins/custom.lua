@@ -73,25 +73,30 @@ return {
     },
     {
         "custom/project-check",
-        event = "LazyFile",
         dev = true,
-        config = function()
-            local pc = require("project-check")
-
-            local function map(mode, l, r, desc)
-                vim.keymap.set(mode, l, r, { desc = desc, silent = true })
-            end
-
-            map("n", "<localleader>dw", function()
-                pc.run_checks(true)
-            end, "TSC + ESLint to Quickfix")
-
-            map("n", "<localleader>dW", function()
-                pc.run_checks(false)
-            end, "TSC + ESLint to Quickfix (include warnings)")
-
-            map("n", "<localleader>nl", pc.view_project_check_logs, "View Project Check logs")
-        end,
+        keys = {
+            {
+                "<localleader>ds",
+                function()
+                    require("project-check").run_checks(true)
+                end,
+                desc = "TSC + ESLint to Quickfix",
+            },
+            {
+                "<localleader>dS",
+                function()
+                    require("project-check").run_checks(false)
+                end,
+                desc = "TSC + ESLint to Quickfix (include warnings)",
+            },
+            {
+                "<localleader>nl",
+                function()
+                    require("project-check").view_project_check_logs()
+                end,
+                desc = "View Project Check logs",
+            },
+        },
     },
     {
         "custom/githunks",
