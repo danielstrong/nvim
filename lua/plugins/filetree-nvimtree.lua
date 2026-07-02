@@ -26,7 +26,12 @@ return {
             {
                 "<localleader>wd",
                 function()
-                    require("nvim-tree.api").tree.toggle() --  TODO: this needs to open as a sidebar instad of float
+                    local view = require("nvim-tree.view")
+                    if view.is_visible() and view.get_winnr() == vim.api.nvim_get_current_win() then
+                        require("nvim-tree.api").tree.close()
+                    else
+                        require("nvim-tree.api").tree.focus() -- TODO: this needs to open as a sidebar instad of float
+                    end
                 end,
                 desc = "Toggle NvimTree Sidebar",
             },
@@ -232,6 +237,15 @@ return {
                 view = {
                     float = {
                         enable = true,
+                        open_win_config = {
+                            relative = "editor",
+                            border = "none",
+                            width = 40,
+                            height = 190,
+                            row = 0,
+
+                            col = 0,
+                        },
                         -- width = 70,
                     },
                     width = 48,
