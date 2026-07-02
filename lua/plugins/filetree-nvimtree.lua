@@ -37,68 +37,17 @@ return {
         dependencies = {
             "nvim-tree/nvim-web-devicons",
         },
-        keys = {
-            {
-                "<localleader>E",
-                function()
-                    require("nvim-tree.api").tree.toggle()
-                end,
-                desc = "Toggle NvimTree Float",
-            },
-            {
-                "<localleader>e",
-                function()
-                    require("nvim-tree.api").tree.toggle({ find_file = true })
-                end,
-                desc = "Toggle NvimTree Float on current",
-            },
-            -- Keymap to toggle the NvimTree
-            {
-                "<localleader>wd",
-                function()
-                    local view = require("nvim-tree.view")
-                    if view.is_visible() and view.get_winnr() == vim.api.nvim_get_current_win() then
-                        require("nvim-tree.api").tree.close()
-                    else
-                        require("nvim-tree.api").tree.focus() -- TODO: this needs to open as a sidebar instad of float
-                    end
-                end,
-                desc = "Toggle NvimTree Sidebar",
-            },
-            -- Keymap to open NvimTree to the current file's location
-            {
-                "<localleader>wD",
-                function()
-                    local view = require("nvim-tree.view")
-                    if view.is_visible() and view.get_winnr() == vim.api.nvim_get_current_win() then
-                        require("nvim-tree.api").tree.close()
-                    else
-                        --     require("nvim-tree.api").tree.focus()
-                        require("nvim-tree.api").tree.find_file({ open = true, focus = true }) -- TODO: this needs to open as a sidebar instad of float
-                    end
-                end,
-                desc = "Focus NvimTree Sidebar on current",
-            },
-        },
-        -- actions = {
-        -- open_file = {
-        -- quit_on_open = true, -- Close the tree after opening a file in the current window
-        -- replacing_current_buffer = true, -- Open the file in the current window/buffer
-        -- You can also add other options like 'resize_window'
-        -- },
-        -- },
-        config = function()
-            local function on_attach(bufnr)
+        opts = {
+            on_attach = function(bufnr)
                 local api = require("nvim-tree.api")
                 -- Preserve all default nvim-tree keymaps
                 -- api.config.mappings.default_on_attach(bufnr)
                 api.map.on_attach.default(bufnr)
 
-                vim.keymap.set("n", "<localleader>r", function()
+                vim.keymap.set({ "n", "x" }, "R", function()
                     require("nvim-tree.api").tree.reload()
                 end, { buffer = bufnr, noremap = true, silent = true, desc = "reload tree" })
-
-                vim.keymap.set("n", "<CR>", function()
+                local function open_edit_close()
                     local node = api.tree.get_node_under_cursor()
                     if not node then
                         return
@@ -109,7 +58,10 @@ return {
                         api.node.open.edit()
                         api.tree.close()
                     end
-                end, { buffer = bufnr, noremap = true, silent = true, desc = "Open file and close tree" })
+                end
+                vim.keymap.set("n", "o", api.node.open.no_window_picker, { buffer = bufnr, noremap = true, silent = true, desc = "Open file and close tree" })
+                vim.keymap.set("n", "O", api.node.open.edit, { buffer = bufnr, noremap = true, silent = true, desc = "Open file and close tree" })
+                vim.keymap.set("n", "<CR>", open_edit_close, { buffer = bufnr, noremap = true, silent = true, desc = "Open file and close tree" })
 
                 vim.keymap.set("n", "i", api.node.open.preview, { buffer = bufnr, noremap = true, silent = true, desc = "Preview file (keep tree focused)" })
 
@@ -119,7 +71,7 @@ return {
                         return
                     end
                     if node.type == "directory" then
-                        -- api.node.open.edit()
+                    -- api.node.open.edit()
                     else
                         api.node.open.preview()
                     end
@@ -130,7 +82,7 @@ return {
                 -- vim.keymap.set("n", "<2-LeftRelease>", "<Nop>", { buffer = bufnr, noremap = true, silent = true })
                 -- vim.keymap.set("v", "<2-LeftMouse>", "<Esc>", { buffer = bufnr, noremap = true, silent = true })
 
-                vim.keymap.set("n", "O", function()
+                vim.keymap.set("n", "go", function()
                     local marks = api.marks.list()
                     local files = {}
                     for _, node in ipairs(marks) do
@@ -257,35 +209,148 @@ return {
                         end
                     end, delay)
                 end, { buffer = bufnr, noremap = true, silent = true, desc = "Diagnostics to Quickfix" })
-            end
-
-            require("nvim-tree").setup({
-                on_attach = on_attach,
-                filesystem_watchers = {
+            end,
+            hijack_netrw = false,
+            view = {
+                debounce_delay = vim.g.is_mac and 0 or 10, -- 15
+                float = {
                     enable = true,
-                },
-                view = {
-                    float = {
-                        enable = true,
-                        open_win_config = {
-                            relative = "editor",
-                            border = "none",
-                            width = 40,
-                            height = 190,
-                            row = 0,
-                            col = 0,
-                        },
-                        -- width = 70,
+                    quit_on_focus_loss = true,
+                    open_win_config = {
+                        -- relative = "editor",
+                        relative = "win",
+                        -- border = "rounded",
+                        -- border = "none",
+                        width = 40,
+                        -- height = 190,
+                        row = 0,
+                        -- col = 1,
+                        -- col = 0,
                     },
-                    width = 48,
+                    -- width = 70,
                 },
-                filters = {
-                    -- https://github.com/nvim-tree/nvim-tree.lua/blob/master/doc/nvim-tree-lua.txt#L2172
-                    dotfiles = false,
-                    git_ignored = true,
-                    custom = { "^node_modules$" },
+                width = 48,
+            },
+            renderer = {
+                icons = {
+                    web_devicons = {
+                        file = {
+                            enable = true,
+                            color = true,
+                        },
+                        folder = {
+                            enable = false,
+                            color = true,
+                        },
+                    },
                 },
-            })
-        end,
+            },
+            git = {
+                enable = false,
+            },
+            diagnostics = {
+                enable = false,
+            },
+            modified = {
+                enable = false,
+            },
+            filters = {
+                -- https://github.com/nvim-tree/nvim-tree.lua/blob/master/doc/nvim-tree-lua.txt#L2172
+                git_ignored = true,
+                dotfiles = false,
+                git_clean = false,
+                no_buffer = false,
+                no_bookmark = false,
+                custom = { "^node_modules$" },
+                exclude = {},
+            },
+            filesystem_watchers = {
+                enable = true,
+                debounce_delay = 50,
+                max_events = 0,
+                ignore_dirs = {
+                    "/.ccls-cache",
+                    "/build",
+                    "/node_modules",
+                    "/target",
+                    "/.zig-cache",
+                },
+                whitelist_dirs = {},
+            },
+        },
+        keys = {
+            {
+                "<localleader>E",
+                function()
+                    local config = require("nvim-tree.config")
+                    config.g.view.float.enable = true
+                    -- config.g.view.float.quit_on_focus_loss = true
+                    -- config.g.filters.dotfiles = true
+                    -- config.g.view.float.open_win_config.border = "rounded"
+                    require("nvim-tree.api").tree.toggle()
+                end,
+                desc = "Toggle NvimTree Float",
+            },
+            {
+                "<localleader>e",
+                function()
+                    local config = require("nvim-tree.config")
+                    config.g.view.float.enable = true
+                    -- config.g.view.float.quit_on_focus_loss = true
+                    -- config.g.filters.dotfiles = true
+                    -- config.g.view.float.open_win_config.border = "none"
+                    require("nvim-tree.api").tree.toggle({ find_file = true })
+                end,
+                desc = "Toggle NvimTree Float on current",
+            },
+            -- Keymap to toggle the NvimTree
+            {
+                "<localleader>wd",
+                function()
+                    local view = require("nvim-tree.view")
+                    if view.is_visible() and view.get_winnr() == vim.api.nvim_get_current_win() then
+                        require("nvim-tree.api").tree.close()
+                    else
+                        local config = require("nvim-tree.config")
+                        config.g.view.float.enable = false
+                        -- config.g.actions.open_file.quit_on_open = false
+
+                        -- config.g.view.float.quit_on_focus_loss = false
+                        -- config.g.filters.dotfiles = false
+                        -- config.g.view.float.open_win_config.border = "none"
+                        require("nvim-tree.api").tree.focus()
+                    end
+                end,
+                desc = "Toggle NvimTree Sidebar",
+            },
+            -- Keymap to open NvimTree to the current file's location
+            {
+                "<localleader>wD",
+                function()
+                    local view = require("nvim-tree.view")
+                    if view.is_visible() and view.get_winnr() == vim.api.nvim_get_current_win() then
+                        require("nvim-tree.api").tree.close()
+                    else
+                        local config = require("nvim-tree.config")
+                        config.g.view.float.enable = false
+                        -- config.g.view.float.quit_on_focus_loss = false
+                        -- config.g.filters.dotfiles = false
+                        -- config.g.view.float.open_win_config.border = "none"
+                        require("nvim-tree.api").tree.find_file({ open = true, focus = true })
+                    end
+                end,
+                desc = "Focus NvimTree Sidebar on current",
+            },
+        },
+        -- actions = {
+        -- open_file = {
+        -- quit_on_open = true, -- Close the tree after opening a file in the current window
+        -- replacing_current_buffer = true, -- Open the file in the current window/buffer
+        -- You can also add other options like 'resize_window'
+        -- },
+        -- },
+        -- config = function(_, opts)
+        --     opts.require("nvim-tree").setup(opts)
+        -- end,
     },
 }
