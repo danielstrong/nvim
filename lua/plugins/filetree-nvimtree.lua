@@ -14,14 +14,14 @@ return {
         },
         keys = {
             {
-                "<localleader>wd",
+                "<localleader>wf",
                 function()
                     require("mini.files").open(vim.api.nvim_buf_get_name(0), true)
                 end,
                 desc = "Open mini.files (Directory of Current File)",
             },
             {
-                "<localleader>wD",
+                "<localleader>wF",
                 function()
                     require("mini.files").open(vim.uv.cwd(), true)
                 end,
@@ -52,33 +52,33 @@ return {
                 end,
                 desc = "Toggle NvimTree Float on current",
             },
-            -- -- Keymap to toggle the NvimTree
-            -- {
-            --     "<localleader>wd",
-            --     function()
-            --         local view = require("nvim-tree.view")
-            --         if view.is_visible() and view.get_winnr() == vim.api.nvim_get_current_win() then
-            --             require("nvim-tree.api").tree.close()
-            --         else
-            --             require("nvim-tree.api").tree.focus() -- TODO: this needs to open as a sidebar instad of float
-            --         end
-            --     end,
-            --     desc = "Toggle NvimTree Sidebar",
-            -- },
-            -- -- Keymap to open NvimTree to the current file's location
-            -- {
-            --     "<localleader>wD",
-            --     function()
-            --         local view = require("nvim-tree.view")
-            --         if view.is_visible() and view.get_winnr() == vim.api.nvim_get_current_win() then
-            --             require("nvim-tree.api").tree.close()
-            --         else
-            --             --     require("nvim-tree.api").tree.focus()
-            --             require("nvim-tree.api").tree.find_file({ open = true, focus = true }) -- TODO: this needs to open as a sidebar instad of float
-            --         end
-            --     end,
-            --     desc = "Focus NvimTree Sidebar on current",
-            -- },
+            -- Keymap to toggle the NvimTree
+            {
+                "<localleader>wd",
+                function()
+                    local view = require("nvim-tree.view")
+                    if view.is_visible() and view.get_winnr() == vim.api.nvim_get_current_win() then
+                        require("nvim-tree.api").tree.close()
+                    else
+                        require("nvim-tree.api").tree.focus() -- TODO: this needs to open as a sidebar instad of float
+                    end
+                end,
+                desc = "Toggle NvimTree Sidebar",
+            },
+            -- Keymap to open NvimTree to the current file's location
+            {
+                "<localleader>wD",
+                function()
+                    local view = require("nvim-tree.view")
+                    if view.is_visible() and view.get_winnr() == vim.api.nvim_get_current_win() then
+                        require("nvim-tree.api").tree.close()
+                    else
+                        --     require("nvim-tree.api").tree.focus()
+                        require("nvim-tree.api").tree.find_file({ open = true, focus = true }) -- TODO: this needs to open as a sidebar instad of float
+                    end
+                end,
+                desc = "Focus NvimTree Sidebar on current",
+            },
         },
         -- actions = {
         -- open_file = {
@@ -269,7 +269,7 @@ return {
                         enable = true,
                         open_win_config = {
                             relative = "editor",
-                            -- border = "none",
+                            border = "none",
                             width = 40,
                             height = 190,
                             row = 0,
