@@ -35,31 +35,41 @@ return {
     },
     {
         "custom/window-move",
-        event = "LazyFile",
         dev = true,
-        config = function()
-            local wm = require("window-move")
-
-            local function map(mode, l, r, desc)
-                vim.keymap.set(mode, l, r, { desc = desc, silent = true })
-            end
-
-            map({ "n", "x" }, "<localleader>wmk", function()
-                wm.window_move("up")
-            end, "Move Window Up")
-
-            map({ "n", "x" }, "<localleader>wmj", function()
-                wm.window_move("down")
-            end, "Move Window Down")
-
-            map({ "n", "x" }, "<localleader>wmh", function()
-                wm.window_move("left")
-            end, "Move Window Left")
-
-            map({ "n", "x" }, "<localleader>wml", function()
-                wm.window_move("right")
-            end, "Move Window Right")
-        end,
+        keys = {
+            {
+                "<localleader>wmk",
+                function()
+                    require("window-move").window_move("up")
+                end,
+                mode = { "n", "x" },
+                desc = "Move Window Up",
+            },
+            {
+                "<localleader>wmj",
+                function()
+                    require("window-move").window_move("down")
+                end,
+                mode = { "n", "x" },
+                desc = "Move Window Down",
+            },
+            {
+                "<localleader>wmh",
+                function()
+                    require("window-move").window_move("left")
+                end,
+                mode = { "n", "x" },
+                desc = "Move Window Left",
+            },
+            {
+                "<localleader>wml",
+                function()
+                    require("window-move").window_move("right")
+                end,
+                mode = { "n", "x" },
+                desc = "Move Window Right",
+            },
+        },
     },
     {
         "custom/project-check",
