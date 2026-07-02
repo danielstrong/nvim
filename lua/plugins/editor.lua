@@ -188,7 +188,7 @@ return {
         },
     },
     {
-        -- this shows just the lsp and is smaller and less annoying
+        -- this shows just the lsp loading notification and is smaller and less annoying
         "j-hui/fidget.nvim",
         enabled = true,
         opts = {
@@ -293,6 +293,7 @@ return {
     {
         "folke/trouble.nvim",
         cmd = { "Trouble" },
+        -- lazy = true,
         opts = {
             focus = true,
             pinned = false, -- When pinned, the opened trouble window will be bound to the current buffer
@@ -567,6 +568,7 @@ return {
             { "<c-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>" },
         },
     },
+    -- minimilistic minimap
     {
         "dstein64/nvim-scrollview",
         enabled = true,
@@ -597,95 +599,6 @@ return {
                             vim.cmd("ScrollViewEnable")
                         else
                             vim.cmd("ScrollViewDisable")
-                        end
-                    end,
-                })
-                :map("<localleader>um")
-        end,
-    },
-    {
-        "lewis6991/satellite.nvim",
-        -- event = "VeryLazy",
-        enabled = false,
-        -- lazy = false,
-        config = function(_, opts)
-            require("satellite").setup({
-                current_only = false,
-                winblend = 75,
-                zindex = 40,
-                excluded_filetypes = {},
-                width = 2,
-                handlers = {
-                    cursor = {
-                        enable = false,
-                        -- Supports any number of symbols
-                        symbols = { "⎺", "⎻", "⎼", "⎽" },
-                        -- symbols = { "⎻", "⎼" },
-                        -- Highlights:
-                        -- - SatelliteCursor (default links to NonText
-                    },
-                    search = {
-                        enable = true,
-                        -- Highlights:
-                        -- - SatelliteSearch (default links to Search)
-                        -- - SatelliteSearchCurrent (default links to SearchCurrent)
-                    },
-                    diagnostic = {
-                        enable = true,
-                        signs = {
-                            error = { LazyVim.config.icons.diagnostics.Error },
-                            warn = { LazyVim.config.icons.diagnostics.Warn },
-                            info = { LazyVim.config.icons.diagnostics.Info },
-                            hint = { LazyVim.config.icons.diagnostics.Hint },
-                        },
-                        min_severity = vim.diagnostic.severity.HINT,
-                        -- Highlights:
-                        -- - SatelliteDiagnosticError (default links to DiagnosticError)
-                        -- - SatelliteDiagnosticWarn (default links to DiagnosticWarn)
-                        -- - SatelliteDiagnosticInfo (default links to DiagnosticInfo)
-                        -- - SatelliteDiagnosticHint (default links to DiagnosticHint)
-                    },
-                    gitsigns = {
-                        enable = true,
-                        signs = { -- can only be a single character (multibyte is okay)
-                            add = "+",
-                            change = "│",
-                            delete = "-",
-                            -- add = "│",
-                            -- change = "│",
-                            -- delete = "-",
-                        },
-                        -- Highlights:
-                        -- SatelliteGitSignsAdd (default links to GitSignsAdd)
-                        -- SatelliteGitSignsChange (default links to GitSignsChange)
-                        -- SatelliteGitSignsDelete (default links to GitSignsDelete)
-                    },
-                    marks = {
-                        enable = false,
-                        show_builtins = false, -- shows the builtin marks like [ ] < >
-                        key = "m",
-                        -- Highlights:
-                        -- SatelliteMark (default links to Normal)
-                    },
-                    quickfix = {
-                        signs = { "-", "=", "≡" },
-                        -- Highlights:
-                        -- SatelliteQuickfix (default links to WarningMsg)
-                    },
-                },
-            })
-            Snacks.toggle
-                .new({
-                    name = "Satellite",
-                    get = function()
-                        return require("satellite.view").enabled()
-                    end,
-                    set = function(state)
-                        local view = require("satellite.view")
-                        if state then
-                            view.enable()
-                        else
-                            view.disable()
                         end
                     end,
                 })
@@ -765,114 +678,7 @@ return {
                         require("mini.map").toggle()
                     end,
                 })
-                :map("<localleader>un")
-        end,
-    },
-    {
-        "Isrothy/neominimap.nvim",
-        version = "v3.x.x",
-        enabled = false,
-        lazy = false, -- NOTE: NO NEED to Lazy load
-        -- Optional. You can also set your own keybindings
-        keys = {
-            -- Global Minimap Controls
-            { "<localleader>uN", "<cmd>Neominimap Toggle<cr>", desc = "Toggle global minimap" },
-            -- { "<localleader>Um", "<cmd>Neominimap Enable<cr>", desc = "Enable global minimap" },
-            -- { "<localleader>nc", "<cmd>Neominimap Disable<cr>", desc = "Disable global minimap" },
-            -- { "<localleader>UM", "<cmd>Neominimap Refresh<cr>", desc = "Refresh global minimap" },
-
-            -- Window-Specific Minimap Controls
-            -- { "<localleader>nwt", "<cmd>Neominimap WinToggle<cr>", desc = "Toggle minimap for current window" },
-            -- { "<localleader>nwr", "<cmd>Neominimap WinRefresh<cr>", desc = "Refresh minimap for current window" },
-            -- { "<localleader>nwo", "<cmd>Neominimap WinEnable<cr>", desc = "Enable minimap for current window" },
-            -- { "<localleader>nwc", "<cmd>Neominimap WinDisable<cr>", desc = "Disable minimap for current window" },
-
-            -- Tab-Specific Minimap Controls
-            -- { "<localleader>ntt", "<cmd>Neominimap TabToggle<cr>", desc = "Toggle minimap for current tab" },
-            -- { "<localleader>ntr", "<cmd>Neominimap TabRefresh<cr>", desc = "Refresh minimap for current tab" },
-            -- { "<localleader>nto", "<cmd>Neominimap TabEnable<cr>", desc = "Enable minimap for current tab" },
-            -- { "<localleader>ntc", "<cmd>Neominimap TabDisable<cr>", desc = "Disable minimap for current tab" },
-
-            -- Buffer-Specific Minimap Controls
-            -- { "<localleader>nbt", "<cmd>Neominimap BufToggle<cr>", desc = "Toggle minimap for current buffer" },
-            -- { "<localleader>nbr", "<cmd>Neominimap BufRefresh<cr>", desc = "Refresh minimap for current buffer" },
-            -- { "<localleader>nbo", "<cmd>Neominimap BufEnable<cr>", desc = "Enable minimap for current buffer" },
-            -- { "<localleader>nbc", "<cmd>Neominimap BufDisable<cr>", desc = "Disable minimap for current buffer" },
-
-            ---Focus Controls
-            -- { "<localleader>nf", "<cmd>Neominimap Focus<cr>", desc = "Focus on minimap" },
-            -- { "<localleader>nu", "<cmd>Neominimap Unfocus<cr>", desc = "Unfocus minimap" },
-            -- { "<localleader>ns", "<cmd>Neominimap ToggleFocus<cr>", desc = "Switch focus on minimap" },
-        },
-        init = function()
-            -- The following options are recommended when layout == "float"
-            vim.opt.wrap = false
-            vim.opt.sidescrolloff = 36 -- Set a large value
-
-            --- Put your configuration here
-
-            vim.g.neominimap = {
-                auto_enable = false,
-                -- layout = "split",
-                exclude_filetypes = {
-                    "help",
-                    "bigfile", -- For Snacks.nvim
-                },
-                exclude_buftypes = {
-                    "nofile",
-                    "nowrite",
-                    "quickfix",
-                    "terminal",
-                    "prompt",
-                },
-                -- How many columns a dot should span
-                x_multiplier = 4, ---@type integer
-
-                -- How many rows a dot should span
-                y_multiplier = 3, ---@type integer
-                -- How the minimap places the current line vertically.
-                -- `"center"`  -> pins the line to the viewport middle (window-relative).
-                -- `"percent"` -> maps line index / total lines to minimap height (file-relative).
-                -- Note: here "center" means the middle of the **minimap window**, not "center of the file".
-                -- current_line_position = "center", ---@type Neominimap.Config.CurrentLinePosition
-                current_line_position = "percent", ---@type Neominimap.Config.CurrentLinePosition
-                --- Used when `layout` is set to `float`
-                float = {
-                    minimap_width = 18, ---@type integer
-
-                    --- If set to nil, there is no maximum height restriction
-                    --- @type integer
-                    max_minimap_height = nil,
-
-                    margin = {
-                        right = 0, ---@type integer
-                        top = 0, ---@type integer
-                        bottom = 0, ---@type integer
-                    },
-                    z_index = 1, ---@type integer
-
-                    --- Border style of the floating window.
-                    --- Accepts all usual border style options (e.g., "single", "double")
-                    --- @type string | string[] | [string, string][]
-                    window_border = vim.fn.has("nvim-0.11") == 1 and vim.o.winborder or "single",
-
-                    -- When true, the floating window will be recreated when you close it.
-                    -- When false, the minimap will be disabled for the current tab when you close the minimap window.
-                    persist = true, ---@type boolean
-                },
-                git = {
-                    enabled = true,
-                },
-                mini_diff = {
-                    enabled = false,
-                },
-                search = {
-                    enabled = true,
-                },
-                mark = {
-                    enabled = false,
-                },
-            }
+                :map("<localleader>uM")
         end,
     },
     {
