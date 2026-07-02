@@ -1,6 +1,7 @@
 return {
     {
         "nvim-mini/mini.files",
+        -- lazy = true,
         opts = {
             windows = {
                 preview = true,
@@ -32,7 +33,7 @@ return {
         "nvim-tree/nvim-tree.lua",
         enabled = true,
         version = "*",
-        lazy = false,
+        -- lazy = false,
         dependencies = {
             "nvim-tree/nvim-web-devicons",
         },
