@@ -1,37 +1,60 @@
 return {
     {
         "custom/copy-store",
-        event = "LazyFile",
         dev = true,
         dependencies = { "ibhagwan/fzf-lua" },
-        config = function()
-            local cs = require("copy-store")
-
-            cs.setup({
-                -- Extra absolute dirs (~ allowed) that act as full copy stores:
-                -- they're listed for paste/edit and offered as save targets, so
-                -- copies can be created and renamed in them just like the nvim
-                -- copies/ dir. Example: extra_dirs = { "~/my-prompts" }
-                extra_dirs = vim.g.is_mac and {
-                    "~/.claude/custom-system-prompts",
-                    "~/.config/clp/context",
-                } or nil,
-            })
-
-            local function map(mode, l, r, desc)
-                vim.keymap.set(mode, l, r, { desc = desc, silent = true })
-            end
-
-            map({ "n", "x" }, "<localleader>jn", cs.create_copy_store_entry, "Create New Copy for Copy Store")
-
-            map({ "n", "x" }, "<localleader>jo", cs.edit_copy_store_entry, "Modify Copy from Copy Store")
-
-            map({ "n", "x" }, "<localleader>jp", cs.paste_copy_store_entry, "Paste Copy from Copy Store")
-
-            map({ "n", "x" }, "<localleader>jP", cs.paste_cwd_entry, "Paste Copy from CWD")
-
-            map({ "n", "x" }, "<localleader>jO", cs.edit_cwd_entry, "Modify Copy from CWD")
-        end,
+        opts = {
+            -- Extra absolute dirs (~ allowed) that act as full copy stores:
+            -- they're listed for paste/edit and offered as save targets, so
+            -- copies can be created and renamed in them just like the nvim
+            -- copies/ dir. Example: extra_dirs = { "~/my-prompts" }
+            extra_dirs = vim.g.is_mac and {
+                "~/.claude/custom-system-prompts",
+                "~/.config/clp/context",
+            } or nil,
+        },
+        keys = {
+            {
+                "<localleader>jn",
+                function()
+                    require("copy-store").create_copy_store_entry()
+                end,
+                mode = { "n", "x" },
+                desc = "Create New Copy for Copy Store",
+            },
+            {
+                "<localleader>jo",
+                function()
+                    require("copy-store").edit_copy_store_entry()
+                end,
+                mode = { "n", "x" },
+                desc = "Modify Copy from Copy Store",
+            },
+            {
+                "<localleader>jp",
+                function()
+                    require("copy-store").paste_copy_store_entry()
+                end,
+                mode = { "n", "x" },
+                desc = "Paste Copy from Copy Store",
+            },
+            {
+                "<localleader>jP",
+                function()
+                    require("copy-store").paste_cwd_entry()
+                end,
+                mode = { "n", "x" },
+                desc = "Paste Copy from CWD",
+            },
+            {
+                "<localleader>jO",
+                function()
+                    require("copy-store").edit_cwd_entry()
+                end,
+                mode = { "n", "x" },
+                desc = "Modify Copy from CWD",
+            },
+        },
     },
     {
         "custom/window-move",
