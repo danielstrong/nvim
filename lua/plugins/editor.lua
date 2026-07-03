@@ -984,7 +984,7 @@ return {
             completion = {
                 accept = {
                     auto_brackets = {
-                        enabled = true,
+                        enabled = false,
                     },
                 },
                 list = {
@@ -1038,6 +1038,7 @@ return {
                 enabled = true,
                 keymap = {
                     preset = "cmdline",
+                    -- ["<CR>"] = { "select_and_accept", "fallback" },
                     ["<Right>"] = false,
                     ["<Left>"] = false,
                 },
@@ -1055,7 +1056,8 @@ return {
 
             keymap = {
                 preset = "enter",
-                ["<C-y>"] = { "show", "show_documentation", "hide_documentation", "fallback" },
+                ["<C-y>"] = { "select_and_accept", "show", "show_documentation", "hide_documentation", "fallback" },
+                ["<CR>"] = { "fallback" },
                 -- ["<C-y>"] = { "select_and_accept" },
                 ["<Tab>"] = { "select_next", "select_and_accept", "fallback" }, -- overridden in config() using vim.g.blink_tab_show
                 ["<S-Tab>"] = { "select_prev", "fallback" },
