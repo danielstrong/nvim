@@ -469,6 +469,16 @@ map("n", "<localleader>nq", function()
     vim.cmd(qf_open and "cclose" or "copen")
 end, { desc = "Toggle Quickfix" })
 
+map("n", "<localleader>nw", function()
+    local ll_open = false
+    for _, win in ipairs(vim.fn.getwininfo()) do
+        if win.loclist == 1 then
+            ll_open = true
+            break
+        end
+    end
+    vim.cmd(ll_open and "lclose" or "lopen")
+end, { desc = "Toggle Quickfix" })
 map("n", "<localleader>dd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
 map("n", "L", function()
     local bufnr, win = vim.diagnostic.open_float()

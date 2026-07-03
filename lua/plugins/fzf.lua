@@ -142,11 +142,11 @@ return {
             keymap = {
                 builtin = {
                     ["<M-Esc>"] = "hide",
-                    ["<C-q>"] = "toggle-help",
+                    ["<C-y>"] = "toggle-help",
                     ["<C-z>"] = "toggle-fullscreen",
-                    -- ["<C-w>"] = "toggle-preview-wrap",
+                    ["<C-x>"] = "toggle-preview-wrap",
                     ["<C-p>"] = "toggle-preview",
-                    ["<C-x>"] = "toggle-preview-cw",
+                    ["<C-o>"] = "toggle-preview-cw",
                     -- ["<C-W>"] = "toggle-preview-behavior",
                     -- ["<C-w>"] = "toggle-preview-ts-ctx",
                     -- ["<C-w>"] = "preview-ts-ctx-dec",
@@ -163,12 +163,36 @@ return {
                     ["ctrl-b"] = "half-page-up",
                     ["ctrl-a"] = "beginning-of-line",
                     ["ctrl-e"] = "end-of-line",
-                    ["alt-a"] = "toggle-all",
-                    ["alt-s"] = "toggle",
+                    ["ctrl-w"] = "toggle-all",
+                    ["ctrl-c"] = "toggle",
                     ["alt-g"] = "first",
                     ["alt-G"] = "last",
                     ["shift-down"] = "preview-page-down",
                     ["shift-up"] = "preview-page-up",
+                },
+            },
+
+            actions = {
+                -- Below are the default actions, setting any value in these tables will override
+                -- the defaults, to inherit from the defaults change [1] from `false` to `true`
+                files = {
+                    -- true,        -- uncomment to inherit all the below in your custom config
+                    -- Pickers inheriting these actions:
+                    --   files, git_files, git_status, grep, lsp, oldfiles, quickfix, loclist,
+                    --   tags, btags, args, buffers, tabs, lines, blines
+                    -- `file_edit_or_qf` opens a single selection or sends multiple selection to quickfix
+                    -- replace `enter` with `file_edit` to open all files/bufs whether single or multiple
+                    -- replace `enter` with `file_switch_or_edit` to attempt a switch in current tab first
+                    ["enter"] = require("fzf-lua").actions.file_edit_or_qf,
+                    ["ctrl-s"] = require("fzf-lua").actions.file_split,
+                    ["ctrl-v"] = require("fzf-lua").actions.file_vsplit,
+                    ["ctrl-t"] = require("fzf-lua").actions.file_tabedit,
+                    ["alt-q"] = require("fzf-lua").actions.file_sel_to_qf,
+                    ["alt-w"] = require("fzf-lua").actions.file_sel_to_ll,
+                    ["alt-i"] = require("fzf-lua").actions.toggle_ignore,
+                    ["alt-h"] = require("fzf-lua").actions.toggle_hidden,
+                    ["alt-f"] = require("fzf-lua").actions.toggle_follow,
+                    ["alt-t"] = require("trouble.sources.fzf").actions.open,
                 },
             },
         },

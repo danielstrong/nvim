@@ -318,20 +318,21 @@ return {
             },
         },
         keys = {
-            { "<localleader>kl", "<cmd>Trouble lsp toggle<cr>", desc = "LSP references/definitions/... (Trouble)" },
+            { "<localleader>kq", "<cmd>Trouble qflist toggle<cr>", desc = "Quickfix List (Trouble)" },
+            { "<localleader>kw", "<cmd>Trouble loclist toggle<cr>", desc = "Location List (Trouble)" },
+
+            { "<localleader>ky", "<cmd>Trouble lsp toggle<cr>", desc = "LSP references/definitions/... (Trouble)" },
             { "<localleader>kr", "<cmd>Trouble lsp_references toggle<cr>", desc = "LSP references (Trouble)" },
             { "<localleader>kd", "<cmd>Trouble lsp_definitions toggle<cr>", desc = "LSP definitions (Trouble)" },
             { "<localleader>kD", "<cmd>Trouble lsp_declarations toggle<cr>", desc = "LSP declarations (Trouble)" },
             { "<localleader>ky", "<cmd>Trouble lsp_type_definitions toggle<cr>", desc = "LSP type definitions (Trouble)" },
             { "<localleader>kI", "<cmd>Trouble lsp_implementations toggle<cr>", desc = "LSP implementations (Trouble)" },
             { "<localleader>ks", "<cmd>Trouble symbols toggle focus=true<cr>", desc = "Symbols (Trouble)" },
+            { "<localleader>kt", "<cmd>Trouble todo toggle<cr>", desc = "Todo (Trouble)" },
+            { "<localleader>kT", "<cmd>Trouble todo toggle filter = {tag = {TODO,FIX,FIXME}}<cr>", desc = "TODO/FIX/FIXME Filtered (Trouble)" },
 
             { "<localleader>da", "<cmd>Trouble diagnostics toggle<cr>", desc = "Workspae Diagnostics (Trouble)" },
             { "<localleader>db", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", desc = "Buffer Diagnostics (Trouble)" },
-            { "<localleader>dL", "<cmd>Trouble loclist toggle<cr>", desc = "Location List (Trouble)" },
-            { "<localleader>dq", "<cmd>Trouble qflist toggle<cr>", desc = "Quickfix List (Trouble)" },
-            { "<localleader>dt", "<cmd>Trouble todo toggle<cr>", desc = "Todo (Trouble)" },
-            { "<localleader>dT", "<cmd>Trouble todo toggle filter = {tag = {TODO,FIX,FIXME}}<cr>", desc = "TODO/FIX/FIXME Filtered (Trouble)" },
             -- bare triggers: loading runs config() which sets the real handlers, then the key is replayed
             -- { "[q", mode = { "n", "x", "o" }, desc = "Previous Trouble/Quickfix Item" },
             -- { "]q", mode = { "n", "x", "o" }, desc = "Next Trouble/Quickfix Item" },
