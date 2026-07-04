@@ -65,7 +65,7 @@ opt.grepprg = "rg --vimgrep"
 opt.ignorecase = true -- Ignore case
 opt.inccommand = "split" --nosplit -- preview incremental substitute
 opt.jumpoptions = "view"
-opt.laststatus = 1 -- global statusline
+opt.laststatus = 2 -- 1 - only if split window, 2 always on
 opt.linebreak = true -- Wrap lines at convenient points
 opt.list = false
 -- opt.listchars = { tab = "» ", trail = "·", nbsp = "␣", extends = "…" }
@@ -211,7 +211,7 @@ vim.filetype.add({
 
 -- neovim's actual built-in default statusline (see `nvim --clean` vim.o.statusline) with filetype appended
 local nvim_default_statusline = table.concat({
-    [[%<%f %h%w%m%r ]],
+    [[%<%f %a%h%w%m%r ]],
     [[%{% v:lua.require('vim._core.util').term_exitcode() %}]],
     [[%=]],
     [[%{% luaeval('(package.loaded[''vim.ui''] and vim.api.nvim_get_current_win() == tonumber(vim.g.actual_curwin or -1) and vim.ui.progress_status()) or '''' ')%}]],
