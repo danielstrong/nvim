@@ -220,7 +220,7 @@ local nvim_default_statusline = table.concat({
     [[%{% &busy > 0 ? '◐ ' : '' %}]],
     [[%{% luaeval('(package.loaded[''config.lsp_progress''] and require(''config.lsp_progress'').status()) or ''''')%}]],
     [[%{% luaeval('(package.loaded[''vim.diagnostic''] and next(vim.diagnostic.count()) and vim.diagnostic.status() .. '''') or ''''') %}]],
-    [[ %y]],
+    [[ %Y]],
     [[ %{% &ruler ? ( &rulerformat == '' ? '%-14.(%l,%c%V%) %P' : &rulerformat ) : '' %} ]],
 })
 local orig_statusline = opt.statusline
