@@ -45,9 +45,15 @@ function M.status()
     end
 
     local parts = {}
-    for _, p in pairs(progress) do
-        for _, item in ipairs(p) do
-            table.insert(parts, item.msg)
+    for client_id, p in pairs(progress) do
+        if #p > 0 then
+            local client = vim.lsp.get_client_by_id(client_id)
+            local name = client and client.name or tostring(client_id)
+            local msgs = {}
+            for _, item in ipairs(p) do
+                table.insert(msgs, item.msg)
+            end
+            table.insert(parts, string.format("%s %s", name, table.concat(msgs, " ")))
         end
     end
     if #parts == 0 then
@@ -55,7 +61,7 @@ function M.status()
     end
 
     local frame = spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1]
-    return string.format("%s %s ", frame, table.concat(parts, " "))
+    return string.format("%s %s", frame, table.concat(parts, " "))
 end
 
 function M.setup()
@@ -71,9 +77,18 @@ function M.setup()
 
             for i = 1, #p + 1 do
                 if i == #p + 1 or p[i].token == ev.data.params.token then
+                    local percent = value.kind == "end" and 100 or value.percentage or 100
+                    local title = value.title or ""
+                    local message = ""
+                    if value.message then
+                        message = ("%s"):format(value.message)
+                    end
+                    -- local msg = ("(%2d %s%s)"):format(percent, title, message)
+                    local msg = percent .. "%%"
+
                     p[i] = {
                         token = ev.data.params.token,
-                        msg = ("[%3d%%] %s%s"):format(value.kind == "end" and 100 or value.percentage or 100, value.title or "", value.message and (" **%s**"):format(value.message) or ""),
+                        msg = msg,
                         done = value.kind == "end",
                     }
                     break

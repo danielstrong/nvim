@@ -192,7 +192,7 @@ return {
     {
         -- this shows just the lsp loading notification and is smaller and less annoying
         "j-hui/fidget.nvim",
-        enabled = true,
+        enabled = false,
         opts = {
             -- options
         },

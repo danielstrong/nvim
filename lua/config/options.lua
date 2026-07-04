@@ -218,10 +218,10 @@ local nvim_default_statusline = table.concat({
     [[%{% &showcmdloc == 'statusline' ? '%-10.S ' : '' %}]],
     [[%{% exists('b:keymap_name') ? '<'..b:keymap_name..'> ' : '' %}]],
     [[%{% &busy > 0 ? '◐ ' : '' %}]],
-    [[%{% luaeval('(package.loaded[''config.lsp_progress''] and require(''config.lsp_progress'').status()) or '''' ')%}]],
-    [[%Y]],
-    [[%{% luaeval('(package.loaded[''vim.diagnostic''] and next(vim.diagnostic.count()) and vim.diagnostic.status() .. '' '') or ''[no diag] '' ') %}]],
-    [[%{% &ruler ? ( &rulerformat == '' ? '%-14.(%l,%c%V%) %P' : &rulerformat ) : '' %} ]],
+    [[%{% luaeval('(package.loaded[''config.lsp_progress''] and require(''config.lsp_progress'').status()) or ''''')%}]],
+    [[%{% luaeval('(package.loaded[''vim.diagnostic''] and next(vim.diagnostic.count()) and vim.diagnostic.status() .. '''') or ''''') %}]],
+    [[ %y]],
+    [[ %{% &ruler ? ( &rulerformat == '' ? '%-14.(%l,%c%V%) %P' : &rulerformat ) : '' %} ]],
 })
 local orig_statusline = opt.statusline
 opt.statusline = nvim_default_statusline
