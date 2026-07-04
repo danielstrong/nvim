@@ -285,6 +285,7 @@ map({ "n", "x" }, "ZQ", "<cmd>q<cr>", { desc = "quit window save session" })
 map({ "n", "x" }, "<localleader>QQ", "<cmd>AutoSession disable<CR><cmd>qa<cr>", { desc = "quit all disable session" }) -- TODO dont have this save sesion..
 map({ "n", "x" }, "<localleader>QA", "<cmd>qa<cr>", { desc = "quit all save session" }) -- TODO dont have this save sesion..
 map({ "n", "x" }, "<localleader>QW", "<cmd>wqa<cr>", { desc = "quit save all save session" }) -- TODO dont have this save sesion..
+map({ "n", "x" }, "<localleader>QR", "<cmd>restart<cr>", { desc = "restart" }) -- TODO dont have this save sesion..
 map({ "n", "x" }, "<localleader>x", real_quit_window_without_closing_nvim, { desc = "Close Window" })
 map({ "n", "x" }, "<localleader>X", "<cmd>qa<cr>", { desc = "quit all save session" })
 

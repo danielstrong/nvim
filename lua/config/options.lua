@@ -163,44 +163,80 @@ vim.filetype.add({
         ["%.cls"] = "apexcode",
     },
 })
-
-vim.g.mode_colors = {
-    n = "StatusLineSection",
-    v = "StatusLineSectionV",
-    ["^V"] = "StatusLineSectionV", -- ^V (visual block)
-    i = "StatusLineSectionI",
-    c = "StatusLineSectionC",
-    r = "StatusLineSectionR",
-}
-
-vim.g.statusline_left = "[%n]%#StatusLine# %<%f%r%h%m%w"
-vim.g.statusline_extra_right = ""
-
-function StatusLineRenderer()
-    local m = vim.fn.mode():lower()
-    local hl = "%#" .. (vim.g.mode_colors[m] or vim.g.mode_colors.n) .. "#"
-    return hl .. vim.g.statusline_left .. " %=" .. vim.g.statusline_extra_right .. " %y %-14.(%l,%c%V%)%P "
-end
+-- custom status line
+-- vim.g.mode_colors = {
+--     n = "StatusLineSection",
+--     v = "StatusLineSectionV",
+--     ["^V"] = "StatusLineSectionV", -- ^V (visual block)
+--     i = "StatusLineSectionI",
+--     c = "StatusLineSectionC",
+--     r = "StatusLineSectionR",
+-- }
+--
+-- vim.g.statusline_left = "[%n]%#StatusLine# %<%f%r%h%m%w"
+-- vim.g.statusline_extra_right = ""
+--
+-- function StatusLineRenderer()
+--     local m = vim.fn.mode():lower()
+--     local hl = "%#" .. (vim.g.mode_colors[m] or vim.g.mode_colors.n) .. "#"
+--     return hl .. vim.g.statusline_left .. " %=" .. vim.g.statusline_extra_right .. " %y %-14.(%l,%c%V%)%P "
+-- end
 
 -- only set default statusline once on initial startup
-if vim.fn.has("vim_starting") == 1 then
-    vim.o.statusline = vim.g.statusline_left
-end
+-- if vim.fn.has("vim_starting") == 1 then
+-- vim.o.statusline = vim.g.statusline_left
+-- end
 
-local statusline_group = vim.api.nvim_create_augroup("statusline_update", { clear = true })
+-- local statusline_group = vim.api.nvim_create_augroup("statusline_update", { clear = true })
 
 -- show focussed buffer statusline
-vim.api.nvim_create_autocmd({ "FocusGained", "VimEnter", "WinEnter", "BufWinEnter" }, {
-    group = statusline_group,
-    callback = function()
-        vim.wo.statusline = "%!v:lua.StatusLineRenderer()"
-    end,
-})
+-- vim.api.nvim_create_autocmd({ "FocusGained", "VimEnter", "WinEnter", "BufWinEnter" }, {
+--     group = statusline_group,
+--     callback = function()
+--          vim.wo.statusline = "%!v:lua.StatusLineRenderer()"
+--     end,
+-- })
 
 -- show blurred buffer statusline
-vim.api.nvim_create_autocmd({ "FocusLost", "VimLeave", "WinLeave" }, {
-    group = statusline_group,
-    callback = function()
-        vim.wo.statusline = ""
-    end,
+-- vim.api.nvim_create_autocmd({ "FocusLost", "VimLeave", "WinLeave" }, {
+--     group = statusline_group,
+--     callback = function()
+--          vim.wo.statusline = ""
+--     end,
+-- })
+
+-- native statusline with filetype appended
+-- opt.statusline = "[%n] %<%f %h%m%r%=%-14.(%l,%c%V%) %P %y"
+-- opt.statusline = "[%n] %<%f%r%h%m%w %= %y %-14.(%l,%c%V%)%P "
+
+-- neovim's actual built-in default statusline (see `nvim --clean` vim.o.statusline) with filetype appended
+local nvim_default_statusline = table.concat({
+    [[%<%f %h%w%m%r ]],
+    [[%{% v:lua.require('vim._core.util').term_exitcode() %}]],
+    [[%=]],
+    [[%{% luaeval('(package.loaded[''vim.ui''] and vim.api.nvim_get_current_win() == tonumber(vim.g.actual_curwin or -1) and vim.ui.progress_status()) or '''' ')%}]],
+    [[%{% &showcmdloc == 'statusline' ? '%-10.S ' : '' %}]],
+    [[%{% exists('b:keymap_name') ? '<'..b:keymap_name..'> ' : '' %}]],
+    [[%{% &busy > 0 ? '◐ ' : '' %}]],
+    [[%y ]],
+    [[%{% luaeval('(package.loaded[''vim.diagnostic''] and next(vim.diagnostic.count()) and vim.diagnostic.status() .. '' '') or ''[no diag] '' ') %}]],
+    [[%{% &ruler ? ( &rulerformat == '' ? '%-14.(%l,%c%V%) %P' : &rulerformat ) : '' %} ]],
 })
+local orig_statusline = opt.statusline
+opt.statusline = nvim_default_statusline
+
+vim.keymap.set("n", "<localleader>QD", function()
+    opt.statusline = nvim_default_statusline
+end)
+vim.keymap.set("n", "<localleader>QF", function()
+    opt.statusline = orig_statusline
+end)
+vim.keymap.set("n", "<localleader>QG", function()
+    opt.statusline = "[%n] %<%f%r%h%m%w %= %y %-14.(%l,%c%V%)%P "
+end)
+vim.keymap.set("n", "<localleader>QH", function()
+    opt.statusline = "[%n] %<%f %a%w%h%m%r%=%S %k%y %-14.(%l,%c%V%) %P "
+end)
+-- opt.statusline = "[%n] %<%f %a%w%h%m%r%=%S %k%y %-14.(%l,%c%V%) %P "
+-- opt.statusline =
+-- "%<%f %h%w%m%r %{% v:lua.require('vim._core.util').term_exitcode() %}%=%{% luaeval('(package.loaded[''vim.ui''] and vim.api.nvim_get_current_win() == tonumber(vim.g.actual_curwin or -1) and vim.ui.progress_status()) or '''' ')%}%{% &showcmdloc == 'statusline' ? '%-10.S ' : '' %}%{% exists('b:keymap_name') ? '<'..b:keymap_name..'> ' : '' %}%{% &busy > 0 ? '◐ ' : '' %}%{% luaeval('(package.loaded[''vim.diagnostic''] and next(vim.diagnostic.count()) a nd vim.diagnostic.status() .. '' '') or '''' ') %}%{% &ruler ? ( &rulerformat == '' ? '%-14.(%l,%c%V%) %P' : &rulerf ormat ) : '' %}"
