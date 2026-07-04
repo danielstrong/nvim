@@ -1,5 +1,6 @@
 return {
     {
+        enabled = false,
         "esmuellert/codediff.nvim",
         cmd = "CodeDiff",
         opts = {
@@ -166,6 +167,7 @@ return {
         },
     },
     {
+        enabled = false,
         "NeogitOrg/neogit",
         lazy = true,
         dependencies = {
