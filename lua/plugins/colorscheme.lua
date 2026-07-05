@@ -112,12 +112,13 @@ return {
                     -- vim.api.nvim_set_hl(0, "StatusLineNC", { fg = "#555555", bg = "#090909" })
                     -- vim.api.nvim_set_hl(0, "TabLine", { fg = "#555555", bg = "#090909" })
                     -- vim.api.nvim_set_hl(0, "TabLineFill", { fg = "#cccccc", bg = "#090909" })
-                    vim.api.nvim_set_hl(0, "TabLineSel", { fg = "#aaaaaa", bg = "#090909" })
+                    -- vim.api.nvim_set_hl(0, "TabLineSel", { fg = "#aaaaaa", bg = "#090909" })
                     -- vim.api.nvim_set_hl(0, "BlinkCmpGhostText", { fg = "#6a9fb5" })
                     -- vim.api.nvim_set_hl(0, "GitSignsCurrentLineBlame", { fg = "#cccccc", italic = true })
                     -- vim.api.nvim_set_hl(0, "GitSignsCurrentLineBlame", { fg = "#909090", italic = true })
 
                     if vim.g.colors_name == "wheat-fox" then
+                        vim.api.nvim_set_hl(0, "CursorLine", { bg = "#151515" })
                         vim.api.nvim_set_hl(0, "TabLineSel", { bg = "#090909" })
                     end
 
