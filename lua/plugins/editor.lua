@@ -1058,8 +1058,11 @@ return {
 
             keymap = {
                 preset = "enter",
-                ["<C-y>"] = { "select_and_accept", "show", "show_documentation", "hide_documentation", "fallback" },
-                ["<CR>"] = { "fallback" },
+                ["<C-y>"] = { "cancel", "show", "fallback" },
+                ["<C-h>"] = { "hide_signature", "show_signature", "fallback" },
+                ["<C-k>"] = { "hide_documentation", "show_documentation", "fallback" },
+                -- ["<C-j>"] = { "select_and_accept", "fallback" },
+                -- ["<CR>"] = { "cancel", "fallback" },
                 -- ["<C-y>"] = { "select_and_accept" },
                 ["<Tab>"] = { "select_next", "select_and_accept", "fallback" }, -- overridden in config() using vim.g.blink_tab_show
                 ["<S-Tab>"] = { "select_prev", "fallback" },

@@ -30,6 +30,7 @@
   "mini.operators": { "branch": "main", "commit": "59c7f7362461a5db830a5752b22ce9f5cd25a966" },
   "mini.pairs": { "branch": "main", "commit": "4a014143fcb4e9df26198ccb3ecff3b9e77a048c" },
   "mini.surround": { "branch": "main", "commit": "a2f644f3759edd3d3f8b6a6d55378408bfe6d290" },
+  "modus": { "branch": "master", "commit": "17a64464c27c1be605adca13dbe48f2f402fe107" },
   "neogit": { "branch": "master", "commit": "43ea1a0854052e583f647e0b35879f0158a70a78" },
   "neosolarized.nvim": { "branch": "main", "commit": "0c01fd2ac2ab33918073f57c63bcb2ae5a31d8de" },
   "nightfly": { "branch": "master", "commit": "66050453bf40ac7eddc7a84dd15291db85fefc43" },
@@ -58,5 +59,6 @@
   "ts-expand-hover.nvim": { "branch": "main", "commit": "f83350d29e7163ac2dc017900051565b41addd1f" },
   "vim-matchup": { "branch": "master", "commit": "055881643e1b37038a572c883de7b1969716db77" },
   "vim-tmux-navigator": { "branch": "master", "commit": "e41c431a0c7b7388ae7ba341f01a0d217eb3a432" },
+  "wheat-fox": { "branch": "main", "commit": "c1837d4ad7c5a7433bf83fd85976dcffe8eaf7b6" },
   "which-key.nvim": { "branch": "main", "commit": "3aab2147e74890957785941f0c1ad87d0a44c15a" }
 }

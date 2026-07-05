@@ -2,11 +2,7 @@ return {
     { "ellisonleao/gruvbox.nvim", lazy = true },
     { "Shatur/neovim-ayu", name = "ayu", lazy = true },
     { "kepano/flexoki-neovim", name = "flexoki", lazy = true },
-    {
-        "folke/tokyonight.nvim",
-        lazy = true,
-        opts = { style = "night" },
-    },
+    { "folke/tokyonight.nvim", lazy = true, opts = { style = "night" } },
     {
         "catppuccin/nvim",
         lazy = true,
@@ -47,46 +43,27 @@ return {
                 which_key = true,
             },
         },
-        specs = {
-            {
-                "akinsho/bufferline.nvim",
-                optional = true,
-                opts = function(_, opts)
-                    if (vim.g.colors_name or ""):find("catppuccin") then
-                        opts.highlights = require("catppuccin.special.bufferline").get_theme()
-                    end
-                end,
-            },
-        },
+        -- specs = {
+        --     {
+        --         "akinsho/bufferline.nvim",
+        --         optional = true,
+        --         opts = function(_, opts)
+        --             if (vim.g.colors_name or ""):find("catppuccin") then
+        --                 opts.highlights = require("catppuccin.special.bufferline").get_theme()
+        --             end
+        --         end,
+        --     },
+        -- },
     },
     { "bluz71/vim-nightfly-colors", name = "nightfly", lazy = true, priority = 1000 },
     { "EdenEast/nightfox.nvim", name = "nightfox", lazy = true },
-    { "rebelot/kanagawa.nvim", name = "kanagawa", lazy = true },
-    {
-        "maxmx03/solarized.nvim",
-        lazy = true,
-        priority = 1000,
-        ---@type solarized.config
-        opts = {},
-    },
-    {
-        "svrana/neosolarized.nvim",
-        lazy = true,
-        priority = 1000,
-        config = function()
-            require("neosolarized").setup({
-                comment_italics = true,
-                background_set = false,
-            })
-            vim.notify("called config on neosolarized")
-            -- vim.api.nvim_set_hl(0, "CursorLine", { bg = "#053040" })
-        end,
-        dependencies = {
-            "tjdevries/colorbuddy.nvim",
-        },
-    },
+    { "rebelot/kanagawa.nvim", name = "kanagawa", lazy = true, opts = { transparent = false } },
+    { "maxmx03/solarized.nvim", lazy = true, priority = 1000, opts = {} },
+    { "svrana/neosolarized.nvim", lazy = true, priority = 1000, opts = { comment_italics = true, background_set = false }, dependencies = { "tjdevries/colorbuddy.nvim" } },
     { "rose-pine/neovim", name = "rose-pine", lazy = true },
     { "bluz71/vim-nightfly-colors", name = "nightfly", lazy = true, priority = 1000 },
+    { "saran13raj/wheat-fox.nvim", priority = 1000, lazy = true, name = "wheat-fox" },
+    { "miikanissi/modus-themes.nvim", priority = 1000, lazy = true, name = "modus" },
     {
         "LazyVim/LazyVim",
         opts = {
@@ -96,7 +73,8 @@ return {
             -- colorscheme = "tokyonight-night",
             -- colorscheme = "tomorrow-night",
             -- colorscheme = "nightfox",
-            colorscheme = "kanagawa",
+            -- colorscheme = "kanagawa",
+            colorscheme = "wheat-fox",
             -- colorscheme = "flexoki",
             -- colorscheme = "kanagawa-dragon",
             -- colorscheme = "nightfly",
@@ -108,26 +86,11 @@ return {
             -- colorscheme = "ayu",
             -- colorscheme = "ayu-dark",
         },
-    },
-    {
-        "LazyVim/LazyVim",
         init = function()
             vim.api.nvim_create_autocmd("ColorScheme", {
                 -- group = augroup("colorscheme"),
                 pattern = "*",
                 callback = function()
-                    --
-                    -- vim.cmd([[
-                    --     hi StatusLine         ctermbg=darkgray ctermfg=black guibg=#cccccc guifg=#090909
-                    --     hi StatusLineNC       ctermbg=black ctermfg=darkgray guibg=#cccccc guifg=#090909
-                    --     hi StatusLineSection  ctermbg=darkgray ctermfg=black guibg=#cccccc guifg=#090909
-                    --     hi StatusLineSectionV ctermbg=darkyellow ctermfg=black guibg=#f4bf75 guifg=#090909
-                    --     hi StatusLineSectionI ctermbg=darkgreen ctermfg=black guibg=#90a959 guifg=#090909
-                    --     hi StatusLineSectionC ctermbg=darkblue ctermfg=black guibg=#6a9fb5 guifg=#090909
-                    --     hi StatusLineSectionR ctermbg=green ctermfg=black guibg=#aac474 guifg=#090909
-                    --     hi Conceal            cterm=underline ctermbg=black ctermfg=lightgray term=underline guibg=#090909 guifg=#cccccc
-                    -- ]])
-                    --
                     -- vim.api.nvim_set_hl(0, "StatusLine", { fg = "#cccccc", bg = "#090909" })
                     -- vim.api.nvim_set_hl(0, "StatusLineNC", { fg = "#cccccc", bg = "#090909" })
                     -- vim.api.nvim_set_hl(0, "StatusLineSection", { fg = "#cccccc", bg = "#090909" })
@@ -135,14 +98,33 @@ return {
                     -- vim.api.nvim_set_hl(0, "StatusLineSectionI", { fg = "#90a959", bg = "#090909" })
                     -- vim.api.nvim_set_hl(0, "StatusLineSectionC", { fg = "#6a9fb5", bg = "#090909" })
                     -- vim.api.nvim_set_hl(0, "StatusLineSectionR", { fg = "#aac474", bg = "#090909" })
-                    vim.api.nvim_set_hl(0, "BlinkCmpGhostText", { fg = "#6a9fb5" })
-                    vim.api.nvim_set_hl(0, "GitSignsCurrentLineBlame", { fg = "#cccccc", italic = true })
+
+                    -- vim.api.nvim_set_hl(0, "Normal", { bg = "#010101" })
+                    -- vim.api.nvim_set_hl(0, "NormalNC", { bg = "#010101" })
+                    -- vim.api.nvim_set_hl(0, "NormalFloat", { bg = "#010101" })
+                    -- vim.api.nvim_set_hl(0, "SignColumn", { bg = "#010101" })
+                    -- vim.api.nvim_set_hl(0, "EndOfBuffer", { bg = "#010101" })
+                    -- vim.api.nvim_set_hl(0, "LineNr", { bg = "#010101" })
+                    -- vim.api.nvim_set_hl(0, "FoldColumn", { bg = "#010101" })
+                    -- vim.api.nvim_set_hl(0, "CursorLine", { bg = "#151515" })
+                    -- vim.api.nvim_set_hl(0, "CursorLine", { bg = "#777777" })
+                    -- vim.api.nvim_set_hl(0, "StatusLine", { fg = "#aaaaaa", bg = "#090909" })
+                    -- vim.api.nvim_set_hl(0, "StatusLineNC", { fg = "#555555", bg = "#090909" })
+                    -- vim.api.nvim_set_hl(0, "TabLine", { fg = "#555555", bg = "#090909" })
+                    -- vim.api.nvim_set_hl(0, "TabLineFill", { fg = "#cccccc", bg = "#090909" })
+                    vim.api.nvim_set_hl(0, "TabLineSel", { fg = "#aaaaaa", bg = "#090909" })
+                    -- vim.api.nvim_set_hl(0, "BlinkCmpGhostText", { fg = "#6a9fb5" })
+                    -- vim.api.nvim_set_hl(0, "GitSignsCurrentLineBlame", { fg = "#cccccc", italic = true })
                     -- vim.api.nvim_set_hl(0, "GitSignsCurrentLineBlame", { fg = "#909090", italic = true })
+
+                    if vim.g.colors_name == "wheat-fox" then
+                        vim.api.nvim_set_hl(0, "TabLineSel", { bg = "#090909" })
+                    end
 
                     if vim.g.colors_name == "neosolarized" then
                         vim.api.nvim_set_hl(0, "CursorLine", { bg = "#053040" })
                     end
-                    -- // hjio there
+
                     if vim.g.colors_name ~= nil and vim.g.colors_name:find("kanagawa") then
                         vim.api.nvim_set_hl(0, "SpellBad", { fg = "#E82424" })
                         vim.api.nvim_set_hl(0, "SpellCap", { fg = "#FF9E3B" })
