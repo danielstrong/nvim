@@ -542,6 +542,18 @@ map("n", "<localleader>gS", Snacks.picker.git_status, { desc = "Git Status" })
 
 Snacks.toggle
     .new({
+        name = "Diagnostics",
+        get = function()
+            return vim.diagnostic.is_enabled()
+        end,
+        set = function(state)
+            vim.diagnostic.enable(state)
+        end,
+    })
+    :map("<localleader>uD")
+
+Snacks.toggle
+    .new({
         name = "ESLint",
         get = function()
             return #vim.lsp.get_clients({ name = "eslint", bufnr = 0 }) > 0
