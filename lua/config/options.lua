@@ -65,7 +65,7 @@ opt.grepprg = "rg --vimgrep"
 opt.ignorecase = true -- Ignore case
 opt.inccommand = "split" --nosplit -- preview incremental substitute
 opt.jumpoptions = "view"
-opt.laststatus = 2 -- 1 - only if split window, 2 always on
+opt.laststatus = 1 -- 1 - only if split window, 2 always on
 opt.linebreak = true -- Wrap lines at convenient points
 opt.list = false
 -- opt.listchars = { tab = "» ", trail = "·", nbsp = "␣", extends = "…" }
