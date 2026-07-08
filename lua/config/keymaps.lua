@@ -15,7 +15,9 @@
 -- "l"    Insert, Command-line, Lang-Arg
 
 local map = vim.keymap.set
-
+map("n", "gh", "<Nop>")
+map("n", "gH", "<Nop>")
+map("n", "g<C-h>", "<Nop>")
 map("n", "=zj", "<cmd>%!jq .<CR>", { noremap = true, desc = "Format JSON with jq" })
 map("n", "=zg", "mggg=G'g", { noremap = true, desc = "Format JSON with jq" })
 
@@ -432,19 +434,19 @@ local function copy_abs_path_with_line_numbers_to_clipboard()
     vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "nx", false)
 end
 
-map("n", "<localleader>c", copy_rel_path_to_clipboard, { desc = "copy relative path" })
-map("x", "<localleader>c", copy_rel_path_with_line_numbers_to_clipboard, { desc = "copy relative path with line number" })
-map({ "n", "x" }, "<localleader>vc", copy_rel_path_with_line_numbers_to_clipboard, { desc = "copy relative path with line number" })
+-- map("n", "<localleader>c", copy_rel_path_to_clipboard, { desc = "copy relative path" })
+-- map("x", "<localleader>c", copy_rel_path_with_line_numbers_to_clipboard, { desc = "copy relative path with line number" })
+-- map({ "n", "x" }, "<localleader>vc", copy_rel_path_with_line_numbers_to_clipboard, { desc = "copy relative path with line number" })
 map("n", "<localleader>y", copy_rel_path_to_clipboard, { desc = "copy relative path" })
 map("x", "<localleader>y", copy_rel_path_with_line_numbers_to_clipboard, { desc = "copy relative path with line number" })
-map({ "n", "x" }, "<localleader>vy", copy_rel_path_with_line_numbers_to_clipboard, { desc = "copy relative path with line number" })
+map({ "n", "x" }, "<leader>y", copy_rel_path_with_line_numbers_to_clipboard, { desc = "copy relative path with line number" })
 
-map("n", "<localleader>C", copy_abs_path_to_clipboard, { desc = "copy absolute path" })
-map("x", "<localleader>C", copy_abs_path_with_line_numbers_to_clipboard, { desc = "copy absolute path with line number" })
-map({ "n", "x" }, "<localleader>vC", copy_abs_path_with_line_numbers_to_clipboard, { desc = "copy absolute path with line number" })
+-- map("n", "<localleader>C", copy_abs_path_to_clipboard, { desc = "copy absolute path" })
+-- map("x", "<localleader>C", copy_abs_path_with_line_numbers_to_clipboard, { desc = "copy absolute path with line number" })
+-- map({ "n", "x" }, "<localleader>vC", copy_abs_path_with_line_numbers_to_clipboard, { desc = "copy absolute path with line number" })
 map("n", "<localleader>Y", copy_abs_path_to_clipboard, { desc = "copy absolute path" })
 map("x", "<localleader>Y", copy_abs_path_with_line_numbers_to_clipboard, { desc = "copy absolute path with line number" })
-map({ "n", "x" }, "<localleader>vY", copy_abs_path_with_line_numbers_to_clipboard, { desc = "copy absolute path with line number" })
+map({ "n", "x" }, "<leader>Y", copy_abs_path_with_line_numbers_to_clipboard, { desc = "copy absolute path with line number" })
 
 map("n", "crt", '"_ciwtrue<Esc>', { nowait = true, noremap = true, desc = "Replace word with true" })
 map("n", "crf", '"_ciwfalse<Esc>', { desc = "Replace word with false" })
