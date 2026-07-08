@@ -241,3 +241,19 @@ end)
 -- opt.statusline = "[%n] %<%f %a%w%h%m%r%=%S %k%y %-14.(%l,%c%V%) %P "
 -- opt.statusline =
 -- "%<%f %h%w%m%r %{% v:lua.require('vim._core.util').term_exitcode() %}%=%{% luaeval('(package.loaded[''vim.ui''] and vim.api.nvim_get_current_win() == tonumber(vim.g.actual_curwin or -1) and vim.ui.progress_status()) or '''' ')%}%{% &showcmdloc == 'statusline' ? '%-10.S ' : '' %}%{% exists('b:keymap_name') ? '<'..b:keymap_name..'> ' : '' %}%{% &busy > 0 ? '◐ ' : '' %}%{% luaeval('(package.loaded[''vim.diagnostic''] and next(vim.diagnostic.count()) a nd vim.diagnostic.status() .. '' '') or '''' ') %}%{% &ruler ? ( &rulerformat == '' ? '%-14.(%l,%c%V%) %P' : &rulerf ormat ) : '' %}"
+
+-- vim.opt.exrc = true
+-- vim.opt.secure = true
+local workspace_path = vim.fn.getcwd()
+local cache_dir = vim.fn.stdpath("data")
+local project_name = vim.fn.fnamemodify(workspace_path, ":t")
+local project_dir = cache_dir .. "/myshada/" .. project_name
+if vim.fn.isdirectory(project_dir) == 0 then
+    vim.fn.mkdir(project_dir, "p")
+end
+local shadafile = project_dir .. "/" .. vim.fn.sha256(workspace_path):sub(1, 8) .. ".shada"
+vim.opt.shadafile = shadafile
+-- local opts = { noremap = true, silent = true, desc = "Jump to Mark" }
+-- vim.keymap.set("n", "<leader>sm", function()
+--     require("fzf-lua").marks({ cwd = project_dir })
+-- end, opts)
