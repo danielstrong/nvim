@@ -116,8 +116,8 @@ return {
                     end
                 end
 
-                vim.keymap.set("n", "<localleader>c", copy_rel_path_to_clipboard, { buffer = bufnr, noremap = true, silent = true, desc = "NvimTree copy relative path" })
-                vim.keymap.set("n", "<localleader>C", copy_abs_path_to_clipboard, { buffer = bufnr, noremap = true, silent = true, desc = "NvimTree copy absolute path" })
+                -- vim.keymap.set("n", "<localleader>c", copy_rel_path_to_clipboard, { buffer = bufnr, noremap = true, silent = true, desc = "NvimTree copy relative path" })
+                -- vim.keymap.set("n", "<localleader>C", copy_abs_path_to_clipboard, { buffer = bufnr, noremap = true, silent = true, desc = "NvimTree copy absolute path" })
                 vim.keymap.set("n", "<localleader>y", copy_rel_path_to_clipboard, { buffer = bufnr, noremap = true, silent = true, desc = "NvimTree copy relative path" })
                 vim.keymap.set("n", "<localleader>Y", copy_abs_path_to_clipboard, { buffer = bufnr, noremap = true, silent = true, desc = "NvimTree copy absolute path" })
 
