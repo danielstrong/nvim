@@ -134,6 +134,32 @@ return {
                 codeaction = { diff_opts = { ctxlen = 3 } },
                 codeaction_native = { diff_opts = { ctxlen = 3 } },
             },
+            -- config.defaults.keymap.fzf["ctrl-q"] = "select-all+accept"
+            -- config.defaults.keymap.fzf["ctrl-u"] = "half-page-up"
+            -- config.defaults.keymap.fzf["ctrl-d"] = "half-page-down"
+            -- config.defaults.keymap.fzf["ctrl-x"] = "jump"
+            -- config.defaults.keymap.fzf["ctrl-f"] = "preview-page-down"
+            -- config.defaults.keymap.fzf["ctrl-b"] = "preview-page-up"
+            -- config.defaults.keymap.builtin["<c-f>"] = "preview-page-down"
+            -- config.defaults.keymap.builtin["<c-b>"] = "preview-page-up"
+
+            -- `action`   |alt-Q|        *file-selection-to-loclist*   `builtin`  |ctrl-b|       *preview-page-up*             `builtin`  |f7|           *toggle-preview-ts-ctx*       `fzf`      |ctrl-r|       *toggle-root-dir*
+            -- `action`   |alt-c|        *toggle-root-dir*             `builtin`  |ctrl-f|       *preview-page-down*           `builtin`  |f8|           *preview-ts-ctx-dec*          `fzf`      |ctrl-s|       *file-split*
+            -- `action`   |alt-f|        *toggle-follow*               `builtin`  |ctrl-i|       *toggle-preview-behavior*     `builtin`  |f9|           *preview-ts-ctx-inc*          `fzf`      |ctrl-t|       *smart-open-with-trouble*
+            -- `action`   |alt-h|        *toggle-hidden*               `builtin`  |ctrl-m|       *preview-up*                  `builtin`  |shift-down|   *preview-page-down*           `fzf`      |ctrl-u|       *half-page-up*
+            -- `action`   |alt-i|        *toggle-ignore*               `builtin`  |ctrl-n|       *preview-down*                `builtin`  |shift-left|   *preview-reset*               `fzf`      |ctrl-v|       *file-vsplit*
+            -- `action`   |alt-q|        *file-selection-to-qf*        `builtin`  |ctrl-o|       *toggle-preview-cw*           `builtin`  |shift-up|     *preview-page-up*             `fzf`      |enter|        *file-edit-or-qf*
+            -- `action`   |ctrl-c|       *abort*                       `builtin`  |ctrl-p|       *toggle-preview*              `fzf`      |alt-G|        *last*                        `fzf`      |esc|          *hide*
+            -- `action`   |ctrl-r|       *toggle-root-dir*             `builtin`  |ctrl-v|       *toggle-help*                 `fzf`      |alt-Q|        *file-selection-to-loclist*
+            -- `action`   |ctrl-s|       *file-split*                  `builtin`  |ctrl-x|       *toggle-preview-wrap*         `fzf`      |alt-a|        *toggle-all*
+            -- `action`   |ctrl-t|       *smart-open-with-trouble*     `builtin`  |ctrl-z|       *toggle-fullscreen*           `fzf`      |alt-c|        *toggle-root-dir*
+            -- `action`   |ctrl-v|       *file-vsplit*                 `builtin`  |f1|           *toggle-help*                 `fzf`      |alt-g|        *first*
+            -- `action`   |enter|        *file-edit-or-qf*             `builtin`  |f2|           *toggle-fullscreen*           `fzf`      |alt-q|        *file-selection-to-qf*
+            -- `action`   |esc|          *hide*                        `builtin`  |f3|           *toggle-preview-wrap*         `fzf`      |alt-s|        *toggle*
+            -- `builtin`  |alt-esc|      *abort*                       `builtin`  |f4|           *toggle-preview*              `fzf`      |ctrl-a|       *beginning-of-line*
+            -- `builtin`  |alt-shift-down| *preview-down*                `builtin`  |f5|           *toggle-preview-cw*           `fzf`      |ctrl-d|       *half-page-down*
+            -- `builtin`  |alt-shift-up| *preview-up*                  `builtin`  |f6|           *toggle-preview-behavior*     `fzf`      |ctrl-e|       *end-of-line*
+            --
             -- actions = {
             --     files = {
             --         ["ctrl-t"] = require("trouble.sources.fzf").actions.open,
