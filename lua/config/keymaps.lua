@@ -19,7 +19,7 @@ map("n", "gh", "<Nop>")
 map("n", "gH", "<Nop>")
 map("n", "g<C-h>", "<Nop>")
 map("n", "=zj", "<cmd>%!jq .<CR>", { noremap = true, desc = "Format JSON with jq" })
-map("n", "=zg", "mggg=G'g", { noremap = true, desc = "Format JSON with jq" })
+map("n", "=zg", "mggg=G'g", { noremap = true, desc = "Format JSON with =" })
 
 -- Search and Replace
 -- to use: yank the replacement text, search the target text, then use this keymap
