@@ -618,7 +618,7 @@ Snacks.toggle
             vim.wo.smoothscroll = state and true or false
         end,
     })
-    :map("<localleader>us")
+    :map("<localleader>uW")
 
 Snacks.toggle
     .new({
@@ -636,7 +636,7 @@ Snacks.toggle
             end
         end,
     })
-    :map("<localleader>us")
+    :map("<localleader>ua")
 
 Snacks.toggle
     .new({

@@ -115,7 +115,7 @@ return {
                     -- vim.api.nvim_set_hl(0, "TabLineFill", { fg = "#cccccc", bg = "#090909" })
                     -- vim.api.nvim_set_hl(0, "TabLineSel", { fg = "#aaaaaa", bg = "#090909" })
                     -- vim.api.nvim_set_hl(0, "BlinkCmpGhostText", { fg = "#6a9fb5" })
-                    -- vim.api.nvim_set_hl(0, "GitSignsCurrentLineBlame", { fg = "#cccccc", italic = true })
+                    vim.api.nvim_set_hl(0, "GitSignsCurrentLineBlame", { fg = "#cccccc", italic = true })
                     -- vim.api.nvim_set_hl(0, "GitSignsCurrentLineBlame", { fg = "#909090", italic = true })
 
                     if vim.g.colors_name == "wheat-fox" then
@@ -128,6 +128,7 @@ return {
                     end
 
                     if vim.g.colors_name ~= nil and vim.g.colors_name:find("kanagawa") then
+                        vim.api.nvim_set_hl(0, "GitSignsCurrentLineBlame", { fg = "#cccccc", italic = true })
                         vim.api.nvim_set_hl(0, "SpellBad", { fg = "#E82424" })
                         vim.api.nvim_set_hl(0, "SpellCap", { fg = "#FF9E3B" })
                         vim.api.nvim_set_hl(0, "SpellRare", { fg = "#7E9CD8" })
