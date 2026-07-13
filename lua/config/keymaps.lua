@@ -610,6 +610,36 @@ Snacks.toggle
 
 Snacks.toggle
     .new({
+        name = "Smooth Scroll",
+        get = function()
+            return vim.wo.smoothscroll == true
+        end,
+        set = function(state)
+            vim.wo.smoothscroll = state and true or false
+        end,
+    })
+    :map("<localleader>us")
+
+Snacks.toggle
+    .new({
+        name = "Animations",
+        get = function()
+            return Snacks.scroll.enabled
+        end,
+        set = function(state)
+            if state then
+                Snacks.scroll.enable()
+                vim.g.snacks_animate = true
+            else
+                Snacks.scroll.disable()
+                vim.g.snacks_animate = false
+            end
+        end,
+    })
+    :map("<localleader>us")
+
+Snacks.toggle
+    .new({
         name = "Force Statusline",
         get = function()
             return vim.o.laststatus == 2

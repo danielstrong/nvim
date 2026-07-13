@@ -92,14 +92,16 @@ vim.api.nvim_create_autocmd("VimEnter", {
                 has_md = true
                 -- normally markdown files show but i dont want it for claude code edits
                 if vim.env.CLAUDE_CODE_ENTRYPOINT ~= "cli" then
-                    vim.o.laststatus = 2
+                    -- vim.o.laststatus = 2
+                    vim.cmd("f")
                 end
                 break
             end
         end
         if not has_md then
             -- non markdown files and markdown files that arent opened through claudecode get laststatus=2 to start with the status
-            vim.o.laststatus = 2
+            -- vim.o.laststatus = 2
+            vim.cmd("f")
             return
         end
         vim.g.blink_tab_show = false
