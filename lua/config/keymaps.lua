@@ -341,7 +341,7 @@ map("n", "zhP", function()
     paste_charwise(false)
 end, { desc = "Paste before characterwise inline" })
 map("n", "zlp", "<cmd>pu<cr>", { desc = "Paste linewise" })
-map("n", "zlP", "<cmdpu!<cr>", { desc = "Paste linewise" })
+map("n", "zlP", "<cmd>pu!<cr>", { desc = "Paste linewise" })
 
 map({ "n", "v", "o" }, "<Home>", "^", { remap = true, desc = "Go to beginning of line" })
 -- map("n", "<Home>", function()
