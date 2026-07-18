@@ -556,6 +556,18 @@ Snacks.toggle
 
 Snacks.toggle
     .new({
+        name = "Diagnostic Virtual Text",
+        get = function()
+            return vim.diagnostic.config().virtual_text ~= false
+        end,
+        set = function(state)
+            vim.diagnostic.config({ virtual_text = state })
+        end,
+    })
+    :map("<localleader>uL")
+
+Snacks.toggle
+    .new({
         name = "ESLint",
         get = function()
             return #vim.lsp.get_clients({ name = "eslint", bufnr = 0 }) > 0

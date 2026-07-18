@@ -128,6 +128,10 @@ return {
                     end
 
                     if vim.g.colors_name ~= nil and vim.g.colors_name:find("kanagawa") then
+                        vim.api.nvim_set_hl(0, "MiniDiffOverContext", { bg = "#672e30", fg = "#dcd7ba" })
+                        vim.api.nvim_set_hl(0, "MiniDiffOverAdd", { bg = "#4a5f32", fg = "#dcd7ba" })
+                        vim.api.nvim_set_hl(0, "MiniDiffOverChange", { bg = "#a35d21", fg = "#2b1d02" })
+                        vim.api.nvim_set_hl(0, "MiniDiffOverChangeBuf", { bg = "#a35d21", fg = "#2b1d02" })
                         vim.api.nvim_set_hl(0, "GitSignsCurrentLineBlame", { fg = "#cccccc", italic = true })
                         vim.api.nvim_set_hl(0, "SpellBad", { fg = "#E82424" })
                         vim.api.nvim_set_hl(0, "SpellCap", { fg = "#FF9E3B" })

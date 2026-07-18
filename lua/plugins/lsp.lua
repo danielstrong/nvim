@@ -80,7 +80,7 @@ return {
                 --     -- this will set set the prefix to a function that returns the diagnostics icon based on the severity
                 --     prefix = "icons",
                 -- },
-                -- virtual_text = false,
+                virtual_text = false,
                 severity_sort = true,
                 signs = {
                     text = {
