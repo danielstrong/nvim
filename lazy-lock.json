@@ -61,5 +61,6 @@
   "vim-matchup": { "branch": "master", "commit": "055881643e1b37038a572c883de7b1969716db77" },
   "vim-tmux-navigator": { "branch": "master", "commit": "e41c431a0c7b7388ae7ba341f01a0d217eb3a432" },
   "wheat-fox": { "branch": "main", "commit": "c1837d4ad7c5a7433bf83fd85976dcffe8eaf7b6" },
-  "which-key.nvim": { "branch": "main", "commit": "3aab2147e74890957785941f0c1ad87d0a44c15a" }
+  "which-key.nvim": { "branch": "main", "commit": "3aab2147e74890957785941f0c1ad87d0a44c15a" },
+  "zdiff.nvim": { "branch": "main", "commit": "6e2a105d7cc138b25e2907589ad2c5251e608424" }
 }
