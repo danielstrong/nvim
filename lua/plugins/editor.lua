@@ -1,5 +1,13 @@
 return {
     {
+        "Darazaki/indent-o-matic",
+        opts = {
+            max_lines = 2048,
+            standard_widths = { 2, 4 },
+            skip_multiline = false, -- Skip multi-line comments and strings (more accurate detection but less performant)
+        },
+    },
+    {
         enabled = false,
         "esmuellert/codediff.nvim",
         cmd = "CodeDiff",
