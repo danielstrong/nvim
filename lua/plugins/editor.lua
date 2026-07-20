@@ -1,5 +1,42 @@
 return {
-
+    {
+        "stevearc/quicker.nvim",
+        enabled = false,
+        ft = "qf",
+        ---@module "quicker"
+        ---@type quicker.SetupOptions
+        opts = {},
+        keys = {
+            {
+                "<localleader>kq",
+                function()
+                    require("quicker").toggle()
+                end,
+                desc = "Toggle quicker quickfix",
+            },
+            {
+                "<localleader>kw",
+                function()
+                    require("quicker").toggle({ loclist = true })
+                end,
+                desc = "Toggle quicker loclist",
+            },
+            -- {
+            --     ">",
+            --     function()
+            --         require("quicker").expand({ before = 2, after = 2, add_to_existing = true })
+            --     end,
+            --     desc = "Expand quickfix context",
+            -- },
+            -- {
+            --     "<",
+            --     function()
+            --         require("quicker").collapse()
+            --     end,
+            --     desc = "Collapse quickfix context",
+            -- },
+        },
+    },
     {
         "Darazaki/indent-o-matic",
         opts = {
@@ -13,14 +50,14 @@ return {
         cmd = "Zdiff",
         opts = {
             -- Whether files are expanded by default
-            default_expanded = true,
+            default_expanded = false,
 
             -- Default branch for toggle_mode (m key)
             default_branch = "main",
 
             -- Keymap bindings (defaults)
             keymaps = {
-                goto_file = "<CR>",
+                goto_file = "o",
                 toggle = "<Tab>",
                 close = "q",
                 refresh = "R",
@@ -361,6 +398,7 @@ return {
     {
         "folke/trouble.nvim",
         cmd = { "Trouble" },
+        enabled = false,
         -- lazy = true,
         dependencies = {
             {

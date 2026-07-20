@@ -782,4 +782,27 @@ do
     make_bracket_mappings_repeatable("s")
     make_bracket_mappings_repeatable("t")
     make_mappings_repeatable("gt", "gT")
+
+    local function qf_next()
+        local ok = pcall(vim.cmd.cnext)
+        if not ok then
+            local ok2 = pcall(vim.cmd, "cc 1")
+            if not ok2 then
+                vim.notify("No quickfix list errors", vim.log.levels.ERROR)
+            end
+        end
+    end
+    local function qf_prev()
+        local ok = pcall(vim.cmd.cprev)
+        if not ok then
+            local ok2 = pcall(vim.cmd, "cc 1")
+            if not ok2 then
+                vim.notify("No quickfix list errors", vim.log.levels.ERROR)
+            end
+        end
+    end
+    local repeatable_qf_next, repeatable_qf_prev = repeat_move.make_repeatable_move_pair(qf_next, qf_prev)
+
+    map({ "n", "x", "o" }, "[q", repeatable_qf_prev, { desc = "Previous Quickfix Item" })
+    map({ "n", "x", "o" }, "]q", repeatable_qf_next, { desc = "Next Quickfix Item" })
 end

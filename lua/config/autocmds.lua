@@ -61,6 +61,14 @@ vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
 --         vim.opt_local.spell = true
 --     end,
 -- })
+-- make :help open in vertical split
+vim.api.nvim_create_autocmd("FileType", {
+    group = augroup("wrap_spell"),
+    pattern = "help",
+    callback = function()
+        vim.cmd("wincmd L")
+    end,
+})
 
 vim.api.nvim_del_augroup_by_name("lazyvim_highlight_yank")
 vim.api.nvim_create_autocmd("TextYankPost", {
@@ -128,6 +136,13 @@ vim.api.nvim_create_autocmd("VimEnter", {
 --
 --
 --#region
-
+-- vim.api.nvim_create_autocmd("LspProgress", {
+--     callback = function(ev)
+--         local client = vim.lsp.get_client_by_id(ev.data.client_id)
+--         local value = ev.data.params.value
+--         local msg = ("[%s] %s %s"):format(client.name, value.kind == "end" and "✓" or "", value.title or "")
+--         vim.notify(msg)
+--     end,
+-- })
 -- Lsp progress in the statusline
 require("config.lsp_progress").setup()

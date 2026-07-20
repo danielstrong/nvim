@@ -16,9 +16,50 @@ vim.g.lazyvim_eslint_auto_format = false
 vim.g.lazyvim_ruby_lsp = "ruby_lsp"
 vim.g.lazyvim_ruby_formatter = "rubocop"
 -- vim.opt_local.spell = true
+--
+-- enable coreui2  see :help ui2
+-- require("vim._core.ui2").enable({
+--     enable = true,
+--     -- msg = { -- Customizes messaging modules
+--     -- targets = "cmd", -- Base message fallback target ('cmd' | 'msg' | 'pager')
+--     -- cmd = {
+--     --     height = 0.5, -- Max height limit (ratio) for expanded cmdline messages
+--     -- },
+--     -- dialog = {
+--     --     height = 0.5, -- Max height limit (ratio) for modal dialog windows
+--     -- },
+--     -- msg = {
+--     --     height = 0.5, -- Max height limit (ratio) for standard message windows
+--     --     timeout = 4000, -- Auto-dismiss duration in milliseconds
+--     -- },
+--     -- pager = {
+--     --     height = 1, -- Max height limit (ratio) for the interactive pager window
+--     -- },
+--     -- },
+--     -- msg = {
+--     --
+--     --     targets = {
+--     --         default = "cmd", -- Fallback for unmapped messages
+--     --         progress = "msg", -- LSP server initialization bars
+--     --         emsg = "pager", -- Severe error stacks go to a scrollable buffer
+--     --         -- lua_print = "msg", -- Standard lua print() outputs
+--     --         -- lua_print = "msg", -- Standard lua print() outputs
+--     --         bufwrite = "cmd", -- Saved file "file.txt" [New] notifications
+--     --     },
+--     -- },
+--     -- msg = {
+--     targets = "pager", -- Ephemeral message window or cmdline
+--     cmd = {
+--         height = 5.5, -- Maximum height while expanded
+--     },
+--     pager = {
+--         height = 5,
+--     },
+--     -- },
+-- })
 
 local opt = vim.opt
-
+-- opt.cmdheight = 0
 opt.autowrite = false
 opt.autoread = true
 -- only set clipboard if not in ssh, to make sure the OSC 52
