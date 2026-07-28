@@ -374,7 +374,266 @@ return {
             indent = { enabled = false },
             scope = { enabled = false },
             scroll = { enabled = false },
-            picker = { enabled = false },
+            picker = {
+                enabled = true,
+                ui_select = true,
+                -- live = true,
+                -- auto_confirm = true, -- Automatically jump if there is only one item
+                -- matcher = {
+                --     fuzzy = true,
+                --     smartcase = true,
+                --     filename_bonus = true,
+                -- },
+                matcher = {
+                    fuzzy = true,
+                    smartcase = true,
+                    filename_bonus = true,
+                },
+                -- layout = { preset = "vertical", layout = { width = 0.95, height = 0.95 } },
+
+                layouts = {
+                    stacked = {
+                        preset = "vertical",
+                        layout = {
+                            backdrop = true,
+                            width = 0.9,
+                            min_width = 80,
+                            height = 0.9,
+                            min_height = 30,
+                            box = "vertical",
+                            border = true,
+                            title = "{title} {live} {flags}",
+                            title_pos = "center",
+                            -- { win = "input", height = 1, border = "bottom" },
+                            -- { win = "list", border = "none" },
+                            -- { win = "preview", title = "{preview}", height = 0.45, border = "top" },
+                            { win = "input", height = 1, border = "bottom", wo = { winhighlight = "NormalFloat:Normal" } },
+                            { win = "list", border = "none", wo = { winhighlight = "NormalFloat:NormalNC" } },
+                            { win = "preview", title = "{preview}", height = 0.45, border = "top", wo = { winhighlight = "NormalFloat:NormalNC" } },
+                        },
+                    },
+                    large_preview = {
+                        layout = {
+                            backdrop = true,
+                            row = 1,
+                            width = 0.95,
+                            height = 0.93,
+                            box = "vertical",
+                            border = "rounded",
+                            title = "{title} {live} {flags}",
+                            wo = { winhighlight = "NormalFloat:NormalNC" },
+                            -- { win = "input", height = 1, border = "bottom" },
+                            -- { win = "list", border = "none" },
+                            -- { win = "preview", title = "{preview}", height = 0.75, border = "top" },
+                            { win = "input", height = 1, border = "bottom", wo = { winhighlight = "NormalFloat:Normal" } },
+                            { win = "list", border = "none", wo = { winhighlight = "NormalFloat:NormalNC" } },
+                            { win = "preview", title = "{preview}", height = 0.75, border = "top", wo = { winhighlight = "NormalFloat:NormalNC" } },
+                        },
+                    },
+                    large_preview_horizontal = {
+                        layout = {
+                            box = "horizontal",
+                            backdrop = true,
+                            row = 1,
+                            width = 0.95,
+                            min_width = 120,
+                            height = 0.93,
+                            wo = { winhighlight = "NormalFloat:NormalNC" },
+                            {
+                                box = "vertical",
+                                border = true,
+                                title = "{title} {live} {flags}",
+                                { win = "input", height = 1, border = "bottom", wo = { winhighlight = "NormalFloat:NormalNC" } },
+                                { win = "list", border = "none", wo = { winhighlight = "NormalFloat:NormalNC" } },
+                            },
+                            { win = "preview", title = "{preview}", border = true, width = 0.5, wo = { winhighlight = "NormalFloat:NormalNC" } },
+                        },
+                    },
+                },
+                layout = { preset = "large_preview_horizontal" },
+                sources = {
+                    commands = {
+                        focus = "list", -- Ensure focus starts on the results list
+                    },
+                    buffers = {
+                        focus = "list", -- Ensure focus starts on the results list
+                    },
+                    search_history = {
+                        focus = "list", -- Ensure focus starts on the results list
+                    },
+                    select = {
+                        focus = "list", -- Ensure focus starts on the results list
+                        -- on_show = function(picker)
+                        --     vim.schedule(function()
+                        --         vim.cmd.stopinsert() -- Drop out of insert mode immediately
+                        --     end)
+                        -- end,
+                    },
+                    lsp_references = {
+                        layout = "large_preview_horizontal",
+                        -- on_show = function(picker)
+                        --     vim.schedule(function()
+                        --         vim.cmd.stopinsert() -- Drop out of insert mode immediately
+                        --     end)
+                        -- end,
+                        focus = "list", -- Ensure focus starts on the results list
+                        auto_confirm = true, -- Automatically jump if there is only one item
+                        live = false, -- global `live = true` above blocks auto_confirm; opt this source out
+                        transform = function(item, ctx)
+                            -- dont have import statements show up as references in typescript
+                            -- (handles both single-line and multi-line `import { ... } from '...';`)
+                            if vim.g.snacks_filter_import_refs == false then
+                                return item
+                            end
+                            if not (item.file and item.pos) then
+                                return item
+                            end
+
+                            local lnum, col = item.pos[1], item.pos[2]
+                            local line = item.line
+                            if not line then
+                                return item
+                            end
+
+                            -- word under the reference position, used to confirm it's actually
+                            -- one of the named imports (not just any line that looks import-ish)
+                            local pre = line:sub(1, col):match("[%w_$]+$") or ""
+                            local post = line:sub(col + 1):match("^[%w_$]+") or ""
+                            local word = pre .. post
+                            if word == "" then
+                                return item
+                            end
+
+                            local lines
+                            if item.buf and vim.api.nvim_buf_is_loaded(item.buf) then
+                                lines = vim.api.nvim_buf_get_lines(item.buf, 0, -1, false)
+                            else
+                                lines = vim.fn.readfile(item.file)
+                            end
+
+                            local window = 25
+                            local start_idx
+                            for i = lnum, math.max(1, lnum - window), -1 do
+                                if lines[i] and lines[i]:match("^%s*import%s") then
+                                    start_idx = i
+                                    break
+                                end
+                            end
+                            if not start_idx then
+                                return item
+                            end
+
+                            local end_idx
+                            for i = lnum, math.min(#lines, lnum + window) do
+                                if lines[i] and lines[i]:match("from%s+['\"][^'\"]+['\"]%s*;?%s*$") then
+                                    end_idx = i
+                                    break
+                                end
+                            end
+                            if not end_idx then
+                                return item
+                            end
+
+                            local block = table.concat(lines, " ", start_idx, end_idx)
+                            -- explicit shape required: import [type] { name, name, ... } from '...';
+                            local names = block:match("^%s*import%s+type%s*{(.-)}%s*from%s+['\"][^'\"]+['\"]%s*;?%s*$") or block:match("^%s*import%s*{(.-)}%s*from%s+['\"][^'\"]+['\"]%s*;?%s*$")
+                            if not names then
+                                return item
+                            end
+
+                            for name in names:gmatch("[%w_$]+") do
+                                if name == word then
+                                    return false
+                                end
+                            end
+
+                            return item
+                        end,
+                    },
+                    lsp_definitions = {
+                        layout = "large_preview_horizontal",
+                        focus = "list", -- Ensure focus starts on the results list
+                        auto_confirm = true, -- Automatically jump if there is only one item
+                        live = false, -- global `live = true` above blocks auto_confirm; opt this source out
+                    },
+
+                    lsp_code_actions = {
+                        transform = function(item, ctx)
+                            --  1. Disable @typescript-eslint/no-unsafe-assignment for this line [eslint]
+                            --  2. Disable @typescript-eslint/no-unsafe-assignment for the entire file [eslint]
+                            --  3. Show documentation for @typescript-eslint/no-unsafe-assignment [eslint]
+                            --  4. Disable @typescript-eslint/no-unsafe-call for this line [eslint]
+                            --  5. Disable @typescript-eslint/no-unsafe-call for the entire file [eslint]
+                            --  6. Show documentation for @typescript-eslint/no-unsafe-call [eslint]
+                            --  7. Update import from "./canonicalPath" [vtsls]
+                            --  8. Add missing function declaration 'unparseMemberRef' [vtsls]
+                            --  9. Convert default export to named export [vtsls]
+                            -- 10. Convert named export to default export [vtsls]
+                            -- 11. Convert namespace import to named imports [vtsls]
+                            -- 12. Convert named imports to default import [vtsls]
+                            -- 13. Convert named imports to namespace import [vtsls]
+                            -- 14. Extract to typedef [vtsls]
+                            -- 15. Extract to type alias [vtsls]
+                            -- 16. Extract to interface [vtsls]
+                            --
+                            -- item.text holds the title/description of the code action
+                            if item.text and item.text:lower():match("update.*import") then
+                                item.score = 10000 -- Forces the item to stick to the top
+                            end
+                            return item
+                        end,
+                    },
+                },
+                actions = {
+                    qflist = function(picker)
+                        -- Get currently selected items (or all filtered items if none are marked)
+                        local sel = picker:selected()
+                        local items = #sel > 0 and sel or picker:items()
+
+                        -- Convert snacks picker items into standard Neovim quickfix items
+                        local qf_items = {}
+                        for _, item in ipairs(items) do
+                            local filename = Snacks.picker.util.path(item)
+                            if filename then
+                                table.insert(qf_items, {
+                                    filename = filename,
+                                    lnum = item.pos and item.pos[1] or 1,
+                                    col = item.pos and item.pos[2] + 1 or 1,
+                                    text = item.line or item.comment or item.text or "",
+                                })
+                            end
+                        end
+
+                        -- Close the picker before notifying so the message isn't hidden
+                        picker:close()
+
+                        -- Populate the quickfix list without opening the window
+                        if #qf_items > 0 then
+                            vim.fn.setqflist(qf_items, "r")
+                            Snacks.notify.info(string.format("Added %d items to the quickfix list", #qf_items))
+                        else
+                            Snacks.notify.warn("No valid items to add to the quickfix list")
+                        end
+                    end,
+                },
+                win = {
+                    -- Apply overrides globally across all inner picker windows
+                    input = {
+                        keys = {
+                            ["<Esc>"] = { "close", mode = { "n", "i" } },
+                            ["<C-x>"] = {
+                                function(picker)
+                                    vim.cmd("stopinsert")
+                                end,
+                                mode = { "i" },
+                                desc = "Escape to normal mode",
+                            },
+                        },
+                    },
+                    -- list = {},
+                    -- preview = {},
+                },
+            },
             -- statuscolumn = { enabled = false },
             ---@class snacks.terminal.Config
             terminal = { enabled = false },
@@ -392,6 +651,86 @@ return {
                 --         vim.o.laststatus = 2
                 --     end
                 -- end,
+            },
+        },
+
+        keys = {
+            -- +------------------------------------+---------------------------------------+-----------------------------------------------+
+            -- | FzfLua Command                     | Snacks Picker Equivalent              | Description                                   |
+            -- +------------------------------------+---------------------------------------+-----------------------------------------------+
+            -- | FzfLua.lsp_references()            | Snacks.picker.lsp_references()        | Find all references under cursor              |
+            -- | FzfLua.lsp_definitions()           | Snacks.picker.lsp_definitions()       | Jump to definition                            |
+            -- | FzfLua.lsp_typedefs()              | Snacks.picker.lsp_typedefs()          | Jump to type definition                       |
+            -- | FzfLua.lsp_implementations()       | Snacks.picker.lsp_implementations()   | Jump to implementation                        |
+            -- | FzfLua.lsp_document_symbols()      | Snacks.picker.lsp_symbols()           | Filter treesitter/LSP symbols in buffer       |
+            -- | FzfLua.lsp_workspace_symbols()     | Snacks.picker.lsp_workspace_symbols() | Search symbols across workspace               |
+            -- | FzfLua.diagnostics_document()      | Snacks.picker.diagnostics()           | Buffer diagnostics (errors/warnings)          |
+            -- | FzfLua.diagnostics_workspace()     | Snacks.picker.diagnostics()           | Workspace-wide diagnostics                    |
+            -- | (None)                             | Snacks.picker.explorer()              | Built-in sidebar file tree explorer           |
+            -- | (None)                             | Snacks.picker.clipboards()            | Search system clipboard history histories     |
+            -- |-(None)                             | Snacks.picker.lazy()                  | Search installed lazy.nvim plugins / specs    |
+            -- +------------------------------------+---------------------------------------+-----------------------------------------------+
+            -- stylua: ignore start
+            { "<localleader>fb", function() Snacks.picker.buffers() end, desc = "fuzzy buffers", },
+            -- { "<localleader>fb", function() Snacks.picker.git_grep() end, desc = "fuzzy buffers", },
+            { "<localleader>fd", function() Snacks.picker.git_files() end, desc = "fuzzy git files", },
+            { "<localleader>fD", function() Snacks.picker.git_diff() end, desc = "fuzzy git diff", },
+            { "<localleader>fe", function() Snacks.picker.files() end, desc = "fuzzy fuzzy files", },
+            { "<localleader>ff", function() Snacks.picker.resume() end, desc = "fuzzy resume", },
+            { "<localleader>fj", function() Snacks.picker.jumps({ focus = "list" }) end, desc = "fuzzy jumps", },
+            { "<localleader>fl", function() Snacks.picker.lines({ args = { "--fixed-strings" }, }) end, desc = "fuzzy lines text search", },
+            { "<localleader>fL", function() Snacks.picker.lines() end, desc = "fuzzy lines grep search", },
+            { "<localleader>fP", function() Snacks.picker.projects({ focus = "list" }) end, desc = "fuzzy projects", },
+            { "<localleader>fq", function() Snacks.picker.qflist({ focus = "list" }) end, desc = "fuzzy quickfix", },
+            { "<localleader>fQ", function() Snacks.picker.loclist({ focus = "list" }) end, desc = "fuzzy loclist", },
+            { "<localleader>fr", function() Snacks.picker.recent() end, desc = "fuzzy recent files", },
+            { "<localleader>fs", function() Snacks.picker.grep({ args = { "--fixed-strings" }, }) end, desc = "fuzzy text search", },
+            { "<localleader>fS", function() Snacks.picker.grep() end, desc = "fuzzy grep search", },
+            { "<localleader>fw", function() Snacks.picker.grep_word() end, desc = "fuzzy word search", },
+            { "<localleader>f'", function() Snacks.picker.marks({ focus = "list" }) end, desc = "fuzzy marks", },
+            { "<localleader>f<space>", function() Snacks.picker.smart() end, desc = "fuzzy smart", },
+
+            { "<localleader>ci", function() Snacks.picker.icons() end, desc = "fuzzy icons", },
+
+            { "<localleader>na", function() Snacks.picker.autocmds() end, desc = "fuzzy autocmds", },
+            { "<localleader>nc", function() Snacks.picker.colorschemes({ focus = "list" }) end, desc = "fuzzy colorschemes", },
+            { "<localleader>nC", function() Snacks.picker.highlights() end, desc = "fuzzy color highlights", },
+            { "<localleader>nh", function() Snacks.picker.help() end, desc = "fuzzy help", },
+            { "<localleader>nn", function() Snacks.picker.notifications({ focus = "list" }) end, desc = "fuzzy notifications", },
+            { "<localleader>no", function() Snacks.picker.treesitter() end, desc = "fuzzy treesitter", },
+            { "<localleader>np", function() Snacks.picker.commands({ focus = "input" }) end, desc = "fuzzy commands picker", },
+            { "<localleader>nP", function() Snacks.picker.pickers({ focus = "list" }) end, desc = "fuzzy snacks pickers", },
+            { "<localleader>nu", function() Snacks.picker.undo({ focus = "list" }) end, desc = "fuzzy undo", },
+            { "<localleader>n/", function() Snacks.picker.search_history() end, desc = "fuzzy search history", },
+            { "<localleader>n?", function() Snacks.picker.keymaps() end, desc = "fuzzy keymaps", },
+            { "<localleader>n:", function() Snacks.picker.command_history() end, desc = "fuzzy command history", },
+            { '<localleader>n"', function() Snacks.picker.registers() end, desc = "fuzzy registers", },
+            { 'z=', function() Snacks.picker.spelling({ focus = "list" }) end, desc = "fuzzy spelling", },
+
+            { "<localleader>gb", function() Snacks.picker.git_log_line({ on_show = function() vim.cmd.stopinsert() end, }) end, desc = "fuzzy git blame line", },
+            { "<localleader>gc", function() Snacks.picker.git_log({ on_show = function() vim.cmd.stopinsert() end, }) end, desc = "fuzzy git log", },
+            { "<localleader>gC", function() Snacks.picker.git_log_file({ on_show = function() vim.cmd.stopinsert() end, }) end, desc = "fuzzy git log file", },
+            { "<localleader>gn", function() Snacks.picker.git_branches({ on_show = function() vim.cmd.stopinsert() end, }) end, desc = "fuzzy git branch", },
+            { "<localleader>gr", function() Snacks.picker.git_stash({ on_show = function() vim.cmd.stopinsert() end, }) end, desc = "fuzzy git stash", },
+            { "<localleader>gs", function() Snacks.picker.git_status({ on_show = function() vim.cmd.stopinsert() end, }) end, desc = "fuzzy git status", },
+
+            -- stylua: ignore end
+            {
+                "<localleader>uR",
+                function()
+                    Snacks.toggle
+                        .new({
+                            name = "Filter Import Statements from LSP References",
+                            get = function()
+                                return vim.g.snacks_filter_import_refs ~= false
+                            end,
+                            set = function(state)
+                                vim.g.snacks_filter_import_refs = state
+                            end,
+                        })
+                        :toggle()
+                end,
+                desc = "toggle lsp references import filtering",
             },
         },
     },
@@ -716,7 +1055,7 @@ return {
                         end
                     end,
                 })
-                :map("<localleader>um")
+                :map("<localleader>uM")
         end,
     },
     {
@@ -792,7 +1131,7 @@ return {
                         require("mini.map").toggle()
                     end,
                 })
-                :map("<localleader>uM")
+                :map("<localleader>um")
         end,
     },
     {

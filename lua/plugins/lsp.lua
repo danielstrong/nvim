@@ -124,7 +124,7 @@ return {
                         { "<localleader>Kw", vim.lsp.buf.list_workspace_folders, desc = "LSP List Workspace Folders" },
                         { "<localleader>Ko", vim.lsp.buf.workspace_symbol, desc = "LSP List Workspace Folders" },
                         { "<localleader>aQ", LazyVim.lsp.action.source, desc = "Source Action", has = "codeAction" },
-                        { "<localleader>aC", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "x" }, has = "codeAction" },
+                        { "<localleader>ac", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "x" }, has = "codeAction" },
                         { "<localleader>ad", vim.lsp.codelens.run, desc = "Run Codelens", mode = { "n", "x" }, has = "codeLens" },
                         {
                             "<localleader>rf",
@@ -194,6 +194,7 @@ return {
     },
     {
         "rachartier/tiny-code-action.nvim", -- improved code action picker that has previes of the output as you choose them, also allows to filter and sort the code actions
+        enabled = false,
         dependencies = {
             -- optional picker via telescope
             -- { "nvim-telescope/telescope.nvim" },
@@ -220,7 +221,8 @@ return {
                 opts = {
                     hotkeys = true, -- Enable hotkeys for quick selection of actions
                     -- hotkeys_mode = "text_based", -- Modes for generating hotkeys
-                    hotkeys_mode = "text_diff_based", -- Modes for generating hotkeys
+                    -- hotkeys_mode = "text_diff_based", -- Modes for generating hotkeys
+                    hotkeys_mode = "sequential", -- Modes for generating hotkeys
                     auto_preview = true, -- Enable or disable automatic preview
                     auto_accept = false, -- Automatically accept the selected action (with hotkeys)
                     position = "cursor", -- Position of the picker window

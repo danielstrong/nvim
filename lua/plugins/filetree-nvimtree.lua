@@ -43,7 +43,28 @@ return {
                 -- Preserve all default nvim-tree keymaps
                 -- api.config.mappings.default_on_attach(bufnr)
                 api.map.on_attach.default(bufnr)
+                vim.keymap.set("n", "}", function()
+                    -- Prompt user for input with path autocompletion enabled
+                    vim.ui.input({
+                        prompt = "New nvim-tree root: ",
+                        completion = "dir",
+                    }, function(input)
+                        -- Exit quietly if the user cancels or submits an empty path
+                        if not input or input == "" then
+                            return
+                        end
 
+                        -- Expand path shortcuts like ~ or . to full absolute paths
+                        local expanded_path = vim.fn.expand(input)
+
+                        -- Check if the directory actually exists before switching
+                        if vim.fn.isdirectory(expanded_path) == 1 then
+                            require("nvim-tree.api").tree.change_root(expanded_path)
+                        else
+                            vim.notify("Directory does not exist: " .. expanded_path, vim.log.levels.ERROR)
+                        end
+                    end)
+                end, { desc = "Change nvim-tree root from prompt" })
                 vim.keymap.set({ "n", "x" }, "R", function()
                     require("nvim-tree.api").tree.reload()
                 end, { buffer = bufnr, noremap = true, silent = true, desc = "reload tree" })
@@ -59,6 +80,7 @@ return {
                         api.tree.close()
                     end
                 end
+
                 vim.keymap.set("n", "o", api.node.open.no_window_picker, { buffer = bufnr, noremap = true, silent = true, desc = "Open file and close tree" })
                 vim.keymap.set("n", "O", api.node.open.edit, { buffer = bufnr, noremap = true, silent = true, desc = "Open file and close tree" })
                 vim.keymap.set("n", "<CR>", open_edit_close, { buffer = bufnr, noremap = true, silent = true, desc = "Open file and close tree" })
