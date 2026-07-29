@@ -453,6 +453,8 @@ map("x", "<localleader>Y", copy_abs_path_with_line_numbers_to_clipboard, { desc 
 map({ "n", "x" }, "<leader>Y", copy_abs_path_with_line_numbers_to_clipboard, { desc = "copy absolute path with line number" })
 
 map("n", "crt", '"_ciwtrue<Esc>', { nowait = true, noremap = true, desc = "Replace word with true" })
+map("n", "cro", '"_ciwon<Esc>', { desc = "Replace word with on" })
+map("n", "crO", '"_ciwoff<Esc>', { desc = "Replace word with off" })
 map("n", "crf", '"_ciwfalse<Esc>', { desc = "Replace word with false" })
 map("n", "crn", '"_ciwnull<Esc>', { desc = "Replace word with null" })
 map("n", "cru", '"_ciwundefined<Esc>', { desc = "Replace word with undefined" })
