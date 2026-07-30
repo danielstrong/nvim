@@ -31,7 +31,7 @@ map("n", "<localleader>rn", '"hyiw:%s!<C-r>h!!gc<left><left><left><C-r>h', { nor
 map("n", "<localleader>rN", '"hyiw:cfdo %s!<C-r>h!!gc<left><left><left><C-r>h', { noremap = true, desc = "Find and replace word incremental (quickfix)" })
 -- to use: visually select the target word, use this keymap, the type in replacement text
 map("x", "<localleader>rn", '"hy:%s!<C-r>h!!gc<left><left><left><C-r>h', { noremap = true, desc = "Find and replace visually incremental" })
-map("x", "<localleader>rN", '"hy:%cfdo s!<C-r>h!!gc<left><left><left><C-r>h', { noremap = true, desc = "Find and replace visually incremental (quickfix)" })
+map("x", "<localleader>rN", '"hy:cfdo %s!<C-r>h!!gc<left><left><left><C-r>h', { noremap = true, desc = "Find and replace visually incremental (quickfix)" })
 --
 -- Rename All
 -- to use: put cursor over target word, use this keymap, then type in replacement text
@@ -39,7 +39,7 @@ map("n", "<localleader>ra", '"hyiw:%s!<C-r>h!!g<left><left><C-r>h', { noremap = 
 map("n", "<localleader>rA", '"hyiw:cfdo %s!<C-r>h!!g<left><left><C-r>h', { noremap = true, desc = "Find and replace word all (quickfix)" })
 -- to use: visually select the target word, use this keymap, the type in replacement text
 map("x", "<localleader>ra", '"hy:%s!<C-r>h!!g<left><left><C-r>h', { noremap = true, desc = "Find and replace visually all" })
-map("x", "<localleaderAra", '"hy:cfdo %s!<C-r>h!!g<left><left><C-r>h', { noremap = true, desc = "Find and replace visually all (quickfix)" })
+map("x", "<localleader>rA", '"hy:cfdo %s!<C-r>h!!g<left><left><C-r>h', { noremap = true, desc = "Find and replace visually all (quickfix)" })
 
 map("n", "#", "gcc", { remap = true, desc = "Toggle line comment" })
 map("x", "#", "gc", { remap = true, desc = "Toggle comment" })
