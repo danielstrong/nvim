@@ -781,12 +781,20 @@ return {
                     },
                     list = {
                         keys = {
+                            ["<2-LeftMouse>"] = false,
                             ["P"] = { "toggle_preview", mode = { "n", "i" } },
                             ["<C-e>"] = { "focus_preview", mode = { "n", "i" } },
                             ["<C-l>"] = { "toggle_focus", mode = { "n", "i" } },
                         },
                     },
-                    -- preview = {},
+                    preview = {
+                        keys = {
+                            ["<2-LeftMouse>"] = false,
+                            ["P"] = { "toggle_preview", mode = { "n", "i" } },
+                            ["i"] = "focus_input",
+                            ["a"] = "focus_list",
+                        },
+                    },
                 },
             },
             -- statuscolumn = { enabled = false },
