@@ -293,14 +293,6 @@ return {
         },
     },
     {
-        -- this shows just the lsp loading notification and is smaller and less annoying
-        "j-hui/fidget.nvim",
-        enabled = false,
-        opts = {
-            -- options
-        },
-    },
-    {
         -- similair to fidget but little differnet also turns vim.notify into floating windows
         "nvim-mini/mini.notify",
         enabled = false,
@@ -342,6 +334,36 @@ return {
 
                 -- Value of 'winblend' option
                 winblend = 25,
+            },
+        },
+    },
+    {
+        "nvim-mini/mini.files",
+        -- lazy = true,
+        opts = {
+            windows = {
+                preview = true,
+                width_focus = 30,
+                width_preview = 50,
+            },
+            options = {
+                use_as_default_explorer = false,
+            },
+        },
+        keys = {
+            {
+                "<localleader>wf",
+                function()
+                    require("mini.files").open(vim.api.nvim_buf_get_name(0), true)
+                end,
+                desc = "Open mini.files (Directory of Current File)",
+            },
+            {
+                "<localleader>wF",
+                function()
+                    require("mini.files").open(vim.uv.cwd(), true)
+                end,
+                desc = "Open mini.files (cwd)",
             },
         },
     },
@@ -392,6 +414,69 @@ return {
                 -- layout = { preset = "vertical", layout = { width = 0.95, height = 0.95 } },
 
                 layouts = {
+                    explorer_sidebar = {
+                        preset = "left",
+                    },
+                    explorer_float_center_vertical = {
+                        layout = {
+                            backdrop = false,
+                            width = 0.99,
+                            min_width = 80,
+                            height = 0.99,
+                            min_height = 30,
+                            box = "vertical",
+                            border = true,
+                            title = "{title} {live} {flags}",
+                            title_pos = "center",
+                            { win = "input", height = 1, border = "bottom", wo = { winhighlight = "NormalFloat:Normal" } },
+                            { win = "list", border = "none", wo = { winhighlight = "NormalFloat:NormalNC" } },
+                            { win = "preview", title = "{preview}", height = 0.4, border = "top", wo = { winhighlight = "NormalFloat:NormalNC" } },
+                        },
+                    },
+                    explorer_float_center_horizontal = {
+                        layout = {
+                            box = "horizontal",
+                            width = 0.99,
+                            min_width = 120,
+                            height = 0.99,
+                            {
+                                box = "vertical",
+                                border = true,
+                                title = "{title} {live} {flags}",
+                                { win = "input", height = 1, border = "bottom", wo = { winhighlight = "NormalFloat:Normal" } },
+                                { win = "list", border = "none", wo = { winhighlight = "NormalFloat:NormalNC" } },
+                            },
+                            { win = "preview", title = "{preview}", border = true, width = 0.525, wo = { winhighlight = "NormalFloat:NormalNC" } },
+                        },
+                    },
+                    explorer_float_center_dropdown = {
+                        layout = {
+                            backdrop = false,
+                            row = 1,
+                            width = 0.99,
+                            min_width = 80,
+                            height = 0.99,
+                            border = "none",
+                            box = "vertical",
+                            { win = "preview", title = "{preview}", height = 0.4, border = true, wo = { winhighlight = "NormalFloat:NormalNC" } },
+                            {
+                                box = "vertical",
+                                border = true,
+                                title = "{title} {live} {flags}",
+                                title_pos = "center",
+                                { win = "input", height = 1, border = "bottom", wo = { winhighlight = "NormalFloat:Normal" } },
+                                { win = "list", border = "none", wo = { winhighlight = "NormalFloat:NormalNC" } },
+                            },
+                        },
+                    },
+                    explorer_float_center = {
+                        cycle = true,
+                        preset = function()
+                            -- return "explorer_float_center_dropdown"
+                            -- return vim.o.columns >= 120 and "explorer_float_center_horizontal" or "explorer_float_center_vertical"
+                            return vim.o.columns >= 120 and "explorer_float_center_horizontal" or "explorer_float_center_dropdown"
+                        end,
+                    },
                     stacked = {
                         preset = "vertical",
                         layout = {
@@ -412,7 +497,7 @@ return {
                             { win = "preview", title = "{preview}", height = 0.45, border = "top", wo = { winhighlight = "NormalFloat:NormalNC" } },
                         },
                     },
-                    large_preview = {
+                    large_preview_vertical = {
                         layout = {
                             backdrop = true,
                             row = 1,
@@ -449,9 +534,40 @@ return {
                             { win = "preview", title = "{preview}", border = true, width = 0.5, wo = { winhighlight = "NormalFloat:NormalNC" } },
                         },
                     },
+                    large_preview = {
+                        cycle = true,
+                        preset = function()
+                            return vim.o.columns >= 120 and "large_preview_horizontal" or "large_preview_vertical"
+                        end,
+                    },
                 },
-                layout = { preset = "large_preview_horizontal" },
+                layout = {
+                    preset = "large_preview",
+                },
                 sources = {
+                    explorer = {
+                        layout = "explorer_float_center",
+                        auto_close = true,
+                        win = {
+                            list = {
+                                keys = {
+                                    ["o"] = "confirm",
+                                    ["<C-s>"] = "explorer_open", -- open with system application
+                                    ["<2-LeftMouse>"] = false,
+                                    ["<C-o>"] = { { "pick_win", "jump" }, mode = { "n", "i" } },
+                                    ["s"] = "edit_split",
+                                    ["S"] = "edit_vsplit",
+                                    ["<c-y>"] = { "yank_relative_path", mode = { "n", "i" } },
+                                    ["<c-z>"] = { "yank_absolute_path", mode = { "n", "i" } },
+                                    ["<C-e>"] = { "focus_preview", mode = { "n", "i" } },
+                                    ["<C-l>"] = { "toggle_focus", mode = { "n", "i" } },
+                                    ["<C-t>"] = "picker_grep",
+                                    ["<localleader>y"] = "yank_relative_path",
+                                    ["<localleader>Y"] = "yank_absolute_path",
+                                },
+                            },
+                        },
+                    },
                     commands = {
                         focus = "list", -- Ensure focus starts on the results list
                     },
@@ -470,7 +586,7 @@ return {
                         -- end,
                     },
                     lsp_references = {
-                        layout = "large_preview_horizontal",
+                        layout = "large_preview",
                         -- on_show = function(picker)
                         --     vim.schedule(function()
                         --         vim.cmd.stopinsert() -- Drop out of insert mode immediately
@@ -551,7 +667,7 @@ return {
                         end,
                     },
                     lsp_definitions = {
-                        layout = "large_preview_horizontal",
+                        layout = "large_preview",
                         focus = "list", -- Ensure focus starts on the results list
                         auto_confirm = true, -- Automatically jump if there is only one item
                         live = false, -- global `live = true` above blocks auto_confirm; opt this source out
@@ -585,6 +701,25 @@ return {
                     },
                 },
                 actions = {
+                    yank_relative_path = function(picker, item)
+                        item = item or picker:current()
+                        local path = item and Snacks.picker.util.path(item)
+                        if not path then
+                            return
+                        end
+                        local rel = vim.fn.fnamemodify(path, ":.")
+                        vim.fn.setreg("+", rel)
+                        Snacks.notify.info("Copied: " .. rel)
+                    end,
+                    yank_absolute_path = function(picker, item)
+                        item = item or picker:current()
+                        local path = item and Snacks.picker.util.path(item)
+                        if not path then
+                            return
+                        end
+                        vim.fn.setreg("+", path)
+                        Snacks.notify.info("Copied: " .. path)
+                    end,
                     qflist = function(picker)
                         -- Get currently selected items (or all filtered items if none are marked)
                         local sel = picker:selected()
@@ -620,7 +755,21 @@ return {
                     -- Apply overrides globally across all inner picker windows
                     input = {
                         keys = {
+                            ["o"] = "confirm",
+                            ["<C-s>"] = "explorer_open", -- open with system application
+                            ["<2-LeftMouse>"] = false,
                             ["<Esc>"] = { "close", mode = { "n", "i" } },
+                            ["<C-o>"] = { { "pick_win", "jump" }, mode = { "n", "i" } },
+                            ["s"] = "edit_split",
+                            ["S"] = "edit_vsplit",
+                            ["P"] = { "toggle_preview", mode = { "n", "i" } },
+                            ["<c-y>"] = { "yank_relative_path", mode = { "n", "i" } },
+                            ["<c-z>"] = { "yank_absolute_path", mode = { "n", "i" } },
+                            ["<localleader>y"] = "yank_relative_path",
+                            ["<localleader>Y"] = "yank_absolute_path",
+                            ["<C-t>"] = { "picker_grep", mode = { "n", "i" } },
+                            ["<C-e>"] = { "focus_preview", mode = { "n", "i" } },
+                            ["<C-l>"] = { "toggle_focus", mode = { "n", "i" } },
                             ["<C-x>"] = {
                                 function(picker)
                                     vim.cmd("stopinsert")
@@ -630,7 +779,13 @@ return {
                             },
                         },
                     },
-                    -- list = {},
+                    list = {
+                        keys = {
+                            ["P"] = { "toggle_preview", mode = { "n", "i" } },
+                            ["<C-e>"] = { "focus_preview", mode = { "n", "i" } },
+                            ["<C-l>"] = { "toggle_focus", mode = { "n", "i" } },
+                        },
+                    },
                     -- preview = {},
                 },
             },
@@ -640,7 +795,7 @@ return {
             ---@class snacks.input.Config
             input = { enabled = false },
             ---@class snacks.explorer.Config
-            explorer = { enabled = false },
+            explorer = { enabled = true, replace_netrw = true },
             ---@class snacks.bigfile.Config
             bigfile = {
                 enabled = true,
@@ -655,6 +810,70 @@ return {
         },
 
         keys = {
+            {
+                "<localleader>wA",
+                function()
+                    -- Snacks.explorer.reveal({ cwd = LazyVim.root() })
+                    Snacks.explorer({ cwd = LazyVim.root(), layout = "explorer_sidebar" })
+                end,
+                desc = "Explorer Snacks (root dir)",
+            },
+            {
+                "<localleader>wa",
+                function()
+                    Snacks.explorer({ layout = "explorer_sidebar" })
+                    -- Snacks.explorer()
+                end,
+                desc = "Explorer Snacks (cwd)",
+            },
+            {
+                "<localleader>e",
+                function()
+                    local explorer = Snacks.picker.get({ source = "explorer" })[1]
+                    if explorer then
+                        explorer:close()
+                    else
+                        Snacks.explorer.reveal({ layout = "explorer_float_center" })
+                    end
+                end,
+                desc = "Explorer Snacks Float (cwd)",
+            },
+            {
+                "<localleader>E",
+                function()
+                    local explorer = Snacks.picker.get({ source = "explorer" })[1]
+                    if explorer then
+                        explorer:close()
+                    else
+                        Snacks.explorer.reveal({ cwd = LazyVim.root(), layout = "explorer_float_center" })
+                    end
+                end,
+                desc = "Explorer Snacks Float (root dir)",
+            },
+            {
+                "<localleader>wd",
+                function()
+                    local explorer = Snacks.picker.get({ source = "explorer" })[1]
+                    if explorer then
+                        explorer:close()
+                    else
+                        Snacks.explorer.reveal({ layout = "explorer_float_center" })
+                    end
+                end,
+                desc = "Explorer Snacks Float (cwd)",
+            },
+            {
+                "<localleader>wD",
+                function()
+                    local explorer = Snacks.picker.get({ source = "explorer" })[1]
+                    if explorer then
+                        explorer:close()
+                    else
+                        Snacks.explorer.reveal({ cwd = LazyVim.root(), layout = "explorer_float_center" })
+                    end
+                end,
+                desc = "Explorer Snacks Float (root dir)",
+            },
             -- +------------------------------------+---------------------------------------+-----------------------------------------------+
             -- | FzfLua Command                     | Snacks Picker Equivalent              | Description                                   |
             -- +------------------------------------+---------------------------------------+-----------------------------------------------+

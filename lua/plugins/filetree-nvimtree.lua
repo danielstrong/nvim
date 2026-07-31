@@ -1,35 +1,5 @@
 return {
     {
-        "nvim-mini/mini.files",
-        -- lazy = true,
-        opts = {
-            windows = {
-                preview = true,
-                width_focus = 30,
-                width_preview = 50,
-            },
-            options = {
-                use_as_default_explorer = false,
-            },
-        },
-        keys = {
-            {
-                "<localleader>wf",
-                function()
-                    require("mini.files").open(vim.api.nvim_buf_get_name(0), true)
-                end,
-                desc = "Open mini.files (Directory of Current File)",
-            },
-            {
-                "<localleader>wF",
-                function()
-                    require("mini.files").open(vim.uv.cwd(), true)
-                end,
-                desc = "Open mini.files (cwd)",
-            },
-        },
-    },
-    {
         "nvim-tree/nvim-tree.lua",
         enabled = true,
         version = "*",
@@ -302,7 +272,7 @@ return {
         },
         keys = {
             {
-                "<localleader>E",
+                "<localleader>WE",
                 function()
                     local config = require("nvim-tree.config")
                     config.g.view.float.enable = true
@@ -314,7 +284,7 @@ return {
                 desc = "Toggle NvimTree Float",
             },
             {
-                "<localleader>e",
+                "<localleader>Wf",
                 function()
                     local config = require("nvim-tree.config")
                     config.g.view.float.enable = true
@@ -327,7 +297,7 @@ return {
             },
             -- Keymap to toggle the NvimTree
             {
-                "<localleader>wd",
+                "<localleader>Wd",
                 function()
                     local view = require("nvim-tree.view")
                     if view.is_visible() and view.get_winnr() == vim.api.nvim_get_current_win() then
@@ -347,7 +317,7 @@ return {
             },
             -- Keymap to open NvimTree to the current file's location
             {
-                "<localleader>wD",
+                "<localleader>WD",
                 function()
                     local view = require("nvim-tree.view")
                     if view.is_visible() and view.get_winnr() == vim.api.nvim_get_current_win() then

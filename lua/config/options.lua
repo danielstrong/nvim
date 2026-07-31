@@ -1,6 +1,7 @@
 -- Options are automatically loaded before lazy.nvim startup
 -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
 -- Add any additional options here
+-- ~/.local/share/nvim/lazy/LazyVim/lua/lazyvim/config/options.lua
 vim.g.mapleader = "|"
 vim.g.maplocalleader = "\\"
 
@@ -9,6 +10,7 @@ vim.g.snacks_animate = false
 -- vim.g.lazyvim_picker = "fzf"
 vim.g.lazyvim_picker = "snacks"
 -- vim.g.lazyvim_explorer = "neo-tree"
+vim.g.lazyvim_explorer = "snacks"
 vim.g.lazyvim_cmp = "blink.cmp"
 vim.g.lazyvim_mini_snippets_in_completion = false
 vim.g.deprecation_warnings = true

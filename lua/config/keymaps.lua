@@ -443,14 +443,12 @@ end
 -- map({ "n", "x" }, "<localleader>vc", copy_rel_path_with_line_numbers_to_clipboard, { desc = "copy relative path with line number" })
 map("n", "<localleader>y", copy_rel_path_to_clipboard, { desc = "copy relative path" })
 map("x", "<localleader>y", copy_rel_path_with_line_numbers_to_clipboard, { desc = "copy relative path with line number" })
-map({ "n", "x" }, "<leader>y", copy_rel_path_with_line_numbers_to_clipboard, { desc = "copy relative path with line number" })
 
 -- map("n", "<localleader>C", copy_abs_path_to_clipboard, { desc = "copy absolute path" })
 -- map("x", "<localleader>C", copy_abs_path_with_line_numbers_to_clipboard, { desc = "copy absolute path with line number" })
 -- map({ "n", "x" }, "<localleader>vC", copy_abs_path_with_line_numbers_to_clipboard, { desc = "copy absolute path with line number" })
 map("n", "<localleader>Y", copy_abs_path_to_clipboard, { desc = "copy absolute path" })
 map("x", "<localleader>Y", copy_abs_path_with_line_numbers_to_clipboard, { desc = "copy absolute path with line number" })
-map({ "n", "x" }, "<leader>Y", copy_abs_path_with_line_numbers_to_clipboard, { desc = "copy absolute path with line number" })
 
 map("n", "crt", '"_ciwtrue<Esc>', { nowait = true, noremap = true, desc = "Replace word with true" })
 map("n", "cro", '"_ciwon<Esc>', { desc = "Replace word with on" })
