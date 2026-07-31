@@ -2,15 +2,14 @@ return {
     {
         "custom/copy-store",
         dev = true,
-        dependencies = { "ibhagwan/fzf-lua" },
+        dependencies = { "folke/snacks.nvim" },
         opts = {
             -- Extra absolute dirs (~ allowed) that act as full copy stores:
             -- they're listed for paste/edit and offered as save targets, so
             -- copies can be created and renamed in them just like the nvim
             -- copies/ dir. Example: extra_dirs = { "~/my-prompts" }
             extra_dirs = vim.g.is_mac and {
-                "~/.claude/custom-system-prompts",
-                "~/.config/clp/context",
+                "~/.config/clp",
             } or nil,
         },
         keys = {

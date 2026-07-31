@@ -39,31 +39,28 @@ local function save_target_dirs()
     return targets
 end
 
--- fzf entries gathered recursively from every source dir, as tab-joined
--- "<filename  (label)>\t<absolute-path>" strings. Field 1 is shown; field 2
--- (the path) is recovered in actions/preview.
-local function list_copy_entries()
-    local entries = {}
+-- Picker items gathered recursively from every source dir. `text` (the
+-- filename) drives fuzzy matching; `file` drives the "file" formatter and
+-- preview via Snacks.picker.util.path(). `comment` shows the source label,
+-- as rendered by the "file" formatter alongside `formatters.file.filename_only`.
+local function list_copy_items()
+    local items = {}
     for _, src in ipairs(source_dirs()) do
         for _, path in ipairs(vim.fn.globpath(src.dir, "**/*", false, true)) do
-            if vim.fn.isdirectory(path) == 0 then
-                local display = vim.fn.fnamemodify(path, ":t") .. "  (" .. src.label .. ")"
-                table.insert(entries, display .. "\t" .. path)
+            local ext = path:match("%.([^./]+)$")
+            if vim.fn.isdirectory(path) == 0 and (ext == "md" or ext == "txt") then
+                table.insert(items, {
+                    text = vim.fn.fnamemodify(path, ":t"),
+                    file = path,
+                    -- comment = "(" .. src.label .. ")",
+                })
             end
         end
     end
-    table.sort(entries)
-    return entries
-end
-
-local function entry_path(entry)
-    return entry:match("\t(.+)$") or entry
-end
-
-local function copy_store_fmt_from(entry)
-    local nbsp = require("fzf-lua.utils").nbsp
-    local display, path = entry:match("^(.-)%\t(.+)$")
-    return path and (display .. nbsp .. path) or entry
+    table.sort(items, function(a, b)
+        return a.text < b.text
+    end)
+    return items
 end
 
 local function file_exists(dir, name)
@@ -173,7 +170,7 @@ function M.create_copy_store_entry()
         local raw = vim.fn.getreg("v")
         lines = vim.split(raw, "\n", { plain = true })
     else
-        lines = { vim.api.nvim_get_current_line() }
+        lines = {}
     end
 
     local targets = save_target_dirs()
@@ -194,53 +191,52 @@ function M.create_copy_store_entry()
     end)
 end
 
+local function open_editor_for_item(item)
+    local path = Snacks.picker.util.path(item)
+    if not path then
+        return
+    end
+    local name = vim.fn.fnamemodify(path, ":t")
+    open_editor_float({
+        title = " Edit: " .. name .. " ",
+        path = path,
+    })
+end
+
 function M.edit_copy_store_entry()
-    local entries = list_copy_entries()
-    if #entries == 0 then
+    local items = list_copy_items()
+    if #items == 0 then
         vim.notify("No copies yet", vim.log.levels.INFO)
         return
     end
 
-    require("fzf-lua").fzf_exec(entries, {
-        prompt = "Edit Copy> ",
-        previewer = "builtin",
-        _fmt = { from = copy_store_fmt_from },
-        fzf_opts = { ["--delimiter"] = "\t", ["--with-nth"] = "1", ["--nth"] = "1" },
-        actions = {
-            ["default"] = function(selected)
-                if not selected or #selected == 0 then
-                    return
-                end
-                local path = entry_path(selected[1])
-                local name = vim.fn.fnamemodify(path, ":t")
-                open_editor_float({
-                    title = " Edit: " .. name .. " ",
-                    path = path,
-                })
-            end,
-        },
+    Snacks.picker.pick({
+        source = "copy_store_edit",
+        items = items,
+        format = "file",
+        formatters = { file = { filename_only = true } },
+        title = "Edit Copy",
+        -- prompt = "Edit Copy> ",
+        confirm = function(picker, item)
+            picker:close()
+            if item then
+                open_editor_for_item(item)
+            end
+        end,
     })
 end
 
 function M.edit_cwd_entry()
-    require("fzf-lua").files({
-        prompt = "Edit from CWD> ",
+    Snacks.picker.files({
+        -- prompt = "Edit from CWD> ",
         cwd = vim.fn.getcwd(),
-        cmd = "fd --type f -e md -e txt",
-        actions = {
-            ["default"] = function(selected, opts)
-                if not selected or #selected == 0 then
-                    return
-                end
-                local fzf_path = require("fzf-lua.path")
-                local path = fzf_path.entry_to_file(selected[1], opts).path
-                local name = vim.fn.fnamemodify(path, ":t")
-                open_editor_float({
-                    title = " Edit: " .. name .. " ",
-                    path = path,
-                })
-            end,
-        },
+        ft = { "md", "txt" },
+        confirm = function(picker, item)
+            picker:close()
+            if item then
+                open_editor_for_item(item)
+            end
+        end,
     })
 end
 
@@ -290,53 +286,47 @@ end
 function M.paste_copy_store_entry()
     local ctx = capture_paste_ctx()
 
-    local entries = list_copy_entries()
-    if #entries == 0 then
+    local items = list_copy_items()
+    if #items == 0 then
         vim.notify("No copies yet", vim.log.levels.INFO)
         return
     end
 
-    require("fzf-lua").fzf_exec(entries, {
-        prompt = "Paste Copy> ",
-        previewer = "builtin",
-        _fmt = { from = copy_store_fmt_from },
-        fzf_opts = { ["--multi"] = true, ["--delimiter"] = "\t", ["--with-nth"] = "1", ["--nth"] = "1" },
-        actions = {
-            ["default"] = function(selected)
-                if not selected or #selected == 0 then
-                    return
-                end
-                local paths = {}
-                for _, entry in ipairs(selected) do
-                    table.insert(paths, entry_path(entry))
-                end
-                paste_paths(paths, ctx)
-            end,
-        },
+    Snacks.picker.pick({
+        source = "copy_store_paste",
+        items = items,
+        format = "file",
+        -- formatters = { file = { filename_only = true } },
+        title = "Paste Copy",
+        -- prompt = "Paste Copy> ",
+        confirm = function(picker)
+            local selected = picker:selected({ fallback = true })
+            picker:close()
+            local paths = {}
+            for _, item in ipairs(selected) do
+                table.insert(paths, Snacks.picker.util.path(item))
+            end
+            paste_paths(paths, ctx)
+        end,
     })
 end
 
 function M.paste_cwd_entry()
     local ctx = capture_paste_ctx()
 
-    require("fzf-lua").files({
-        prompt = "Paste from CWD> ",
+    Snacks.picker.files({
+        -- prompt = "Paste from CWD> ",
         cwd = vim.fn.getcwd(),
-        cmd = "fd --type f -e md -e txt",
-        fzf_opts = { ["--multi"] = true },
-        actions = {
-            ["default"] = function(selected, opts)
-                if not selected or #selected == 0 then
-                    return
-                end
-                local fzf_path = require("fzf-lua.path")
-                local paths = {}
-                for _, entry in ipairs(selected) do
-                    table.insert(paths, fzf_path.entry_to_file(entry, opts).path)
-                end
-                paste_paths(paths, ctx)
-            end,
-        },
+        ft = { "md", "txt" },
+        confirm = function(picker)
+            local selected = picker:selected({ fallback = true })
+            picker:close()
+            local paths = {}
+            for _, item in ipairs(selected) do
+                table.insert(paths, Snacks.picker.util.path(item))
+            end
+            paste_paths(paths, ctx)
+        end,
     })
 end
 

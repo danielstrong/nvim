@@ -1,0 +1,1 @@
+Never run shell commands as background jobs. Do not append `&` to commands or use `nohup`, `disown`, or similar backgrounding techniques. Always run commands in the foreground and wait for them to complete before proceeding.
