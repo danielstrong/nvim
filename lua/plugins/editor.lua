@@ -907,6 +907,8 @@ return {
             { "<localleader>fj", function() Snacks.picker.jumps({ focus = "list" }) end, desc = "fuzzy jumps", },
             { "<localleader>fl", function() Snacks.picker.lines({ args = { "--fixed-strings" }, }) end, desc = "fuzzy lines text search", },
             { "<localleader>fL", function() Snacks.picker.lines() end, desc = "fuzzy lines grep search", },
+            { "<localleader>fo", function() Snacks.picker.lsp_workspace_symbols() end, desc = "fuzzy workspace symbols", },
+            { "<localleader>fO", function() Snacks.picker.lsp_symbols() end, desc = "fuzzy symbols", },
             { "<localleader>fP", function() Snacks.picker.projects({ focus = "list" }) end, desc = "fuzzy projects", },
             { "<localleader>fq", function() Snacks.picker.qflist({ focus = "list" }) end, desc = "fuzzy quickfix", },
             { "<localleader>fQ", function() Snacks.picker.loclist({ focus = "list" }) end, desc = "fuzzy loclist", },
@@ -917,7 +919,7 @@ return {
             { "<localleader>f'", function() Snacks.picker.marks({ focus = "list" }) end, desc = "fuzzy marks", },
             { "<localleader>f<space>", function() Snacks.picker.smart() end, desc = "fuzzy smart", },
 
-            { "<localleader>ci", function() Snacks.picker.icons() end, desc = "fuzzy icons", },
+            { "<localleader>ai", function() Snacks.picker.icons() end, desc = "fuzzy icons", },
 
             { "<localleader>na", function() Snacks.picker.autocmds() end, desc = "fuzzy autocmds", },
             { "<localleader>nc", function() Snacks.picker.colorschemes({ focus = "list" }) end, desc = "fuzzy colorschemes", },

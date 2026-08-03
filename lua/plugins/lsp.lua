@@ -104,7 +104,6 @@ return {
                         { "<c-k>", hover_help, mode = "i", desc = "Signature Help", has = "signatureHelp" },
                         { "<localleader>Kh", vim.lsp.buf.document_highlight, desc = "Document Highlight" },
                         { "<localleader>KH", vim.lsp.buf.clear_references, desc = "Clear Document Highlight" },
-                        { "<localleader>af", vim.lsp.buf.format, desc = "LSP Format" },
                         { "<localleader>Ki", vim.lsp.buf.incoming_calls, desc = "LSP Incoming Calls" },
                         { "<localleader>KI", vim.lsp.buf.outgoing_calls, desc = "LSP Outoging Calls" },
                         {
@@ -123,8 +122,9 @@ return {
                         },
                         { "<localleader>Kw", vim.lsp.buf.list_workspace_folders, desc = "LSP List Workspace Folders" },
                         { "<localleader>Ko", vim.lsp.buf.workspace_symbol, desc = "LSP List Workspace Folders" },
+                        { "<localleader>af", vim.lsp.buf.format, desc = "LSP Format" },
                         { "<localleader>aQ", LazyVim.lsp.action.source, desc = "Source Action", has = "codeAction" },
-                        { "<localleader>ac", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "x" }, has = "codeAction" },
+                        { "<localleader>aC", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "x" }, has = "codeAction" },
                         { "<localleader>ad", vim.lsp.codelens.run, desc = "Run Codelens", mode = { "n", "x" }, has = "codeLens" },
                         {
                             "<localleader>rf",
@@ -194,7 +194,7 @@ return {
     },
     {
         "rachartier/tiny-code-action.nvim", -- improved code action picker that has previes of the output as you choose them, also allows to filter and sort the code actions
-        enabled = false,
+        enabled = true,
         dependencies = {
             -- optional picker via telescope
             -- { "nvim-telescope/telescope.nvim" },
@@ -214,36 +214,37 @@ return {
             -- picker = { "fzf-lua" },
             -- picker = { "select", opts = {} },
 
-            backend = "vim",
+            -- backend = "vim",
             -- backend = "delta",
-            picker = {
-                "buffer",
-                opts = {
-                    hotkeys = true, -- Enable hotkeys for quick selection of actions
-                    -- hotkeys_mode = "text_based", -- Modes for generating hotkeys
-                    -- hotkeys_mode = "text_diff_based", -- Modes for generating hotkeys
-                    hotkeys_mode = "sequential", -- Modes for generating hotkeys
-                    auto_preview = true, -- Enable or disable automatic preview
-                    auto_accept = false, -- Automatically accept the selected action (with hotkeys)
-                    position = "cursor", -- Position of the picker window
-                    -- position = "center", -- Position of the picker window
-                    -- winborder = "single", -- Border style for picker and preview windows
-                    winborder = "rounded", -- Border style for picker and preview windows
-                    keymaps = {
-                        preview = "K", -- Key to show preview
-                        close = { "q", "<Esc>" }, -- Keys to close the window (can be string or table)
-                        select = "<CR>", -- Keys to select action (can be string or table)
-                        preview_close = { "q", "<Esc>" }, -- Keys to return from preview to main window (can be string or table)
-                    },
-                    custom_keys = {
-                        { key = "m", pattern = "Fill match arms" },
-                        { key = "m", pattern = "Consider making this binding mutable: mut" },
-                        { key = "r", pattern = "Rename.*" }, -- Lua pattern matching
-                        { key = "e", pattern = "Extract Method" },
-                    },
-                    group_icon = " └",
-                },
-            },
+            picker = { "snacks", opts = { focus = "list" } },
+            -- picker = {
+            --     "buffer",
+            --     opts = {
+            --         hotkeys = true, -- Enable hotkeys for quick selection of actions
+            --         -- hotkeys_mode = "text_based", -- Modes for generating hotkeys
+            --         -- hotkeys_mode = "text_diff_based", -- Modes for generating hotkeys
+            --         hotkeys_mode = "sequential", -- Modes for generating hotkeys
+            --         auto_preview = true, -- Enable or disable automatic preview
+            --         auto_accept = false, -- Automatically accept the selected action (with hotkeys)
+            --         position = "cursor", -- Position of the picker window
+            --         -- position = "center", -- Position of the picker window
+            --         -- winborder = "single", -- Border style for picker and preview windows
+            --         winborder = "rounded", -- Border style for picker and preview windows
+            --         keymaps = {
+            --             preview = "K", -- Key to show preview
+            --             close = { "q", "<Esc>" }, -- Keys to close the window (can be string or table)
+            --             select = "<CR>", -- Keys to select action (can be string or table)
+            --             preview_close = { "q", "<Esc>" }, -- Keys to return from preview to main window (can be string or table)
+            --         },
+            --         custom_keys = {
+            --             { key = "m", pattern = "Fill match arms" },
+            --             { key = "m", pattern = "Consider making this binding mutable: mut" },
+            --             { key = "r", pattern = "Rename.*" }, -- Lua pattern matching
+            --             { key = "e", pattern = "Extract Method" },
+            --         },
+            --         group_icon = " └",
+            --     },
+            -- },
 
             -- Sort import-related actions to the top (within their category group)
             sort = function(a, b)
