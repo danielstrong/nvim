@@ -216,7 +216,7 @@ return {
 
             -- backend = "vim",
             -- backend = "delta",
-            picker = { "snacks", opts = { focus = "list" } },
+            picker = { "snacks", opts = { focus = "list", layout = { preview = false } } },
             -- picker = {
             --     "buffer",
             --     opts = {
