@@ -564,6 +564,7 @@ return {
                                     ["<C-t>"] = "picker_grep",
                                     ["<localleader>y"] = "yank_relative_path",
                                     ["<localleader>Y"] = "yank_absolute_path",
+                                    ["R"] = "explorer_git_rename",
                                 },
                             },
                         },
@@ -719,6 +720,9 @@ return {
                         end
                         vim.fn.setreg("+", path)
                         Snacks.notify.info("Copied: " .. path)
+                    end,
+                    explorer_git_rename = function(picker, item)
+                        require("custom-utils.explorer_git_rename").rename(picker, item)
                     end,
                     qflist = function(picker)
                         -- Get currently selected items (or all filtered items if none are marked)
