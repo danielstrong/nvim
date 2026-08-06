@@ -48,11 +48,20 @@ end
 
 function M.tabs_picker()
     local items = get_tabs()
+    local cur_tabpage = vim.api.nvim_get_current_tabpage()
     Snacks.picker({
         title = "Tabs",
         focus = "list",
         items = items,
         format = "text",
+        on_show = function(picker)
+            for i, item in ipairs(items) do
+                if item.tabpage == cur_tabpage then
+                    picker.list:view(i)
+                    break
+                end
+            end
+        end,
         confirm = function(picker, item)
             picker:close()
             vim.cmd(("tabnext %d"):format(item.tabnr))
