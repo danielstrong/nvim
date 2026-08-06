@@ -15,6 +15,16 @@
 -- "l"    Insert, Command-line, Lang-Arg
 
 local map = vim.keymap.set
+
+-- Runs an ex command and echoes it at the bottom of the screen, so the
+-- keymap makes it obvious what just ran.
+local function cmd_echo(command, text)
+    return function()
+        vim.cmd(command)
+        vim.api.nvim_echo({ { text, "None" } }, false, {})
+    end
+end
+
 map("n", "gh", "<Nop>")
 map("n", "gH", "<Nop>")
 map("n", "g<C-h>", "<Nop>")
@@ -60,9 +70,9 @@ map({ "n", "x" }, "<localleader>wmH", "<C-W>H", { desc = "Move Window Far Left" 
 map({ "n", "x" }, "<localleader>wmJ", "<C-W>J", { desc = "Move Window Far Bottom" })
 map({ "n", "x" }, "<localleader>wmK", "<C-W>K", { desc = "Move Window Far Top" })
 
-map({ "n", "x" }, "<localleader>tn", "<cmd>tabnew<cr>", { desc = "Tab new" })
-map({ "n", "x" }, "<localleader>tw", "<cmd>tab split<cr>", { desc = "Open current window into new tab" })
-map({ "n", "x" }, "<localleader>ts", "<cmd>tab split<cr>", { desc = "Open current window into new tab" })
+map({ "n", "x" }, "<localleader>tn", cmd_echo("tabnew", "New Tab"), { desc = "Tab new" })
+map({ "n", "x" }, "<localleader>tw", cmd_echo("tab split", "Split Tab"), { desc = "Open current window into new tab" })
+map({ "n", "x" }, "<localleader>ts", cmd_echo("tab split", "Split Tab"), { desc = "Open current window into new tab" })
 map({ "n", "x" }, "<localleader>tW", "<C-W>T", { desc = "Break out window into new tab" })
 map({ "n", "x" }, "<localleader>tx", "<cmd>tabclose<cr>", { desc = "Tab close" })
 map({ "n", "x" }, "<localleader>tO", "<cmd>tabonly<cr>", { desc = "Kill other tabs" })
@@ -675,6 +685,18 @@ Snacks.toggle
         end,
     })
     :map("<localleader>ua")
+
+Snacks.toggle
+    .new({
+        name = "Show Tabs",
+        get = function()
+            return vim.o.showtabline == 1
+        end,
+        set = function(state)
+            vim.o.showtabline = state and 1 or 0
+        end,
+    })
+    :map("<localleader>ut")
 
 Snacks.toggle
     .new({
