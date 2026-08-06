@@ -14,33 +14,17 @@ local function get_tabs()
             name = "[No Name]"
         end
 
-        local preview_lines = {}
-        table.insert(preview_lines, ("Tab %d: %d window%s"):format(i, #wins, #wins == 1 and "" or "s"))
-        table.insert(preview_lines, ("%-6s %-8s %s"):format("WinID", "Buf#", "File"))
-        table.insert(preview_lines, string.rep("-", 40))
-        for _, win in ipairs(wins) do
-            local win_buf = vim.api.nvim_win_get_buf(win)
-            local bufname = vim.api.nvim_buf_get_name(win_buf)
-            if bufname == "" then
-                bufname = "[No Name]"
-            end
-            bufname = vim.fn.fnamemodify(bufname, ":~:.") -- relative to cwd, or ~
-            local win_marker = (win == cur_win) and "->" or "  "
-            table.insert(preview_lines, ("%s %-6d %-8d %s"):format(win_marker, win, win_buf, bufname))
-        end
-        if #wins == 0 then
-            table.insert(preview_lines, "No windows in tab")
-        end
+        local cursor_pos = vim.api.nvim_win_get_cursor(cur_win)
 
         table.insert(tabs, {
             idx = i,
             text = ("Tab %d: %s"):format(i, name),
             tabnr = i,
             tabpage = tabpage,
-            preview = {
-                text = table.concat(preview_lines, "\n"),
-                ft = "text",
-            },
+            buf = buf,
+            file = vim.api.nvim_buf_get_name(buf),
+            pos = cursor_pos,
+            preview_title = ("Tab %d: %s (%d window%s)"):format(i, name, #wins, #wins == 1 and "" or "s"),
         })
     end
     return tabs
@@ -66,7 +50,7 @@ function M.tabs_picker()
             picker:close()
             vim.cmd(("tabnext %d"):format(item.tabnr))
         end,
-        preview = "preview",
+        preview = "file",
         actions = {
             open_tab = function(picker, item)
                 picker:close()
