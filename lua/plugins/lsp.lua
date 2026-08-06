@@ -17,6 +17,7 @@ local function hover_help()
                     vim.api.nvim_win_close(win, true)
                 end
             end
+            vim.keymap.set("n", "<Esc>", close_hover_help, { buffer = fbuf, nowait = true, desc = "Close Hover" })
             vim.keymap.set("n", "L", close_hover_help, { buffer = fbuf, nowait = true, desc = "Close Hover" })
             vim.keymap.set("n", "K", close_hover_help, { buffer = fbuf, nowait = true, desc = "Close Hover" })
             vim.keymap.set("n", "H", close_hover_help, { buffer = fbuf, nowait = true, desc = "Close Hover" })
@@ -43,6 +44,7 @@ local function signature_help()
                     vim.api.nvim_win_close(win, true)
                 end
             end
+            vim.keymap.set("n", "<Esc>", close_sig_help, { buffer = fbuf, nowait = true, desc = "Close Signature Help" })
             vim.keymap.set("n", "L", close_sig_help, { buffer = fbuf, nowait = true, desc = "Close Signature Help" })
             vim.keymap.set("n", "K", close_sig_help, { buffer = fbuf, nowait = true, desc = "Close Signature Help" })
             vim.keymap.set("n", "H", close_sig_help, { buffer = fbuf, nowait = true, desc = "Close Signature Help" })

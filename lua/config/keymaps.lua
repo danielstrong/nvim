@@ -497,12 +497,35 @@ map("n", "L", function()
                 vim.api.nvim_win_close(win, true)
             end
         end
+        vim.keymap.set("n", "<Esc>", closer_diag_hover, { buffer = bufnr, nowait = true, desc = "Close Line Diagnostics" })
         vim.keymap.set("n", "L", closer_diag_hover, { buffer = bufnr, nowait = true, desc = "Close Line Diagnostics" })
         vim.keymap.set("n", "H", closer_diag_hover, { buffer = bufnr, nowait = true, desc = "Close Line Diagnostics" })
         vim.keymap.set("n", "K", closer_diag_hover, { buffer = bufnr, nowait = true, desc = "Close Line Diagnostics" })
         vim.keymap.set("n", "gK", closer_diag_hover, { buffer = bufnr, nowait = true, desc = "Close Line Diagnostics" })
     end
 end, { desc = "Line Diagnostics" })
+
+local function close_floating_previews()
+    -- closes previews opened with vim.diagnostic.open_float, vim.lsp.buf.hover, and vim.lsp.buf.signature_help
+    local float_win = vim.b[0].lsp_floating_preview
+    if float_win and vim.api.nvim_win_is_valid(float_win) then
+        vim.schedule(function()
+            if vim.api.nvim_win_is_valid(float_win) then
+                vim.api.nvim_win_close(float_win, true)
+            end
+        end)
+        return true
+        -- return ""
+    end
+    return false
+end
+
+map({ "i", "n", "s" }, "<esc>", function()
+    close_floating_previews()
+    vim.cmd("noh")
+    LazyVim.cmp.actions.snippet_stop()
+    return "<esc>"
+end, { expr = true, desc = "Escape and Clear hlsearch" })
 
 map("n", "<localleader>dc", function()
     local diags = vim.diagnostic.get(0, { lnum = vim.fn.line(".") - 1 })
