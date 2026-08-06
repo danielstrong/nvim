@@ -339,6 +339,7 @@ return {
     },
     {
         "nvim-mini/mini.files",
+        enabled = false,
         -- lazy = true,
         opts = {
             windows = {
@@ -863,28 +864,30 @@ return {
                 desc = "Explorer Snacks Float (root dir)",
             },
             {
-                "<localleader>wd",
+                "<localleader>wf",
                 function()
                     local explorer = Snacks.picker.get({ source = "explorer" })[1]
                     if explorer then
                         explorer:close()
                     else
-                        Snacks.explorer.reveal({ layout = "explorer_float_center" })
+                        -- Get the full path of the parent directory of the current active file
+                        local current_file_dir = vim.fn.expand("%:p:h")
+
+                        -- If it's a valid directory, use it as the explorer root and follow the file
+                        if vim.fn.isdirectory(current_file_dir) == 1 then
+                            Snacks.explorer({
+                                cwd = current_file_dir,
+                                layout = "explorer_float_center",
+                                follow_file = true,
+                            })
+                        else
+                            -- Fallback default if you are on an empty/unnamed buffer
+                            Snacks.explorer({ layout = "explorer_float_center", follow_file = true })
+                        end
+                        -- Snacks.explorer({ layout = "explorer_float_center", follow_file = true })
                     end
                 end,
-                desc = "Explorer Snacks Float (cwd)",
-            },
-            {
-                "<localleader>wD",
-                function()
-                    local explorer = Snacks.picker.get({ source = "explorer" })[1]
-                    if explorer then
-                        explorer:close()
-                    else
-                        Snacks.explorer.reveal({ cwd = LazyVim.root(), layout = "explorer_float_center" })
-                    end
-                end,
-                desc = "Explorer Snacks Float (root dir)",
+                desc = "Explorer Snacks Float (current file)",
             },
             -- +------------------------------------+---------------------------------------+-----------------------------------------------+
             -- | FzfLua Command                     | Snacks Picker Equivalent              | Description                                   |
