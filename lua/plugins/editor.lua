@@ -922,6 +922,8 @@ return {
             { "<localleader>fr", function() Snacks.picker.recent() end, desc = "fuzzy recent files", },
             { "<localleader>fs", function() Snacks.picker.grep({ args = { "--fixed-strings" }, }) end, desc = "fuzzy text search", },
             { "<localleader>fS", function() Snacks.picker.grep() end, desc = "fuzzy grep search", },
+            { "<localleader>ft", function() require('custom-utils.snacks_tab_picker').tabs_picker() end, desc = "fuzzy tab", },
+            { "<C-q>", function() require('custom-utils.snacks_tab_picker').tabs_picker() end, desc = "fuzzy tab", },
             { "<localleader>fw", function() Snacks.picker.grep_word() end, desc = "fuzzy word search", },
             { "<localleader>f'", function() Snacks.picker.marks({ focus = "list" }) end, desc = "fuzzy marks", },
             { "<localleader>f<space>", function() Snacks.picker.smart() end, desc = "fuzzy smart", },
