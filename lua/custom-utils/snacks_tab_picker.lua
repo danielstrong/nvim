@@ -143,6 +143,8 @@ function M.tabs_picker(opts)
                 keys = {
                     ["d"] = "close_tab",
                     ["o"] = "open_tab",
+                    ["h"] = "list_up",
+                    ["l"] = "list_down",
                 },
             },
         },
