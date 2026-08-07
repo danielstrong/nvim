@@ -760,7 +760,7 @@ return {
                     -- Apply overrides globally across all inner picker windows
                     input = {
                         keys = {
-                            ["o"] = "confirm",
+                            ["o"] = { "confirm", mode = { "n", "i" } },
                             ["<C-s>"] = "explorer_open", -- open with system application
                             ["<2-LeftMouse>"] = false,
                             ["<Esc>"] = { "close", mode = { "n", "i" } },
@@ -786,6 +786,7 @@ return {
                     },
                     list = {
                         keys = {
+                            ["o"] = "confirm",
                             ["<2-LeftMouse>"] = false,
                             ["P"] = { "toggle_preview", mode = { "n", "i" } },
                             ["<C-e>"] = { "focus_preview", mode = { "n", "i" } },
@@ -924,7 +925,18 @@ return {
             { "<localleader>fS", function() Snacks.picker.grep() end, desc = "fuzzy grep search", },
             { "<localleader>fw", function() Snacks.picker.grep_word() end, desc = "fuzzy word search", },
             { "<localleader>f'", function() Snacks.picker.marks({ focus = "list" }) end, desc = "fuzzy marks", },
-            { "<C-q>", function() Snacks.picker.marks({ focus = "list" }) end, desc = "fuzzy named marks", },
+            {
+                "<C-q>",
+                function()
+                    Snacks.picker.marks({
+                        focus = "list",
+                        transform = function(item)
+                            return item.label:match("^[a-zA-Z]$") ~= nil
+                        end,
+                    })
+                end,
+                desc = "fuzzy named marks",
+            },
             { "<localleader>f<space>", function() Snacks.picker.smart() end, desc = "fuzzy smart", },
 
             { "<localleader>ai", function() Snacks.picker.icons() end, desc = "fuzzy icons", },
