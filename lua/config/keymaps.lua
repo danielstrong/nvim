@@ -15,6 +15,7 @@
 -- "l"    Insert, Command-line, Lang-Arg
 
 local map = vim.keymap.set
+local tabs_windows_buffers = require("custom-utils.tabs_windows_buffers")
 
 -- Runs an ex command and echoes it at the bottom of the screen, so the
 -- keymap makes it obvious what just ran.
@@ -60,7 +61,8 @@ map({ "n", "x" }, "<localleader>vb", "<C-v>", { desc = "Enter visual block mode"
 
 map({ "n", "x" }, "<localleader>wt", "<cmd>tab split<cr>", { desc = "Split Window to Tab" })
 map({ "n", "x" }, "<localleader>wS", "<C-W>v", { desc = "Split Window Right" })
-map({ "n", "x" }, "<localleader>wx", "<C-W>c", { desc = "Close Window" })
+map({ "n", "x" }, "<localleader>wc", "<C-W>c", { desc = "Close Window" })
+map({ "n", "x" }, "<localleader>wx", tabs_windows_buffers.real_quit_window_without_closing_nvim, { desc = "Close Window without closing vim" })
 map({ "n", "x" }, "<localleader>wO", "<C-W>o", { desc = "Only Window" })
 map({ "n", "x" }, "<localleader>we", "<cmd>wincmd p<CR>", { silent = true, desc = "Previous window split" })
 map({ "n", "x" }, "<localleader>wmn", "<C-W>x", { desc = "Swap current window with next" })
@@ -70,46 +72,45 @@ map({ "n", "x" }, "<localleader>wmH", "<C-W>H", { desc = "Move Window Far Left" 
 map({ "n", "x" }, "<localleader>wmJ", "<C-W>J", { desc = "Move Window Far Bottom" })
 map({ "n", "x" }, "<localleader>wmK", "<C-W>K", { desc = "Move Window Far Top" })
 
-map({ "n", "x" }, "<localleader>tn", cmd_echo("tabnew", "New Tab"), { desc = "Tab new" })
-map({ "n", "x" }, "<localleader>tw", cmd_echo("tab split", "Split Tab"), { desc = "Open current window into new tab" })
-map({ "n", "x" }, "<localleader>ts", cmd_echo("tab split", "Split Tab"), { desc = "Open current window into new tab" })
-map({ "n", "x" }, "<localleader>tW", "<C-W>T", { desc = "Break out window into new tab" })
-map({ "n", "x" }, "<localleader>tx", "<cmd>tabclose<cr>", { desc = "Tab close" })
-map({ "n", "x" }, "<localleader>tO", "<cmd>tabonly<cr>", { desc = "Kill other tabs" })
-map({ "n", "x" }, "<localleader>te", "<cmd>tabnext #<cr>", { desc = "Navigate tab to last accessed" })
-map({ "n", "x" }, "<localleader>t[", "<cmd>tabprev<cr>", { desc = "Navigate tab to left" })
-map({ "n", "x" }, "<localleader>t]", "<cmd>tabnext<cr>", { desc = "Navigate tab to right" })
-map({ "n", "x" }, "<localleader>th", "<cmd>tabprev<cr>", { desc = "Navigate tab to left" })
-map({ "n", "x" }, "<localleader>tl", "<cmd>tabnext<cr>", { desc = "Navigate tab to right" })
-map({ "n", "x" }, "<localleader>t1", "<cmd>1tabnext<cr>", { desc = "Navigate to tab 1" })
-map({ "n", "x" }, "<localleader>t2", "<cmd>2tabnext<cr>", { desc = "Navigate to tab 2" })
-map({ "n", "x" }, "<localleader>t3", "<cmd>3tabnext<cr>", { desc = "Navigate to tab 3" })
-map({ "n", "x" }, "<localleader>t4", "<cmd>4tabnext<cr>", { desc = "Navigate to tab 4" })
-map({ "n", "x" }, "<localleader>t5", "<cmd>5tabnext<cr>", { desc = "Navigate to tab 5" })
-map({ "n", "x" }, "<localleader>t6", "<cmd>6tabnext<cr>", { desc = "Navigate to tab 6" })
-map({ "n", "x" }, "<localleader>t7", "<cmd>7tabnext<cr>", { desc = "Navigate to tab 7" })
-map({ "n", "x" }, "<localleader>t8", "<cmd>8tabnext<cr>", { desc = "Navigate to tab 8" })
-map({ "n", "x" }, "<localleader>t9", "<cmd>9tabnext<cr>", { desc = "Navigate to tab 9" })
-map({ "n", "x" }, "<localleader>t0", "<cmd>tabfirst<cr>", { desc = "Navigate tab first" })
-map({ "n", "x" }, "<localleader>t$", "<cmd>tablast<cr>", { desc = "Navigate tab last" })
-map({ "n", "x" }, "<localleader>tm[", "<cmd>-tabmove<cr>", { desc = "Move tab to left" })
-map({ "n", "x" }, "<localleader>tm]", "<cmd>+tabmove<cr>", { desc = "Move tab to right" })
-map({ "n", "x" }, "<localleader>tmh", "<cmd>-tabmove<cr>", { desc = "Move tab to left" })
-map({ "n", "x" }, "<localleader>tml", "<cmd>+tabmove<cr>", { desc = "Move tab to right" })
-map({ "n", "x" }, "<localleader>tm1", "<cmd>tabmove 0<cr>", { desc = "Move tab to 1" })
-map({ "n", "x" }, "<localleader>tm2", "<cmd>tabmove 2<cr>", { desc = "Move tab to 2" })
-map({ "n", "x" }, "<localleader>tm3", "<cmd>tabmove 3<cr>", { desc = "Move tab to 3" })
-map({ "n", "x" }, "<localleader>tm4", "<cmd>tabmove 4<cr>", { desc = "Move tab to 4" })
-map({ "n", "x" }, "<localleader>tm5", "<cmd>tabmove 5<cr>", { desc = "Move tab to 5" })
-map({ "n", "x" }, "<localleader>tm6", "<cmd>tabmove 6<cr>", { desc = "Move tab to 6" })
-map({ "n", "x" }, "<localleader>tm7", "<cmd>tabmove 7<cr>", { desc = "Move tab to 7" })
-map({ "n", "x" }, "<localleader>tm8", "<cmd>tabmove 8<cr>", { desc = "Move tab to 8" })
-map({ "n", "x" }, "<localleader>tm9", "<cmd>tabmove 9<cr>", { desc = "Move tab to 9" })
-map({ "n", "x" }, "<localleader>tm0", "<cmd>tabmove 0<cr>", { desc = "Move tab to first" })
-map({ "n", "x" }, "<localleader>tm$", "<cmd>tabmove $<cr>", { desc = "Move tab to end" })
-map({ "n", "x" }, "<localleader>tm#", "<cmd>tabmove #<cr>", { desc = "Move tab after last accessed" })
+local function tab_map(keys, rhs, opts)
+    map({ "n", "x" }, "<localleader>q" .. keys, rhs, opts)
+    map({ "n", "x" }, "<C-q>" .. keys, rhs, opts)
+end
 
-map({ "n", "x" }, "<localleader>tr", function()
+tab_map("f", function()
+    require("custom-utils.snacks_tab_picker").tabs_picker({
+        -- preview_mode = "current"
+        preview_mode = "concat",
+    })
+end, { desc = "fuzzy tabs" })
+tab_map("n", cmd_echo("tabnew", "New Tab"), { desc = "Tab new" })
+tab_map("w", cmd_echo("tab split", "Split Tab"), { desc = "Open current window into new tab" })
+tab_map("s", cmd_echo("tab split", "Split Tab"), { desc = "Open current window into new tab" })
+tab_map("W", "<C-W>T", { desc = "Break out window into new tab" })
+tab_map("x", "<cmd>tabclose<cr>", { desc = "Tab close" })
+tab_map("O", "<cmd>tabonly<cr>", { desc = "Kill other tabs" })
+tab_map("e", "<cmd>tabnext #<cr>", { desc = "Navigate tab to last accessed" })
+tab_map("[", "<cmd>tabprev<cr>", { desc = "Navigate tab to left" })
+tab_map("]", "<cmd>tabnext<cr>", { desc = "Navigate tab to right" })
+tab_map("h", "<cmd>tabprev<cr>", { desc = "Navigate tab to left" })
+tab_map("l", "<cmd>tabnext<cr>", { desc = "Navigate tab to right" })
+for i = 1, 9 do
+    tab_map(tostring(i), "<cmd>" .. i .. "tabnext<cr>", { desc = "Navigate to tab " .. i })
+end
+tab_map("0", "<cmd>tabfirst<cr>", { desc = "Navigate tab first" })
+tab_map("$", "<cmd>tablast<cr>", { desc = "Navigate tab last" })
+tab_map("m[", "<cmd>-tabmove<cr>", { desc = "Move tab to left" })
+tab_map("m]", "<cmd>+tabmove<cr>", { desc = "Move tab to right" })
+tab_map("mh", "<cmd>-tabmove<cr>", { desc = "Move tab to left" })
+tab_map("ml", "<cmd>+tabmove<cr>", { desc = "Move tab to right" })
+for i = 1, 9 do
+    tab_map("m" .. i, "<cmd>tabmove " .. (i == 1 and 0 or i) .. "<cr>", { desc = "Move tab to " .. i })
+end
+tab_map("m0", "<cmd>tabmove 0<cr>", { desc = "Move tab to first" })
+tab_map("m$", "<cmd>tabmove $<cr>", { desc = "Move tab to end" })
+tab_map("m#", "<cmd>tabmove #<cr>", { desc = "Move tab after last accessed" })
+
+tab_map("r", function()
     local current = vim.t.tab_name or ""
     vim.ui.input({ prompt = "Tab name: ", default = current }, function(name)
         if name == nil then
@@ -176,86 +177,7 @@ function _G.TabLineSplits()
     return s .. "%#TabLineFill#%T"
 end
 
-local function real_win_count()
-    local count = 0
-    for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-        if vim.api.nvim_win_get_config(win).relative == "" then
-            local buf = vim.api.nvim_win_get_buf(win)
-            local ft = vim.api.nvim_get_option_value("filetype", { buf = buf })
-            if ft ~= "NvimTree" then
-                count = count + 1
-            end
-        end
-    end
-    return count
-end
-
-local function real_tab_count()
-    return vim.fn.tabpagenr("$")
-end
-
-local function real_wins_showing_current_buf_count()
-    local cur = vim.api.nvim_get_current_buf()
-    local showing = 0
-    for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-        if vim.api.nvim_win_get_config(win).relative == "" and vim.api.nvim_win_get_buf(win) == cur then
-            showing = showing + 1
-        end
-    end
-    return showing
-end
-
-local function real_is_only_nvimtree_remaining()
-    local count = 0
-    local nvimtreecount = 0
-    for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-        if vim.api.nvim_win_get_config(win).relative == "" then
-            local buf = vim.api.nvim_win_get_buf(win)
-            local ft = vim.api.nvim_get_option_value("filetype", { buf = buf })
-            if ft ~= "NvimTree" then
-                count = count + 1
-            else
-                nvimtreecount = nvimtreecount + 1
-            end
-        end
-    end
-    return count == 0 and nvimtreecount == 1
-end
-
-local function real_quit_window()
-    vim.cmd("quit")
-    if real_is_only_nvimtree_remaining() then
-        vim.cmd("quit")
-    end
-end
-
-local function real_quit_window_without_closing_nvim()
-    if real_tab_count() == 1 and real_win_count() == 1 then
-        vim.notify("Can't close the last window", vim.log.levels.WARN)
-        return
-    end
-    vim.cmd("quit")
-    if real_tab_count() > 1 and real_is_only_nvimtree_remaining() then
-        vim.cmd("quit")
-    end
-end
-
-local function real_delete_buffer_without_closing_nvim()
-    if real_tab_count() == 1 and real_win_count() == 1 then
-        vim.notify("Can't close the last window", vim.log.levels.WARN)
-        return
-    end
-    if real_wins_showing_current_buf_count() > 1 then
-        vim.cmd("quit")
-        return
-    end
-    Snacks.bufdelete()
-    if real_tab_count() > 1 and real_is_only_nvimtree_remaining() then
-        Snacks.bufdelete()
-    end
-end
-
-map({ "n", "x" }, "<localleader>q", real_delete_buffer_without_closing_nvim, { desc = "close buffer" })
+map({ "n", "x" }, "<localleader>bx", tabs_windows_buffers.real_delete_buffer_without_closing_nvim, { desc = "close buffer" })
 map({ "n", "x" }, "<localleader>bo", function()
     local shown = {}
     for _, win in ipairs(vim.api.nvim_list_wins()) do
@@ -272,7 +194,7 @@ map({ "n", "x" }, "<localleader>bo", function()
     vim.notify(("Deleted %d buffer%s"):format(deleted, deleted == 1 and "" or "s"))
 end, { desc = "kill unshown buffers" })
 map({ "n", "x" }, "<localleader>bO", "<cmd>%bd |e# | bd#<cr>", { desc = "only buffer" })
-map({ "n", "x" }, "<localleader>bx", "<cmd>bn | bd #<cr>", { desc = "kill buffer" })
+map({ "n", "x" }, "<localleader>bX", "<cmd>bn | bd #<cr>", { desc = "kill buffer" })
 map({ "n", "x" }, "<localleader>l", "<cmd>e<cr>", { desc = "reload buffer" })
 map({ "n", "x" }, "<localleader>bl", "<cmd>e<cr>", { desc = "reload buffer" })
 map({ "n", "x" }, "<localleader>bD", function()
@@ -293,7 +215,7 @@ map({ "n", "x" }, "<localleader>bL", reload_all_buffers, { desc = "reload all bu
 map({ "n", "x" }, "<localleader>L", reload_all_buffers, { desc = "reload all buffers" })
 
 map({ "n", "x" }, "ZZ", "<cmd>x<cr>", { desc = "save quit file" })
-map({ "n", "x" }, "ZX", real_quit_window, { desc = "quit window" })
+map({ "n", "x" }, "ZX", tabs_windows_buffers.real_quit_window, { desc = "quit window" })
 map({ "n", "x" }, "ZC", "<cmd>qa<cr>", { desc = "quit all save session" })
 map({ "n", "x" }, "ZV", "<cmd>wqa<cr>", { desc = "save quit all" })
 map({ "n", "x" }, "ZQ", "<cmd>q<cr>", { desc = "quit window save session" })
@@ -302,7 +224,7 @@ map({ "n", "x" }, "<localleader>QQ", "<cmd>AutoSession disable<CR><cmd>qa<cr>", 
 map({ "n", "x" }, "<localleader>QA", "<cmd>qa<cr>", { desc = "quit all save session" }) -- TODO dont have this save sesion..
 map({ "n", "x" }, "<localleader>QW", "<cmd>wqa<cr>", { desc = "quit save all save session" }) -- TODO dont have this save sesion..
 map({ "n", "x" }, "<localleader>QR", "<cmd>restart<cr>", { desc = "restart" }) -- TODO dont have this save sesion..
-map({ "n", "x" }, "<localleader>x", real_quit_window_without_closing_nvim, { desc = "Close Window" })
+map({ "n", "x" }, "<localleader>x", tabs_windows_buffers.real_quit_window_without_closing_nvim, { desc = "Close Window" })
 map({ "n", "x" }, "<localleader>X", "<cmd>qa<cr>", { desc = "quit all save session" })
 
 map({ "n", "x" }, "<localleader>s", "<cmd>w<cr>", { desc = "Save Buffer" })
