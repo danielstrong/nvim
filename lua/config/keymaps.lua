@@ -73,8 +73,8 @@ map({ "n", "x" }, "<localleader>wmJ", "<C-W>J", { desc = "Move Window Far Bottom
 map({ "n", "x" }, "<localleader>wmK", "<C-W>K", { desc = "Move Window Far Top" })
 
 local function tab_map(keys, rhs, opts)
-    map({ "n", "x" }, "<localleader>q" .. keys, rhs, opts)
-    map({ "n", "x" }, "<C-q>" .. keys, rhs, opts)
+    map({ "n", "x" }, "<localleader>t" .. keys, rhs, opts)
+    -- map({ "n", "x" }, "<C-q>" .. keys, rhs, opts)
 end
 
 tab_map("f", function()
