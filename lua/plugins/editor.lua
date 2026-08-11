@@ -760,7 +760,7 @@ return {
                     -- Apply overrides globally across all inner picker windows
                     input = {
                         keys = {
-                            ["o"] = { "confirm", mode = { "n", "i" } },
+                            ["o"] = { "confirm", mode = { "n" } },
                             ["<C-s>"] = "explorer_open", -- open with system application
                             ["<2-LeftMouse>"] = false,
                             ["<Esc>"] = { "close", mode = { "n", "i" } },
@@ -789,8 +789,8 @@ return {
                             ["o"] = "confirm",
                             ["<2-LeftMouse>"] = false,
                             ["P"] = { "toggle_preview", mode = { "n", "i" } },
-                            ["<C-e>"] = { "focus_preview", mode = { "n", "i" } },
                             ["<C-l>"] = { "toggle_focus", mode = { "n", "i" } },
+                            ["<C-e>"] = { "focus_preview", mode = { "n", "i" } },
                         },
                     },
                     preview = {
@@ -926,7 +926,7 @@ return {
             { "<localleader>fw", function() Snacks.picker.grep_word() end, desc = "fuzzy word search", },
             { "<localleader>f'", function() Snacks.picker.marks({ focus = "list" }) end, desc = "fuzzy marks", },
             {
-                "<C-q>",
+                "<localleader>'",
                 function()
                     Snacks.picker.marks({
                         focus = "list",
@@ -1128,8 +1128,8 @@ return {
                 { "<localleader>j", group = "Copy Store", mode = { "n", "x" } },
                 { "<localleader>k", group = "LSP", mode = { "n", "x" } },
                 { "<localleader>n", group = "Nvim", mode = { "n", "x" } },
-                -- { "<C-q>", group = "Tabs", mode = { "n", "x" } },
-                -- { "<C-q>m", group = "Move Tab", mode = { "n", "x" } },
+                { "<C-q>", group = "Tabs", mode = { "n", "x" } },
+                { "<C-q>m", group = "Move Tab", mode = { "n", "x" } },
                 { "<localleader>t", group = "Tabs", mode = { "n", "x" } },
                 { "<localleader>tm", group = "Move Tab", mode = { "n", "x" } },
                 { "<localleader>r", group = "Replace", mode = { "n", "x" } },
