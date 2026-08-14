@@ -767,7 +767,7 @@ return {
                             ["<C-o>"] = { { "pick_win", "jump" }, mode = { "n", "i" } },
                             ["s"] = "edit_split",
                             ["S"] = "edit_vsplit",
-                            ["P"] = { "toggle_preview", mode = { "n", "i" } },
+                            ["P"] = { "toggle_preview", mode = { "n" } },
                             ["<c-y>"] = { "yank_relative_path", mode = { "n", "i" } },
                             ["<c-z>"] = { "yank_absolute_path", mode = { "n", "i" } },
                             ["<localleader>y"] = "yank_relative_path",
