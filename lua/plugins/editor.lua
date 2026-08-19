@@ -958,6 +958,7 @@ return {
             { "<localleader>nC", function() Snacks.picker.highlights() end, desc = "fuzzy color highlights", },
             { "<localleader>nh", function() Snacks.picker.help() end, desc = "fuzzy help", },
             { "<localleader>nn", function() Snacks.picker.notifications({ focus = "list" }) end, desc = "fuzzy notifications", },
+            { "<localleader>nL", function() Snacks.picker.lsp_config({ focus = "list" }) end, desc = "fuzzy lsp_info", },
             { "<localleader>no", function() Snacks.picker.treesitter() end, desc = "fuzzy treesitter", },
             { "<localleader>np", function() Snacks.picker.commands({ focus = "input" }) end, desc = "fuzzy commands picker", },
             { "<localleader>nP", function() Snacks.picker.pickers({ focus = "list" }) end, desc = "fuzzy snacks pickers", },
