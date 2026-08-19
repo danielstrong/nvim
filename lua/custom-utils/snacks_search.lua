@@ -56,7 +56,9 @@ end
 --- Remembers every string confirmed this session (lost on restart) and lets
 --- <Up>/<C-p> and <Down>/<C-n> cycle through that history while typing.
 --- <Tab> completes filesystem paths for the token under the cursor.
-function M.grep_with_filter_prompt()
+--- @param opts? { prefill?: string } prefill overrides the usual "last confirmed value" default.
+function M.grep_with_filter_prompt(opts)
+    opts = opts or {}
     -- index == #grep_filter_history + 1 means "editing the draft" (not viewing a history entry).
     local index = #grep_filter_history + 1
     local draft = ""
@@ -69,7 +71,7 @@ function M.grep_with_filter_prompt()
 
     local win = Snacks.input({
         prompt = "Grep filter (comma-separated globs, prefix with ! to exclude)",
-        default = grep_filter_history[#grep_filter_history],
+        default = (opts.prefill and opts.prefill ~= "") and opts.prefill or grep_filter_history[#grep_filter_history],
     }, function(value)
         if value == nil then
             return -- Esc: abort, no history entry

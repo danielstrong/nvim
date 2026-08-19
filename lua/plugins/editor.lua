@@ -566,6 +566,7 @@ return {
                                     ["<localleader>y"] = "yank_relative_path",
                                     ["<localleader>Y"] = "yank_absolute_path",
                                     ["R"] = "explorer_git_rename",
+                                    ["<localleader>fS"] = { "explorer_grep_filter", mode = { "n", "i" } },
                                 },
                             },
                         },
@@ -724,6 +725,20 @@ return {
                     end,
                     explorer_git_rename = function(picker, item)
                         require("custom-utils.explorer_git_rename").rename(picker, item)
+                    end,
+                    explorer_grep_filter = function(picker)
+                        local sel = picker:selected({ fallback = true })
+                        local tokens = {}
+                        for _, item in ipairs(sel) do
+                            local path = Snacks.picker.util.path(item)
+                            if path then
+                                local rel = vim.fn.fnamemodify(path, ":.")
+                                table.insert(tokens, item.dir and (rel .. "/**") or rel)
+                            end
+                        end
+                        require("custom-utils.snacks_search").grep_with_filter_prompt({
+                            prefill = table.concat(tokens, ", "),
+                        })
                     end,
                     qflist = function(picker)
                         -- Get currently selected items (or all filtered items if none are marked)
