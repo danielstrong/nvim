@@ -922,7 +922,7 @@ return {
             { "<localleader>fQ", function() Snacks.picker.loclist({ focus = "list" }) end, desc = "fuzzy loclist", },
             { "<localleader>fr", function() Snacks.picker.recent() end, desc = "fuzzy recent files", },
             { "<localleader>fs", function() Snacks.picker.grep({ args = { "--fixed-strings" }, }) end, desc = "fuzzy text search", },
-            { "<localleader>fS", function() Snacks.picker.grep() end, desc = "fuzzy grep search", },
+            { "<localleader>fg", function() Snacks.picker.grep() end, desc = "fuzzy grep search", },
             { "<localleader>fw", function() Snacks.picker.grep_word() end, desc = "fuzzy word search", },
             { "<localleader>f'", function() Snacks.picker.marks({ focus = "list" }) end, desc = "fuzzy marks", },
             {
