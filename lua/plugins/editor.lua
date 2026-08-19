@@ -567,6 +567,7 @@ return {
                                     ["<localleader>Y"] = "yank_absolute_path",
                                     ["R"] = "explorer_git_rename",
                                     ["<localleader>fS"] = { "explorer_grep_filter", mode = { "n", "i" } },
+                                    ["<localleader>fE"] = { "explorer_files_filter", mode = { "n", "i" } },
                                 },
                             },
                         },
@@ -727,18 +728,12 @@ return {
                         require("custom-utils.explorer_git_rename").rename(picker, item)
                     end,
                     explorer_grep_filter = function(picker)
-                        local sel = picker:selected({ fallback = true })
-                        local tokens = {}
-                        for _, item in ipairs(sel) do
-                            local path = Snacks.picker.util.path(item)
-                            if path then
-                                local rel = vim.fn.fnamemodify(path, ":.")
-                                table.insert(tokens, item.dir and (rel .. "/**") or rel)
-                            end
-                        end
-                        require("custom-utils.snacks_search").grep_with_filter_prompt({
-                            prefill = table.concat(tokens, ", "),
-                        })
+                        local snacks_search = require("custom-utils.snacks_search")
+                        snacks_search.grep_with_filter_prompt({ prefill = snacks_search.explorer_selection_prefill(picker) })
+                    end,
+                    explorer_files_filter = function(picker)
+                        local snacks_search = require("custom-utils.snacks_search")
+                        snacks_search.files_with_filter_prompt({ prefill = snacks_search.explorer_selection_prefill(picker) })
                     end,
                     qflist = function(picker)
                         -- Get currently selected items (or all filtered items if none are marked)
@@ -926,7 +921,7 @@ return {
             { "<localleader>fd", function() Snacks.picker.git_files() end, desc = "fuzzy git files", },
             { "<localleader>fD", function() Snacks.picker.git_diff() end, desc = "fuzzy git diff", },
             { "<localleader>fe", function() Snacks.picker.files() end, desc = "fuzzy files", },
-            { "<localleader>fE", function() Snacks.picker.files() end, desc = "fuzzy files include/exclude filters fuzzy files", },
+            { "<localleader>fE", function() require("custom-utils.snacks_search").files_with_filter_prompt() end, desc = "fuzzy files with include/exclude filters", },
             { "<localleader>ff", function() Snacks.picker.resume() end, desc = "fuzzy resume", },
             { "<localleader>fj", function() Snacks.picker.jumps({ focus = "list" }) end, desc = "fuzzy jumps", },
             { "<localleader>fl", function() Snacks.picker.lines({ args = { "--fixed-strings" }, }) end, desc = "fuzzy lines text search", },

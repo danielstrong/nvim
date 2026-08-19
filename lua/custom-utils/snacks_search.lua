@@ -2,10 +2,7 @@ local Snacks = require("snacks")
 
 local M = {}
 
--- In-memory only (cleared on restart): raw strings the user has confirmed via grep_with_filter_prompt.
-local grep_filter_history = {}
-
-local function parse_grep_filter(input)
+local function parse_filter(input)
     local include, exclude = {}, {}
     for token in (input .. ","):gmatch("([^,]*),") do
         token = token:match("^%s*(.-)%s*$")
@@ -51,87 +48,144 @@ local function current_token_base(win)
     return token_start + ws_len + bang_len + 1, base
 end
 
---- Prompt for comma-separated include/exclude glob filters (tokens prefixed
---- with "!" are excludes), then run Snacks.picker.grep() restricted to them.
---- Remembers every string confirmed this session (lost on restart) and lets
---- <Up>/<C-p> and <Down>/<C-n> cycle through that history while typing.
---- <Tab> completes filesystem paths for the token under the cursor.
---- @param opts? { prefill?: string } prefill overrides the usual "last confirmed value" default.
-function M.grep_with_filter_prompt(opts)
-    opts = opts or {}
-    -- index == #grep_filter_history + 1 means "editing the draft" (not viewing a history entry).
-    local index = #grep_filter_history + 1
-    local draft = ""
+--- Builds a reusable "prompt for comma-separated include/exclude glob
+--- filters" function (tokens prefixed with "!" are excludes). The returned
+--- function remembers every string confirmed this session in `history`
+--- (in-memory only, lost on restart), lets <Up>/<C-p> and <Down>/<C-n> cycle
+--- through it while typing (preserving any in-progress draft), and lets
+--- <Tab> complete filesystem paths for the token under the cursor.
+--- `on_confirm(include, exclude)` is called with the parsed glob lists once
+--- the user hits Enter (never called on Esc).
+--- @param history string[] in-memory history list to read/append to.
+--- @param prompt string prompt text shown in the input window.
+--- @param on_confirm fun(include: string[], exclude: string[])
+local function make_filter_prompt(history, prompt, on_confirm)
+    --- @param opts? { prefill?: string } prefill overrides the usual "last confirmed value" default.
+    return function(opts)
+        opts = opts or {}
+        -- index == #history + 1 means "editing the draft" (not viewing a history entry).
+        local index = #history + 1
+        local draft = ""
 
-    local function set_line(win, text)
-        text = text or ""
-        vim.api.nvim_buf_set_lines(win.buf, 0, -1, false, { text })
-        vim.api.nvim_win_set_cursor(win.win, { 1, #text })
-    end
-
-    local win = Snacks.input({
-        prompt = "Grep filter (comma-separated globs, prefix with ! to exclude)",
-        default = (opts.prefill and opts.prefill ~= "") and opts.prefill or grep_filter_history[#grep_filter_history],
-    }, function(value)
-        if value == nil then
-            return -- Esc: abort, no history entry
+        local function set_line(win, text)
+            text = text or ""
+            vim.api.nvim_buf_set_lines(win.buf, 0, -1, false, { text })
+            vim.api.nvim_win_set_cursor(win.win, { 1, #text })
         end
-        table.insert(grep_filter_history, value)
-        local include, exclude = parse_grep_filter(value)
+
+        local win = Snacks.input({
+            prompt = prompt,
+            default = (opts.prefill and opts.prefill ~= "") and opts.prefill or history[#history],
+        }, function(value)
+            if value == nil then
+                return -- Esc: abort, no history entry
+            end
+            table.insert(history, value)
+            on_confirm(parse_filter(value))
+        end)
+
+        -- Discards any in-progress edit of a recalled entry when navigating further (standard readline behavior).
+        local function hist_up()
+            if vim.fn.pumvisible() == 1 then
+                feed("<C-p>")
+                return
+            end
+            if index == 1 then
+                return
+            end
+            if index > #history then
+                draft = vim.api.nvim_buf_get_lines(win.buf, 0, 1, false)[1] or ""
+            end
+            index = index - 1
+            set_line(win, history[index])
+        end
+
+        local function hist_down()
+            if vim.fn.pumvisible() == 1 then
+                feed("<C-n>")
+                return
+            end
+            if index > #history then
+                return
+            end
+            index = index + 1
+            set_line(win, index > #history and draft or history[index])
+        end
+
+        local function complete_path()
+            if vim.fn.pumvisible() == 1 then
+                feed("<C-n>")
+                return
+            end
+            local startcol, base = current_token_base(win)
+            local ok, matches = pcall(vim.fn.getcompletion, base, "file")
+            if ok and #matches > 0 then
+                vim.fn.complete(startcol, matches)
+            end
+        end
+
+        vim.keymap.set("i", "<Tab>", complete_path, { buffer = win.buf })
+        for _, mode in ipairs({ "i", "n" }) do
+            vim.keymap.set(mode, "<Up>", hist_up, { buffer = win.buf })
+            vim.keymap.set(mode, "<C-p>", hist_up, { buffer = win.buf })
+            vim.keymap.set(mode, "<Down>", hist_down, { buffer = win.buf })
+            vim.keymap.set(mode, "<C-n>", hist_down, { buffer = win.buf })
+        end
+    end
+end
+
+-- In-memory only (cleared on restart), one history per filter prompt.
+local grep_filter_history = {}
+local file_filter_history = {}
+
+--- Prompt for include/exclude filters, then run Snacks.picker.grep() restricted to them.
+M.grep_with_filter_prompt = make_filter_prompt(
+    grep_filter_history,
+    "Grep filter (comma-separated globs, prefix with ! to exclude)",
+    function(include, exclude)
         Snacks.picker.grep({
             args = { "--fixed-strings" },
             glob = include[1] and include or nil,
             exclude = exclude[1] and exclude or nil,
         })
-    end)
-
-    -- Discards any in-progress edit of a recalled entry when navigating further (standard readline behavior).
-    local function hist_up()
-        if vim.fn.pumvisible() == 1 then
-            feed("<C-p>")
-            return
-        end
-        if index == 1 then
-            return
-        end
-        if index > #grep_filter_history then
-            draft = vim.api.nvim_buf_get_lines(win.buf, 0, 1, false)[1] or ""
-        end
-        index = index - 1
-        set_line(win, grep_filter_history[index])
     end
+)
 
-    local function hist_down()
-        if vim.fn.pumvisible() == 1 then
-            feed("<C-n>")
-            return
+--- Prompt for include/exclude filters, then run Snacks.picker.files() restricted to them.
+--- Forces the ripgrep backend (`cmd = "rg"`) so the include/exclude globs get
+--- the same multi `-g`/`-g '!...'` semantics as the grep filter above,
+--- regardless of whether `fd` is otherwise preferred for plain file search.
+M.files_with_filter_prompt = make_filter_prompt(
+    file_filter_history,
+    "File filter (comma-separated globs, prefix with ! to exclude)",
+    function(include, exclude)
+        local args = {}
+        for _, pattern in ipairs(include) do
+            table.insert(args, "-g")
+            table.insert(args, pattern)
         end
-        if index > #grep_filter_history then
-            return
+        for _, pattern in ipairs(exclude) do
+            table.insert(args, "-g")
+            table.insert(args, "!" .. pattern)
         end
-        index = index + 1
-        set_line(win, index > #grep_filter_history and draft or grep_filter_history[index])
+        Snacks.picker.files({ cmd = "rg", args = args })
     end
+)
 
-    local function complete_path()
-        if vim.fn.pumvisible() == 1 then
-            feed("<C-n>")
-            return
-        end
-        local startcol, base = current_token_base(win)
-        local ok, matches = pcall(vim.fn.getcompletion, base, "file")
-        if ok and #matches > 0 then
-            vim.fn.complete(startcol, matches)
+--- Builds a comma-separated prefill string from an explorer picker's
+--- selected items (falling back to the item under the cursor if nothing is
+--- multi-selected), turning directories into `dir/**` so they work as globs.
+--- @param picker snacks.Picker
+function M.explorer_selection_prefill(picker)
+    local tokens = {}
+    for _, item in ipairs(picker:selected({ fallback = true })) do
+        local path = Snacks.picker.util.path(item)
+        if path then
+            local rel = vim.fn.fnamemodify(path, ":.")
+            table.insert(tokens, item.dir and (rel .. "/**") or rel)
         end
     end
-
-    vim.keymap.set("i", "<Tab>", complete_path, { buffer = win.buf })
-    for _, mode in ipairs({ "i", "n" }) do
-        vim.keymap.set(mode, "<Up>", hist_up, { buffer = win.buf })
-        vim.keymap.set(mode, "<C-p>", hist_up, { buffer = win.buf })
-        vim.keymap.set(mode, "<Down>", hist_down, { buffer = win.buf })
-        vim.keymap.set(mode, "<C-n>", hist_down, { buffer = win.buf })
-    end
+    return table.concat(tokens, ", ")
 end
 
 return M
