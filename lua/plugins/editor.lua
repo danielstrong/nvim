@@ -822,14 +822,28 @@ return {
             explorer = { enabled = true, replace_netrw = true },
             ---@class snacks.bigfile.Config
             bigfile = {
-                enabled = true,
+                enabled = false,
                 notify = false,
-                -- setup = function(ctx)
-                --     -- Snacks.bigfile.setup(ctx)
-                --     if vim.o.laststatus ~= 2 then
-                --         vim.o.laststatus = 2
-                --     end
-                -- end,
+                size = 6 * 1024 * 1024, -- 6 MB
+                line_length = 1500,
+                setup = function(ctx)
+                    -- if vim.fn.exists(":NoMatchParen") ~= 0 then
+                    --     vim.cmd([[NoMatchParen]])
+                    -- end
+                    -- Snacks.util.wo(0, { foldmethod = "manual", statuscolumn = "", conceallevel = 0 })
+                    vim.b.completion = false
+                    vim.b.minianimate_disable = true
+                    vim.b.minihipatterns_disable = true
+                    vim.schedule(function()
+                        if vim.api.nvim_buf_is_valid(ctx.buf) then
+                            vim.bo[ctx.buf].syntax = ctx.ft -- simplistic highlighitng and folding, keeps as bigifle
+                            -- vim.bo[ctx.buf].filetype = ctx.ft -- full highlithing and folding, turns into actual filetype
+                        end
+                    end)
+                    if vim.o.laststatus ~= 2 then
+                        vim.o.laststatus = 2
+                    end
+                end,
             },
         },
 
