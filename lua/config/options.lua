@@ -62,6 +62,8 @@ vim.g.lazyvim_ruby_formatter = "rubocop"
 -- })
 
 local opt = vim.opt
+-- opt.title = true
+-- opt.titlestring = "hii"
 -- opt.cmdheight = 0
 opt.autowrite = false
 opt.autoread = true
@@ -161,7 +163,8 @@ opt.ruler = true -- Disable the default ruler
 opt.scrolloff = 4 -- Lines of context
 -- opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "help", "globals", "skiprtp", "folds" }
 -- opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "winpos", "help", "globals", "skiprtp", "folds", "localoptions" }
-opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "winpos", "help", "folds", "globals", "localoptions" }
+-- opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "winpos", "help", "folds", "globals", "localoptions" }
+opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "winpos", "help", "globals", "localoptions" }
 --vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
 -- opt.sessionoptions = { "blank", "buffers", "curdir", "folds", "help", "tabpages", "winsize", "winpos", "terminal", "localoptions" }
 opt.shortmess:append({ S = false, W = true, I = true, c = true, C = true })
@@ -221,6 +224,45 @@ vim.filetype.add({
         ["%.cls"] = "apexcode",
     },
 })
+-- custom fold line
+local function custom_fold_text()
+    local foldstart = vim.v.foldstart
+    local line = vim.fn.getline(foldstart)
+    local total_lines = vim.v.foldend - vim.v.foldstart + 0
+
+    -- Build the fold-start line as highlighted chunks (treesitter, falling
+    -- back to legacy syntax) so returning a list preserves highlighting
+    -- instead of the plain "Folded" color a plain string would get.
+    local chunks = {}
+    for i = 1, #line do
+        local char = line:sub(i, i)
+        local ok, captures = pcall(vim.treesitter.get_captures_at_pos, 0, foldstart - 1, i - 1)
+        local hl
+        if ok and #captures > 0 then
+            hl = "@" .. captures[#captures].capture
+        else
+            hl = vim.fn.synIDattr(vim.fn.synID(foldstart, i, 1), "name")
+        end
+        if hl == "" then
+            hl = "Folded"
+        end
+
+        local last = chunks[#chunks]
+        if last and last[2] == hl then
+            last[1] = last[1] .. char
+        else
+            table.insert(chunks, { char, hl })
+        end
+    end
+
+    table.insert(chunks, { string.format(" --- [%d lines] ", total_lines), "Comment" })
+    return chunks
+end
+
+_G.custom_fold_text = custom_fold_text
+vim.opt.foldtext = "v:lua.custom_fold_text()"
+
+-- vim.opt.foldtext = "foldtext()"
 -- custom status line
 -- vim.g.mode_colors = {
 --     n = "StatusLineSection",
