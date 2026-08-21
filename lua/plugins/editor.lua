@@ -566,8 +566,8 @@ return {
                                     ["<localleader>y"] = "yank_relative_path",
                                     ["<localleader>Y"] = "yank_absolute_path",
                                     ["R"] = "explorer_git_rename",
-                                    ["<localleader>fS"] = { "explorer_grep_filter", mode = { "n", "i" } },
-                                    ["<localleader>fE"] = { "explorer_files_filter", mode = { "n", "i" } },
+                                    ["<localleader>fS"] = { "explorer_grep_filter", mode = { "n" } },
+                                    ["<localleader>fE"] = { "explorer_files_filter", mode = { "n" } },
                                 },
                             },
                         },
@@ -822,7 +822,7 @@ return {
             explorer = { enabled = true, replace_netrw = true },
             ---@class snacks.bigfile.Config
             bigfile = {
-                enabled = false,
+                enabled = true,
                 notify = false,
                 size = 6 * 1024 * 1024, -- 6 MB
                 line_length = 1500,
