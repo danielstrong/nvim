@@ -549,6 +549,9 @@ return {
                     explorer = {
                         layout = "explorer_float_center",
                         auto_close = true,
+                        include = {
+                            "**/*",
+                        },
                         win = {
                             list = {
                                 keys = {

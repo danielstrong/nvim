@@ -53,6 +53,12 @@ return {
                 mode = { "n", "x" },
                 desc = "Modify Copy from CWD",
             },
+            {
+                "<localleader>j#",
+                ":<C-u>g/^#/d<CR>",
+                mode = { "n" },
+                desc = "Delete lines starting with #",
+            },
         },
     },
     {
