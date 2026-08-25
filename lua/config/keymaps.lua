@@ -214,6 +214,24 @@ end
 map({ "n", "x" }, "<localleader>bL", reload_all_buffers, { desc = "reload all buffers" })
 map({ "n", "x" }, "<localleader>L", reload_all_buffers, { desc = "reload all buffers" })
 
+map({ "n", "x" }, "ZA", function()
+    if vim.bo.filetype == "markdown" and vim.env.CLAUDE_CODE_ENTRYPOINT == "cli" then
+        -- closing when editing a prompt file, delete lines that start with #, and delete empty lines and start and bottom
+        vim.cmd([[g/^#/d]])
+        local buf = vim.api.nvim_get_current_buf()
+        local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+        local first = 1
+        while first <= #lines and lines[first]:match("^%s*$") do
+            first = first + 1
+        end
+        local last = #lines
+        while last >= first and lines[last]:match("^%s*$") do
+            last = last - 1
+        end
+        vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.list_slice(lines, first, last))
+    end
+    vim.cmd("x")
+end, { desc = "save quit agent file" })
 map({ "n", "x" }, "ZZ", "<cmd>x<cr>", { desc = "save quit file" })
 map({ "n", "x" }, "ZX", tabs_windows_buffers.real_quit_window, { desc = "quit window" })
 map({ "n", "x" }, "ZC", "<cmd>qa<cr>", { desc = "quit all save session" })
