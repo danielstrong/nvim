@@ -287,7 +287,7 @@ local function navigate(direction, unstaged_only)
     if target then
         local line = forward and target.lnum or target.endln
         goto_hunk(target, line)
-        vim.notify(string.format("Hunk %d of %d (%s...working tree)", idx, #hunks, base_label), vim.log.levels.INFO)
+        vim.notify(string.format("Hunk %d of %d (%s...)", idx, #hunks, base_label), vim.log.levels.INFO)
     end
 end
 
