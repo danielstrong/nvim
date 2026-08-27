@@ -170,7 +170,21 @@ local function collect_comparebranch_hunks()
         return a.lnum < b.lnum
     end)
 
-    return hunks, default_ref
+    return hunks, default_ref, merge_base
+end
+
+-- Keeps Gitsigns' diff base (used for its gutter signs) in sync with the
+-- mode being navigated. Sentinel-based cache avoids re-diffing every
+-- attached buffer on every hop when repeatedly navigating the same mode.
+local GITSIGNS_BASE_UNSET = {}
+local last_gitsigns_base = GITSIGNS_BASE_UNSET
+
+local function sync_gitsigns_base(base)
+    if last_gitsigns_base ~= GITSIGNS_BASE_UNSET and last_gitsigns_base == base then
+        return
+    end
+    require("gitsigns").change_base(base, true)
+    last_gitsigns_base = base
 end
 
 local function current_pos()
@@ -251,6 +265,13 @@ local function select_target(hunks, direction)
 end
 
 local function navigate(direction, unstaged_only)
+    local base_label = unstaged_only and "index" or "HEAD"
+    if unstaged_only then
+        sync_gitsigns_base(nil)
+    else
+        sync_gitsigns_base("HEAD")
+    end
+
     local hunks = collect_hunks(unstaged_only)
     if hunks == nil then
         vim.notify("Not a git repository", vim.log.levels.WARN)
@@ -266,15 +287,17 @@ local function navigate(direction, unstaged_only)
     if target then
         local line = forward and target.lnum or target.endln
         goto_hunk(target, line)
-        vim.notify(string.format("Hunk %d of %d", idx, #hunks), vim.log.levels.INFO)
+        vim.notify(string.format("Hunk %d of %d (%s...working tree)", idx, #hunks, base_label), vim.log.levels.INFO)
     end
 end
 
 local function navigate_comparebranch(direction)
-    local hunks, default_ref = collect_comparebranch_hunks()
+    local hunks, default_ref, merge_base = collect_comparebranch_hunks()
     if hunks == nil then
         return
     end
+    sync_gitsigns_base(merge_base)
+
     if #hunks == 0 then
         vim.notify(string.format("No hunks comparing %s to HEAD", default_ref), vim.log.levels.INFO)
         return
