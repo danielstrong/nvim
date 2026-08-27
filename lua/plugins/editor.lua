@@ -394,6 +394,7 @@ return {
             },
             dashboard = { enabled = false },
             notifier = { enabled = false, top_down = false, style = "minimal", margin = { right = 0 } },
+            gh = {},
             indent = { enabled = false },
             scope = { enabled = false },
             scroll = { enabled = false },
@@ -575,6 +576,8 @@ return {
                             },
                         },
                     },
+                    gh_issue = {},
+                    gh_pr = {},
                     commands = {
                         focus = "list", -- Ensure focus starts on the results list
                     },
@@ -679,7 +682,6 @@ return {
                         auto_confirm = true, -- Automatically jump if there is only one item
                         live = false, -- global `live = true` above blocks auto_confirm; opt this source out
                     },
-
                     lsp_code_actions = {
                         transform = function(item, ctx)
                             --  1. Disable @typescript-eslint/no-unsafe-assignment for this line [eslint]
@@ -992,6 +994,10 @@ return {
             { "<localleader>gn", function() Snacks.picker.git_branches({ on_show = function() vim.cmd.stopinsert() end, }) end, desc = "fuzzy git branch", },
             { "<localleader>gr", function() Snacks.picker.git_stash({ on_show = function() vim.cmd.stopinsert() end, }) end, desc = "fuzzy git stash", },
             { "<localleader>gs", function() Snacks.picker.git_status({ on_show = function() vim.cmd.stopinsert() end, }) end, desc = "fuzzy git status", },
+            { "<localleader>gi", function() Snacks.picker.gh_issue() end, desc = "fuzzy git issue (open)", },
+            { "<localleader>gI", function() Snacks.picker.gh_issue({state="all"}) end, desc = "fuzzy git issue (all)", },
+            { "<localleader>gp", function() Snacks.picker.gh_pr() end, desc = "fuzzy github pr (open)", },
+            { "<localleader>gP", function() Snacks.picker.gh_pr({state="all"}) end, desc = "fuzzy github pr (all)", },
 
             -- stylua: ignore end
             {

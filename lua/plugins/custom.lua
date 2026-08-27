@@ -151,6 +151,9 @@ return {
             -- vim.keymap.set({ "n", "x", "o" }, "[y", repeatable_prev_allhunk, { desc = "Prev Hunk (repo-wide)" })
             -- vim.keymap.set({ "n", "x", "o" }, "]Y", gh.last, { desc = "Last Hunk (repo-wide)" })
             -- vim.keymap.set({ "n", "x", "o" }, "[Y", gh.first, { desc = "First Hunk (repo-wide)" })
+
+            local repeatable_next_comparebranch, repeatable_prev_comparebranch = repeat_move.make_repeatable_move_pair(gh.next_comparebranch, gh.prev_comparebranch)
+
             return {
                 { "]g", repeatable_next_unstagedhunk, mode = { "n", "x", "o" }, desc = "Next Unstaged Hunk (repo-wide)" },
                 { "[g", repeatable_prev_unstagedhunk, mode = { "n", "x", "o" }, desc = "Prev Unstaged Hunk (repo-wide)" },
@@ -160,6 +163,10 @@ return {
                 { "[y", repeatable_prev_allhunk, mode = { "n", "x", "o" }, desc = "Prev Hunk (repo-wide)" },
                 { "]Y", gh.last, mode = { "n", "x", "o" }, desc = "Last Hunk (repo-wide)" },
                 { "[Y", gh.first, mode = { "n", "x", "o" }, desc = "First Hunk (repo-wide)" },
+                { "]p", repeatable_next_comparebranch, mode = { "n", "x", "o" }, desc = "Next Hunk (compare branch)" },
+                { "[p", repeatable_prev_comparebranch, mode = { "n", "x", "o" }, desc = "Prev Hunk (compare branch)" },
+                { "]P", gh.last_comparebranch, mode = { "n", "x", "o" }, desc = "Last Hunk (compare branch)" },
+                { "[P", gh.first_comparebranch, mode = { "n", "x", "o" }, desc = "First Hunk (compare branch)" },
             }
         end,
     },

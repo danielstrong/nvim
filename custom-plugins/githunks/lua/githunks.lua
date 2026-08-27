@@ -3,6 +3,10 @@
 local M = {}
 
 M.wrap = true
+-- When true, compare-branch hunks diff against the remote-tracking ref
+-- (e.g. origin/main). When false, prefer the local branch of the same name
+-- (e.g. main) if it exists, falling back to the remote-tracking ref.
+M.prefer_remote_tracking = true
 
 local function git(args, cwd)
     local res = vim.system(vim.list_extend({ "git" }, args), { cwd = cwd, text = true }):wait()
@@ -82,6 +86,93 @@ local function collect_hunks(unstaged_only)
     return hunks, root
 end
 
+local function branch_exists_locally(name, root)
+    return git({ "show-ref", "--verify", "--quiet", "refs/heads/" .. name }, root) ~= nil
+end
+
+-- Resolves the default branch to diff against: origin/HEAD's target if a
+-- remote is configured (honoring M.prefer_remote_tracking), else a local
+-- main/master branch. Returns the ref to diff against and to display, e.g.
+-- "origin/main" or "main".
+local function resolve_default_branch(root)
+    local symref = git({ "symbolic-ref", "refs/remotes/origin/HEAD" }, root)
+    if symref then
+        local name = vim.trim(symref):match("^refs/remotes/origin/(.+)$")
+        if name then
+            local remote_ref = "origin/" .. name
+            if M.prefer_remote_tracking then
+                return remote_ref
+            end
+            if branch_exists_locally(name, root) then
+                return name
+            end
+            return remote_ref
+        end
+    end
+
+    for _, name in ipairs({ "main", "master" }) do
+        if branch_exists_locally(name, root) then
+            return name
+        end
+    end
+
+    return nil
+end
+
+local function current_branch_display(root)
+    local name = git({ "rev-parse", "--abbrev-ref", "HEAD" }, root)
+    if name then
+        name = vim.trim(name)
+        if name ~= "HEAD" and name ~= "" then
+            return name
+        end
+    end
+    local sha = git({ "rev-parse", "--short", "HEAD" }, root)
+    return sha and vim.trim(sha) or "HEAD"
+end
+
+-- Hunks between the merge-base of HEAD and the default branch, and the
+-- current working tree (so uncommitted changes are included).
+local function collect_comparebranch_hunks()
+    local root = repo_root()
+    if not root then
+        vim.notify("Not a git repository", vim.log.levels.WARN)
+        return nil
+    end
+
+    local default_ref = resolve_default_branch(root)
+    if not default_ref then
+        vim.notify("Could not determine default branch", vim.log.levels.WARN)
+        return nil
+    end
+
+    local merge_base = git({ "merge-base", default_ref, "HEAD" }, root)
+    if not merge_base then
+        vim.notify("Could not determine default branch", vim.log.levels.WARN)
+        return nil
+    end
+    merge_base = vim.trim(merge_base)
+
+    local hunks = {}
+    parse_diff(git({ "--no-pager", "diff", "-U0", merge_base }, root), root, hunks)
+
+    local untracked = git({ "ls-files", "--others", "--exclude-standard" }, root)
+    for line in vim.gsplit(untracked or "", "\n", { plain = true }) do
+        if line ~= "" then
+            hunks[#hunks + 1] = { file = root .. "/" .. line, lnum = 1, endln = 1 }
+        end
+    end
+
+    table.sort(hunks, function(a, b)
+        if a.file ~= b.file then
+            return a.file < b.file
+        end
+        return a.lnum < b.lnum
+    end)
+
+    return hunks, default_ref
+end
+
 local function current_pos()
     if vim.bo.buftype ~= "" then
         return nil
@@ -120,17 +211,7 @@ local function goto_hunk(target, line)
     vim.cmd("normal! zz")
 end
 
-local function navigate(direction, unstaged_only)
-    local hunks = collect_hunks(unstaged_only)
-    if hunks == nil then
-        vim.notify("Not a git repository", vim.log.levels.WARN)
-        return
-    end
-    if #hunks == 0 then
-        vim.notify("No git hunks in repository", vim.log.levels.INFO)
-        return
-    end
-
+local function select_target(hunks, direction)
     local forward = direction == "next" or direction == "last"
     local target, idx
 
@@ -166,10 +247,46 @@ local function navigate(direction, unstaged_only)
         end
     end
 
+    return target, idx, forward
+end
+
+local function navigate(direction, unstaged_only)
+    local hunks = collect_hunks(unstaged_only)
+    if hunks == nil then
+        vim.notify("Not a git repository", vim.log.levels.WARN)
+        return
+    end
+    if #hunks == 0 then
+        vim.notify("No git hunks in repository", vim.log.levels.INFO)
+        return
+    end
+
+    local target, idx, forward = select_target(hunks, direction)
+
     if target then
         local line = forward and target.lnum or target.endln
         goto_hunk(target, line)
         vim.notify(string.format("Hunk %d of %d", idx, #hunks), vim.log.levels.INFO)
+    end
+end
+
+local function navigate_comparebranch(direction)
+    local hunks, default_ref = collect_comparebranch_hunks()
+    if hunks == nil then
+        return
+    end
+    if #hunks == 0 then
+        vim.notify(string.format("No hunks comparing %s to HEAD", default_ref), vim.log.levels.INFO)
+        return
+    end
+
+    local target, idx, forward = select_target(hunks, direction)
+
+    if target then
+        local line = forward and target.lnum or target.endln
+        goto_hunk(target, line)
+        local current_branch = current_branch_display(repo_root())
+        vim.notify(string.format("Hunk %d of %d (%s...%s)", idx, #hunks, default_ref, current_branch), vim.log.levels.INFO)
     end
 end
 
@@ -203,6 +320,22 @@ end
 
 function M.last_unstaged()
     navigate("last", true)
+end
+
+function M.next_comparebranch()
+    navigate_comparebranch("next")
+end
+
+function M.prev_comparebranch()
+    navigate_comparebranch("prev")
+end
+
+function M.first_comparebranch()
+    navigate_comparebranch("first")
+end
+
+function M.last_comparebranch()
+    navigate_comparebranch("last")
 end
 
 function M.setup()
