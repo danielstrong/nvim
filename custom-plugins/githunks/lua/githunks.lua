@@ -266,11 +266,7 @@ end
 
 local function navigate(direction, unstaged_only)
     local base_label = unstaged_only and "index" or "HEAD"
-    if unstaged_only then
-        sync_gitsigns_base(nil)
-    else
-        sync_gitsigns_base("HEAD")
-    end
+    sync_gitsigns_base(nil)
 
     local hunks = collect_hunks(unstaged_only)
     if hunks == nil then
@@ -287,7 +283,7 @@ local function navigate(direction, unstaged_only)
     if target then
         local line = forward and target.lnum or target.endln
         goto_hunk(target, line)
-        vim.notify(string.format("Hunk %d of %d (%s...)", idx, #hunks, base_label), vim.log.levels.INFO)
+        vim.notify(string.format("Hunk %d of %d", idx, #hunks, base_label), vim.log.levels.INFO)
     end
 end
 
