@@ -1,0 +1,12 @@
+{
+  "settings": {
+    "env": {
+      "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1",
+      "CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH": "0",
+      "CLAUDE_CODE_DISABLE_EXPLORE_PLAN_AGENTS": "1",
+      "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1",
+      "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "0"
+    },
+    "disableWorkflows": true
+  }
+}

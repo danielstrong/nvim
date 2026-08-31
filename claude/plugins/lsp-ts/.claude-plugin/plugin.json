@@ -1,0 +1,23 @@
+{
+  "name": "lsp-ts",
+  "description": "TypeScript/JavaScript language server (vtsls) for code intelligence",
+  "version": "1.0.0",
+  "lspServers": {
+    "typescript": {
+      "command": "~/.local/share/nvim/mason/bin/vtsls",
+      "args": [
+        "--stdio"
+      ],
+      "extensionToLanguage": {
+        ".ts": "typescript",
+        ".tsx": "typescriptreact",
+        ".mts": "typescript",
+        ".cts": "typescript",
+        ".js": "javascript",
+        ".jsx": "javascriptreact",
+        ".mjs": "javascript",
+        ".cjs": "javascript"
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "lsp-json",
+  "description": "JSON language server (vscode-json-language-server) for code intelligence",
+  "version": "1.0.0",
+  "lspServers": {
+    "vscode-json-language-server": {
+      "command": "~/.local/share/nvim/mason/bin/vscode-json-language-server",
+      "args": [
+        "--stdio"
+      ],
+      "extensionToLanguage": {
+        ".json": "json"
+      },
+      "initializationOptions": {
+        "provideFormatter": true,
+        "json": {
+          "validate": {
+            "enable": true
+          },
+          "format": {
+            "enable": true
+          }
+        }
+      }
+    }
+  }
+}

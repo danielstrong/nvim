@@ -1,0 +1,9 @@
+{
+  "name": "use-pnpm",
+  "description": "enforce using pnpm instead of npm",
+  "version": "1.0.0",
+  "author": {
+    "name": "Your Name",
+    "email": "you@example.com"
+  }
+}

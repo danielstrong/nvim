@@ -1,0 +1,30 @@
+{
+  "setting-sources": [
+    "user"
+  ],
+  "settings": {
+    "permissions": {
+      "deny": [
+        "EnterPlanMode",
+        "DesignSync",
+        "NotebookEdit",
+        "SendMessage",
+        "PushNotification",
+        "RemoteTrigger",
+        "ReportFindings",
+        "ScheduleWakeup",
+        "AskUserQuestion",
+        "CronCreate",
+        "CronDelete",
+        "CronList"
+      ]
+    },
+    "showLastResponseInExternalEditor": true,
+    "autoMemoryEnabled": false,
+    "disableBundledSkills": true,
+    "disableWorkflows": true,
+    "disableRemoteControl": true,
+    "disableClaudeAiConnectors": true,
+    "disableArtifact": true
+  }
+}
