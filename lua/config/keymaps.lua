@@ -128,59 +128,22 @@ tab_map("r", function()
 end, { desc = "Rename tab" })
 
 vim.o.tabline = "%!v:lua.TabLineSplits()"
-function _G.TabLine()
+local function render_tabline(splits)
     local s = ""
     for i = 1, vim.fn.tabpagenr("$") do
-        local tabnr = i
-        local tabpage = vim.api.nvim_list_tabpages()[i]
-        local ok, name = pcall(vim.api.nvim_tabpage_get_var, tabpage, "tab_name")
-        if not ok then
-            name = nil
-        end
-        if not name or name == "" then
-            local buflist = vim.fn.tabpagebuflist(tabnr)
-            local winnr = vim.fn.tabpagewinnr(tabnr)
-            local bufnr = buflist[winnr]
-            local fname = vim.fn.fnamemodify(vim.fn.bufname(bufnr), ":t")
-            name = (fname ~= "" and fname or "[No Name]")
-        end
-        local hl = (tabnr == vim.fn.tabpagenr()) and "%#TabLineSel#" or "%#TabLine#"
-        s = s .. hl .. "%" .. tabnr .. "T " .. tabnr .. ": " .. name .. " %T"
+        local name = require("custom-utils.tabs_windows_buffers").tab_name(i, { splits = splits })
+        local hl = (i == vim.fn.tabpagenr()) and "%#TabLineSel#" or "%#TabLine#"
+        s = s .. hl .. "%" .. i .. "T " .. i .. ": " .. name .. " %T"
     end
     return s .. "%#TabLineFill#%T"
 end
 
+function _G.TabLine()
+    return render_tabline(false)
+end
+
 function _G.TabLineSplits()
-    local s = ""
-    for i = 1, vim.fn.tabpagenr("$") do
-        local tabnr = i
-        local tabpage = vim.api.nvim_list_tabpages()[i]
-        local ok, name = pcall(vim.api.nvim_tabpage_get_var, tabpage, "tab_name")
-        if not ok then
-            name = nil
-        end
-        if not name or name == "" then
-            local names = {}
-            for _, win in ipairs(vim.api.nvim_tabpage_list_wins(tabpage)) do
-                if vim.api.nvim_win_get_config(win).relative == "" then
-                    local bufnr = vim.api.nvim_win_get_buf(win)
-                    local ft = vim.bo[bufnr].filetype
-                    if ft ~= "NvimTree" then
-                        local fname = vim.fn.fnamemodify(vim.fn.bufname(bufnr), ":t")
-                        table.insert(names, fname ~= "" and fname or "[No Name]")
-                    end
-                end
-            end
-            if #names > 1 then
-                name = "" .. table.concat(names, " | ") .. ""
-            else
-                name = names[1] or "[No Name]"
-            end
-        end
-        local hl = (tabnr == vim.fn.tabpagenr()) and "%#TabLineSel#" or "%#TabLine#"
-        s = s .. hl .. "%" .. tabnr .. "T " .. tabnr .. ": " .. name .. " %T"
-    end
-    return s .. "%#TabLineFill#%T"
+    return render_tabline(true)
 end
 
 map({ "n", "x" }, "<localleader>bx", tabs_windows_buffers_close.real_delete_buffer_without_closing_nvim, { desc = "close buffer" })

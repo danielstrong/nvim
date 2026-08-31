@@ -1220,6 +1220,7 @@ return {
                     end,
                     mode = { "n", "x" },
                 },
+                unpack(require("custom-utils.tabs_windows_buffers").wk_tab_specs()),
             },
         },
         keys = {
