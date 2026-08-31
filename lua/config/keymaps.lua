@@ -15,7 +15,7 @@
 -- "l"    Insert, Command-line, Lang-Arg
 
 local map = vim.keymap.set
-local tabs_windows_buffers = require("custom-utils.tabs_windows_buffers")
+local tabs_windows_buffers_close = require("custom-utils.tabs_windows_buffers_close")
 
 -- Runs an ex command and echoes it at the bottom of the screen, so the
 -- keymap makes it obvious what just ran.
@@ -59,18 +59,24 @@ map({ "n", "x" }, "x", '"_x')
 map({ "n", "x" }, "X", '"_X')
 map({ "n", "x" }, "<localleader>vb", "<C-v>", { desc = "Enter visual block mode" })
 
-map({ "n", "x" }, "<localleader>wt", "<cmd>tab split<cr>", { desc = "Split Window to Tab" })
-map({ "n", "x" }, "<localleader>wS", "<C-W>v", { desc = "Split Window Right" })
-map({ "n", "x" }, "<localleader>wc", "<C-W>c", { desc = "Close Window" })
-map({ "n", "x" }, "<localleader>wx", tabs_windows_buffers.real_quit_window_without_closing_nvim, { desc = "Close Window without closing vim" })
-map({ "n", "x" }, "<localleader>wO", "<C-W>o", { desc = "Only Window" })
-map({ "n", "x" }, "<localleader>we", "<cmd>wincmd p<CR>", { silent = true, desc = "Previous window split" })
-map({ "n", "x" }, "<localleader>wmn", "<C-W>x", { desc = "Swap current window with next" })
-map({ "n", "x" }, "<localleader>wmr", "<C-W>r", { desc = "Rotate Window" })
-map({ "n", "x" }, "<localleader>wmL", "<C-W>L", { desc = "Move Window Far Right" })
-map({ "n", "x" }, "<localleader>wmH", "<C-W>H", { desc = "Move Window Far Left" })
-map({ "n", "x" }, "<localleader>wmJ", "<C-W>J", { desc = "Move Window Far Bottom" })
-map({ "n", "x" }, "<localleader>wmK", "<C-W>K", { desc = "Move Window Far Top" })
+local function window_map(keys, rhs, opts)
+    opts = vim.tbl_extend("force", opts or {}, { remap = false })
+    map({ "n", "x" }, "<localleader>w" .. keys, rhs, opts)
+    map({ "n", "x" }, "<C-w>" .. keys, rhs, opts)
+end
+
+window_map("t", "<cmd>tab split<cr>", { desc = "Split Window to Tab" })
+window_map("S", "<C-W>v", { desc = "Split Window Right" })
+window_map("c", "<C-W>c", { desc = "Close Window" })
+window_map("x", tabs_windows_buffers_close.real_quit_window_without_closing_nvim, { desc = "Close Window without closing vim" })
+window_map("O", "<C-W>o", { desc = "Only Window" })
+window_map("e", "<cmd>wincmd p<CR>", { silent = true, desc = "Previous window split" })
+window_map("mn", "<C-W>x", { desc = "Swap current window with next" })
+window_map("mr", "<C-W>r", { desc = "Rotate Window" })
+window_map("mL", "<C-W>L", { desc = "Move Window Far Right" })
+window_map("mH", "<C-W>H", { desc = "Move Window Far Left" })
+window_map("mJ", "<C-W>J", { desc = "Move Window Far Bottom" })
+window_map("mK", "<C-W>K", { desc = "Move Window Far Top" })
 
 local function tab_map(keys, rhs, opts)
     map({ "n", "x" }, "<localleader>t" .. keys, rhs, opts)
@@ -177,7 +183,7 @@ function _G.TabLineSplits()
     return s .. "%#TabLineFill#%T"
 end
 
-map({ "n", "x" }, "<localleader>bx", tabs_windows_buffers.real_delete_buffer_without_closing_nvim, { desc = "close buffer" })
+map({ "n", "x" }, "<localleader>bx", tabs_windows_buffers_close.real_delete_buffer_without_closing_nvim, { desc = "close buffer" })
 map({ "n", "x" }, "<localleader>bo", function()
     local shown = {}
     for _, win in ipairs(vim.api.nvim_list_wins()) do
@@ -232,17 +238,20 @@ map({ "n", "x" }, "ZA", function()
     end
     vim.cmd("x")
 end, { desc = "save quit agent file" })
+map({ "n", "x" }, "ZQ", "<cmd>q<cr>", { desc = "quit window save session" })
+map({ "n", "x" }, "ZR", "<cmd>restart<cr>", { desc = "restart" }) -- TODO dont have this save sesion..
+map({ "n", "x" }, "ZD", "<cmd>AutoSession disable<CR><cmd>qa<cr>", { desc = "quit all no session save" })
+map({ "n", "x" }, "ZF", "<cmd>AutoSession delete<CR><cmd>qa<cr>", { desc = "quit all clear session" })
 map({ "n", "x" }, "ZZ", "<cmd>x<cr>", { desc = "save quit file" })
-map({ "n", "x" }, "ZX", tabs_windows_buffers.real_quit_window, { desc = "quit window" })
+map({ "n", "x" }, "ZX", tabs_windows_buffers_close.real_quit_window, { desc = "quit window" })
 map({ "n", "x" }, "ZC", "<cmd>qa<cr>", { desc = "quit all save session" })
 map({ "n", "x" }, "ZV", "<cmd>wqa<cr>", { desc = "save quit all" })
-map({ "n", "x" }, "ZQ", "<cmd>q<cr>", { desc = "quit window save session" })
 
 map({ "n", "x" }, "<localleader>QQ", "<cmd>AutoSession disable<CR><cmd>qa<cr>", { desc = "quit all disable session" }) -- TODO dont have this save sesion..
 map({ "n", "x" }, "<localleader>QA", "<cmd>qa<cr>", { desc = "quit all save session" }) -- TODO dont have this save sesion..
 map({ "n", "x" }, "<localleader>QW", "<cmd>wqa<cr>", { desc = "quit save all save session" }) -- TODO dont have this save sesion..
 map({ "n", "x" }, "<localleader>QR", "<cmd>restart<cr>", { desc = "restart" }) -- TODO dont have this save sesion..
-map({ "n", "x" }, "<localleader>x", tabs_windows_buffers.real_quit_window_without_closing_nvim, { desc = "Close Window" })
+map({ "n", "x" }, "<localleader>x", tabs_windows_buffers_close.real_quit_window_without_closing_nvim, { desc = "Close Window" })
 map({ "n", "x" }, "<localleader>X", "<cmd>qa<cr>", { desc = "quit all save session" })
 
 map({ "n", "x" }, "<localleader>s", "<cmd>w<cr>", { desc = "Save Buffer" })

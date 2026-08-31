@@ -118,9 +118,9 @@ return {
             },
             { "<localleader>ze", "<cmd>AutoSession search<CR>", mode = { "n", "x" }, desc = "Session Search" },
             { "<localleader>zd", "<cmd>AutoSession deletePicker<CR>", mode = { "n", "x" }, desc = "Session Delete Picker" },
-            { "<localleader>zf", "<cmd>AutoSession delete<CR>", mode = { "n", "x" }, desc = "Session Delete" },
+            { "<localleader>zD", "<cmd>AutoSession delete<CR>", mode = { "n", "x" }, desc = "Session Delete" },
+            { "<localleader>zf", "<cmd>AutoSession purgeOrphaned<CR>", mode = { "n", "x" }, desc = "Session Purge Orphaned" },
             { "<localleader>zF", ":AutoSession delete ", mode = { "n", "x" }, desc = "Session Delete with name" },
-            { "<localleader>zD", "<cmd>AutoSession purgeOrphaned<CR>", mode = { "n", "x" }, desc = "Session Purge Orphaned" },
             {
                 "<localleader>zK",
                 function()

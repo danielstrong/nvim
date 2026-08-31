@@ -57,13 +57,49 @@ return {
     },
     { "bluz71/vim-nightfly-colors", name = "nightfly", lazy = true, priority = 1000 },
     { "EdenEast/nightfox.nvim", name = "nightfox", lazy = true },
-    { "rebelot/kanagawa.nvim", name = "kanagawa", lazy = true, opts = { transparent = false } },
     { "maxmx03/solarized.nvim", lazy = true, priority = 1000, opts = {} },
     { "svrana/neosolarized.nvim", lazy = true, priority = 1000, opts = { comment_italics = true, background_set = false }, dependencies = { "tjdevries/colorbuddy.nvim" } },
     { "rose-pine/neovim", name = "rose-pine", lazy = true },
     { "bluz71/vim-nightfly-colors", name = "nightfly", lazy = true, priority = 1000 },
     { "saran13raj/wheat-fox.nvim", priority = 1000, lazy = true, name = "wheat-fox" },
     { "miikanissi/modus-themes.nvim", priority = 1000, lazy = true, name = "modus" },
+    {
+        "rebelot/kanagawa.nvim",
+        name = "kanagawa",
+        lazy = true,
+        opts = {
+            transparent = false,
+            dimInactive = false,
+            overrides = function(colors)
+                local theme = colors.theme
+                return {
+
+                    MiniDiffOverContext = { bg = "#672e30", fg = "#dcd7ba" },
+                    MiniDiffOverAdd = { bg = "#4a5f32", fg = "#dcd7ba" },
+                    MiniDiffOverContextBuff = { bg = "#151515" },
+                    -- MiniDiffOverContextBuff = { bg = "#2A2A37" },
+                    -- MiniDiffOverContextBuff = { bg = "#2A2A37" },
+                    MiniDiffOverChange = { bg = "#a35d21", fg = "#2b1d02" },
+                    -- MiniDiffOverChange = { bg = "#cc6c00", fg = "#2b1d02" },
+                    MiniDiffOverChangeBuf = { bg = "#a35d21", fg = "#2b1d02" },
+                    GitSignsCurrentLineBlame = { fg = "#cccccc", italic = true },
+                    SpellBad = { fg = "#E82424" },
+                    SpellCap = { fg = "#FF9E3B" },
+                    SpellRare = { fg = "#7E9CD8" },
+                    SpellLocal = { fg = "#98BB6C" },
+
+                    NormalFloat = { bg = "none" },
+                    -- FloatBorder = {bg = "none"},
+                    -- FloatTitle = {bg = "none"},
+                    -- hlgroup with dark background ot use in other places
+                    NormalDark = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
+                    -- Popular plugins that open floats that want to keep dark
+                    LazyNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
+                    MasonNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
+                }
+            end,
+        },
+    },
     {
         "LazyVim/LazyVim",
         opts = {
@@ -127,17 +163,17 @@ return {
                         vim.api.nvim_set_hl(0, "CursorLine", { bg = "#053040" })
                     end
 
-                    if vim.g.colors_name ~= nil and vim.g.colors_name:find("kanagawa") then
-                        vim.api.nvim_set_hl(0, "MiniDiffOverContext", { bg = "#672e30", fg = "#dcd7ba" })
-                        vim.api.nvim_set_hl(0, "MiniDiffOverAdd", { bg = "#4a5f32", fg = "#dcd7ba" })
-                        vim.api.nvim_set_hl(0, "MiniDiffOverChange", { bg = "#a35d21", fg = "#2b1d02" })
-                        vim.api.nvim_set_hl(0, "MiniDiffOverChangeBuf", { bg = "#a35d21", fg = "#2b1d02" })
-                        vim.api.nvim_set_hl(0, "GitSignsCurrentLineBlame", { fg = "#cccccc", italic = true })
-                        vim.api.nvim_set_hl(0, "SpellBad", { fg = "#E82424" })
-                        vim.api.nvim_set_hl(0, "SpellCap", { fg = "#FF9E3B" })
-                        vim.api.nvim_set_hl(0, "SpellRare", { fg = "#7E9CD8" })
-                        vim.api.nvim_set_hl(0, "SpellLocal", { fg = "#98BB6C" })
-                    end
+                    -- if vim.g.colors_name ~= nil and vim.g.colors_name:find("kanagawa") then
+                    --     vim.api.nvim_set_hl(0, "MiniDiffOverContext", { bg = "#672e30", fg = "#dcd7ba" })
+                    --     vim.api.nvim_set_hl(0, "MiniDiffOverAdd", { bg = "#4a5f32", fg = "#dcd7ba" })
+                    --     vim.api.nvim_set_hl(0, "MiniDiffOverChange", { bg = "#a35d21", fg = "#2b1d02" })
+                    --     vim.api.nvim_set_hl(0, "MiniDiffOverChangeBuf", { bg = "#a35d21", fg = "#2b1d02" })
+                    --     vim.api.nvim_set_hl(0, "GitSignsCurrentLineBlame", { fg = "#cccccc", italic = true })
+                    --     vim.api.nvim_set_hl(0, "SpellBad", { fg = "#E82424" })
+                    --     vim.api.nvim_set_hl(0, "SpellCap", { fg = "#FF9E3B" })
+                    --     vim.api.nvim_set_hl(0, "SpellRare", { fg = "#7E9CD8" })
+                    --     vim.api.nvim_set_hl(0, "SpellLocal", { fg = "#98BB6C" })
+                    -- end
                 end,
             })
         end,
