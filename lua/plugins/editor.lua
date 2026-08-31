@@ -1192,24 +1192,7 @@ return {
                     group = "Windows",
                     proxy = "<c-w>",
                     expand = function()
-                        local extras = require("which-key.extras")
-                        local ret = {}
-                        for i = 1, vim.fn.winnr("$") do
-                            local win = vim.fn.win_getid(i)
-                            if vim.api.nvim_win_get_config(win).relative == "" then
-                                local buf = vim.api.nvim_win_get_buf(win)
-                                local name = extras.bufname(buf)
-                                ret[#ret + 1] = {
-                                    tostring(i),
-                                    function()
-                                        vim.cmd(i .. "wincmd w")
-                                    end,
-                                    desc = name,
-                                    icon = { cat = "file", name = name },
-                                }
-                            end
-                        end
-                        return ret
+                        return require("custom-utils.tabs_windows_buffers").wk_window_jump_expand()
                     end,
                     mode = { "n", "x" },
                 },
@@ -1217,26 +1200,23 @@ return {
                     "<localleader>wm",
                     group = "Move Window",
                     expand = function()
-                        local extras = require("which-key.extras")
-                        local wm = require("window-move")
-                        local ret = {}
-                        for i = 1, vim.fn.winnr("$") do
-                            local win = vim.fn.win_getid(i)
-                            if vim.api.nvim_win_get_config(win).relative == "" then
-                                local buf = vim.api.nvim_win_get_buf(win)
-                                local name = extras.bufname(buf)
-                                ret[#ret + 1] = {
-                                    tostring(i),
-                                    function()
-                                        wm.window_swap_to(i)
-                                    end,
-                                    desc = "Move to " .. name,
-                                    icon = { cat = "file", name = name },
-                                    mode = { "n", "x" },
-                                }
-                            end
-                        end
-                        return ret
+                        return require("custom-utils.tabs_windows_buffers").wk_window_move_expand()
+                    end,
+                    mode = { "n", "x" },
+                },
+                {
+                    "<C-w>",
+                    group = "Windows",
+                    expand = function()
+                        return require("custom-utils.tabs_windows_buffers").wk_window_jump_expand()
+                    end,
+                    mode = { "n", "x" },
+                },
+                {
+                    "<C-w>m",
+                    group = "Move Window",
+                    expand = function()
+                        return require("custom-utils.tabs_windows_buffers").wk_window_move_expand()
                     end,
                     mode = { "n", "x" },
                 },

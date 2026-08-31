@@ -184,60 +184,18 @@ function _G.TabLineSplits()
 end
 
 map({ "n", "x" }, "<localleader>bx", tabs_windows_buffers_close.real_delete_buffer_without_closing_nvim, { desc = "close buffer" })
-map({ "n", "x" }, "<localleader>bo", function()
-    local shown = {}
-    for _, win in ipairs(vim.api.nvim_list_wins()) do
-        shown[vim.api.nvim_win_get_buf(win)] = true
-    end
-    local deleted = 0
-    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-        if vim.bo[buf].buflisted and not shown[buf] then
-            if pcall(vim.api.nvim_buf_delete, buf, { force = false }) then
-                deleted = deleted + 1
-            end
-        end
-    end
-    vim.notify(("Deleted %d buffer%s"):format(deleted, deleted == 1 and "" or "s"))
-end, { desc = "kill unshown buffers" })
+map({ "n", "x" }, "<localleader>bo", tabs_windows_buffers_close.delete_unshown_buffers, { desc = "kill unshown buffers" })
 map({ "n", "x" }, "<localleader>bO", "<cmd>%bd |e# | bd#<cr>", { desc = "only buffer" })
 map({ "n", "x" }, "<localleader>bX", "<cmd>bn | bd #<cr>", { desc = "kill buffer" })
 map({ "n", "x" }, "<localleader>l", "<cmd>e<cr>", { desc = "reload buffer" })
 map({ "n", "x" }, "<localleader>bl", "<cmd>e<cr>", { desc = "reload buffer" })
-map({ "n", "x" }, "<localleader>bD", function()
-    Snacks.bufdelete()
-end, { desc = "buffer delete" })
+map({ "n", "x" }, "<localleader>bD", tabs_windows_buffers_close.delete_buffer, { desc = "buffer delete" })
 map({ "n", "x" }, "<localleader>bd", "<cmd>bd<cr>", { desc = "buffer delete" })
 map({ "n", "x" }, "<localleader>be", "<cmd>b#<cr>", { desc = "switch to last buffer" })
-local function reload_all_buffers()
-    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-        if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].buftype == "" and vim.api.nvim_buf_get_name(buf) ~= "" then
-            vim.api.nvim_buf_call(buf, function()
-                vim.cmd("e")
-            end)
-        end
-    end
-end
-map({ "n", "x" }, "<localleader>bL", reload_all_buffers, { desc = "reload all buffers" })
-map({ "n", "x" }, "<localleader>L", reload_all_buffers, { desc = "reload all buffers" })
+map({ "n", "x" }, "<localleader>bL", tabs_windows_buffers_close.reload_all_buffers, { desc = "reload all buffers" })
+map({ "n", "x" }, "<localleader>L", tabs_windows_buffers_close.reload_all_buffers, { desc = "reload all buffers" })
 
-map({ "n", "x" }, "ZA", function()
-    if vim.bo.filetype == "markdown" and vim.env.CLAUDE_CODE_ENTRYPOINT == "cli" then
-        -- closing when editing a prompt file, delete lines that start with #, and delete empty lines and start and bottom
-        vim.cmd([[g/^#/d]])
-        local buf = vim.api.nvim_get_current_buf()
-        local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-        local first = 1
-        while first <= #lines and lines[first]:match("^%s*$") do
-            first = first + 1
-        end
-        local last = #lines
-        while last >= first and lines[last]:match("^%s*$") do
-            last = last - 1
-        end
-        vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.list_slice(lines, first, last))
-    end
-    vim.cmd("x")
-end, { desc = "save quit agent file" })
+map({ "n", "x" }, "ZA", tabs_windows_buffers_close.quit_clear_agent_comments, { desc = "save quit agent file" })
 map({ "n", "x" }, "ZQ", "<cmd>q<cr>", { desc = "quit window save session" })
 map({ "n", "x" }, "ZR", "<cmd>restart<cr>", { desc = "restart" }) -- TODO dont have this save sesion..
 map({ "n", "x" }, "ZD", "<cmd>AutoSession disable<CR><cmd>qa<cr>", { desc = "quit all no session save" })
