@@ -1,6 +1,3 @@
--- Dependency/build "clutter" the snacks explorer hides by default; toggled with `U`.
-local explorer_clutter = { "node_modules", ".git", ".next", "dist", "cdk.out" }
-
 return {
     {
         "stevearc/quicker.nvim",
@@ -551,7 +548,7 @@ return {
                     explorer = {
                         layout = "explorer_float_center",
                         auto_close = true,
-                        hidden = true, -- always show dotfiles
+                        hidden = true,
                         ignored = true,
                         win = {
                             list = {
@@ -575,6 +572,25 @@ return {
                                 },
                             },
                         },
+                    },
+                    files = {
+                        hidden = true,
+                        ignored = true,
+                        exclude = { ".git", "node_modules" },
+                    },
+                    grep = {
+                        hidden = true,
+                        ignored = true,
+                        exclude = { ".git", "node_modules" },
+                    },
+                    grep_word = {
+                        hidden = true,
+                        ignored = true,
+                        exclude = { ".git", "node_modules" },
+                    },
+                    smart = {
+                        hidden = true,
+                        ignored = true,
                     },
                     gh_issue = {},
                     gh_pr = {},
@@ -994,13 +1010,14 @@ return {
             { "<localleader>n:", function() Snacks.picker.command_history() end, desc = "fuzzy command history", },
             { '<localleader>n"', function() Snacks.picker.registers() end, desc = "fuzzy registers", },
             { 'z=', function() Snacks.picker.spelling({ focus = "list" }) end, desc = "fuzzy spelling", },
+            { 's=', function() Snacks.picker.spelling({ focus = "list" }) end, desc = "fuzzy spelling", },
 
-            { "<localleader>gb", function() Snacks.picker.git_log_line({ on_show = function() vim.cmd.stopinsert() end, }) end, desc = "fuzzy git blame line", },
-            { "<localleader>gc", function() Snacks.picker.git_log({ on_show = function() vim.cmd.stopinsert() end, }) end, desc = "fuzzy git log", },
-            { "<localleader>gC", function() Snacks.picker.git_log_file({ on_show = function() vim.cmd.stopinsert() end, }) end, desc = "fuzzy git log file", },
-            { "<localleader>gn", function() Snacks.picker.git_branches({ on_show = function() vim.cmd.stopinsert() end, }) end, desc = "fuzzy git branch", },
-            { "<localleader>gr", function() Snacks.picker.git_stash({ on_show = function() vim.cmd.stopinsert() end, }) end, desc = "fuzzy git stash", },
-            { "<localleader>gs", function() Snacks.picker.git_status({ on_show = function() vim.cmd.stopinsert() end, }) end, desc = "fuzzy git status", },
+            { "<localleader>gb", function() Snacks.picker.git_log_line({ focus = "list"}) end, desc = "fuzzy git blame line", },
+            { "<localleader>gc", function() Snacks.picker.git_log({ focus = "list"}) end, desc = "fuzzy git log", },
+            { "<localleader>gC", function() Snacks.picker.git_log_file({ focus = "list"}) end, desc = "fuzzy git log file", },
+            { "<localleader>gn", function() Snacks.picker.git_branches({ focus = "list"}) end, desc = "fuzzy git branch", },
+            { "<localleader>gr", function() Snacks.picker.git_stash({ focus = "list"}) end, desc = "fuzzy git stash", },
+            { "<localleader>gs", function() Snacks.picker.git_status({ focus = "list"}) end, desc = "fuzzy git status", },
             { "<localleader>gi", function() Snacks.picker.gh_issue() end, desc = "fuzzy git issue (open)", },
             { "<localleader>gI", function() Snacks.picker.gh_issue({state="all"}) end, desc = "fuzzy git issue (all)", },
             { "<localleader>gp", function() Snacks.picker.gh_pr() end, desc = "fuzzy github pr (open)", },
