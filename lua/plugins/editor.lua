@@ -553,16 +553,10 @@ return {
                         auto_close = true,
                         hidden = true, -- always show dotfiles
                         ignored = true,
-                        exclude = explorer_clutter,
-                        -- true = `explorer_clutter` paths are visible (badge shown), kept in
-                        -- sync with `exclude` by the explorer_toggle_clutter action
-                        explorer_show_clutter = false,
-                        toggles = { explorer_show_clutter = { icon = "u" } },
                         win = {
                             list = {
                                 keys = {
                                     ["o"] = "confirm",
-                                    ["U"] = "explorer_toggle_clutter",
                                     ["<C-s>"] = "explorer_open", -- open with system application
                                     ["<2-LeftMouse>"] = false,
                                     ["<C-o>"] = { { "pick_win", "jump" }, mode = { "n", "i" } },
@@ -737,13 +731,6 @@ return {
                     end,
                     explorer_git_rename = function(picker, item)
                         require("custom-utils.explorer_git_rename").rename(picker, item)
-                    end,
-                    explorer_toggle_clutter = function(picker)
-                        local show = not picker.opts.explorer_show_clutter
-                        picker.opts.explorer_show_clutter = show
-                        picker.opts.exclude = show and {} or explorer_clutter
-                        picker.list:set_target()
-                        picker:find()
                     end,
                     explorer_grep_filter = function(picker)
                         local snacks_search = require("custom-utils.snacks_search")
