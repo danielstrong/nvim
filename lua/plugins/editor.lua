@@ -1,3 +1,6 @@
+-- Dependency/build "clutter" the snacks explorer hides by default; toggled with `U`.
+local explorer_clutter = { "node_modules", ".git", ".next", "dist", "cdk.out" }
+
 return {
     {
         "stevearc/quicker.nvim",
@@ -548,13 +551,18 @@ return {
                     explorer = {
                         layout = "explorer_float_center",
                         auto_close = true,
-                        include = {
-                            "**/*",
-                        },
+                        hidden = true, -- always show dotfiles
+                        ignored = true,
+                        exclude = explorer_clutter,
+                        -- true = `explorer_clutter` paths are visible (badge shown), kept in
+                        -- sync with `exclude` by the explorer_toggle_clutter action
+                        explorer_show_clutter = false,
+                        toggles = { explorer_show_clutter = { icon = "u" } },
                         win = {
                             list = {
                                 keys = {
                                     ["o"] = "confirm",
+                                    ["U"] = "explorer_toggle_clutter",
                                     ["<C-s>"] = "explorer_open", -- open with system application
                                     ["<2-LeftMouse>"] = false,
                                     ["<C-o>"] = { { "pick_win", "jump" }, mode = { "n", "i" } },
@@ -729,6 +737,13 @@ return {
                     end,
                     explorer_git_rename = function(picker, item)
                         require("custom-utils.explorer_git_rename").rename(picker, item)
+                    end,
+                    explorer_toggle_clutter = function(picker)
+                        local show = not picker.opts.explorer_show_clutter
+                        picker.opts.explorer_show_clutter = show
+                        picker.opts.exclude = show and {} or explorer_clutter
+                        picker.list:set_target()
+                        picker:find()
                     end,
                     explorer_grep_filter = function(picker)
                         local snacks_search = require("custom-utils.snacks_search")
