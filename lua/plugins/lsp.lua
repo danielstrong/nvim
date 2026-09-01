@@ -56,6 +56,44 @@ local function signature_help()
     vim.schedule(attach)
 end
 
+-- LazyVim's vtsls `gD` routes through `LazyVim.lsp.execute({ open = true })`, which
+-- unconditionally calls `require("trouble")`. This runs the command directly instead.
+local function goto_source_definition()
+    local buf = vim.api.nvim_get_current_buf()
+    local client = vim.lsp.get_clients({ bufnr = buf, name = "vtsls" })[1]
+    if not client then
+        return vim.notify("vtsls is not attached to this buffer", vim.log.levels.WARN)
+    end
+
+    local params = vim.lsp.util.make_position_params(vim.api.nvim_get_current_win(), client.offset_encoding)
+    client:exec_cmd({
+        command = "typescript.goToSourceDefinition",
+        arguments = { params.textDocument.uri, params.position },
+    }, { bufnr = buf }, function(err, result)
+        if err then
+            return vim.notify("goToSourceDefinition: " .. err.message, vim.log.levels.ERROR)
+        end
+        result = result or {}
+        if vim.tbl_isempty(result) then
+            return vim.notify("No source definition found", vim.log.levels.WARN)
+        end
+        if #result == 1 then
+            return vim.lsp.util.show_document(result[1], client.offset_encoding, { reuse_win = true, focus = true })
+        end
+
+        local items = {}
+        for _, loc in ipairs(vim.lsp.util.locations_to_items(result, client.offset_encoding)) do
+            items[#items + 1] = {
+                text = loc.filename .. " " .. loc.text,
+                file = loc.filename,
+                pos = { loc.lnum, loc.col - 1 },
+                line = loc.text,
+            }
+        end
+        Snacks.picker.pick({ items = items, format = "file", title = "Source Definitions" })
+    end)
+end
+
 return {
     -- this fixes "vim" not being detected in lua config files
     -- { "folke/neodev.nvim", opts = {} },
@@ -100,6 +138,13 @@ return {
             servers = {
                 ["*"] = {
                     keys = {
+                        {
+                            "gD",
+                            function()
+                                Snacks.picker.lsp_declarations()
+                            end,
+                            desc = "Goto Declaration",
+                        },
                         { "K", hover_help, desc = "Hover", has = "hover" },
                         { "H", signature_help, desc = "Signature Help", has = "signatureHelp" },
                         { "gK", signature_help, desc = "Signature Help", has = "signatureHelp" },
@@ -158,6 +203,9 @@ return {
                     },
                 },
                 vtsls = {
+                    keys = {
+                        { "gD", goto_source_definition, desc = "Goto Source Definition" },
+                    },
                     experimental = {
                         maxInlayHintLength = 500,
                     },

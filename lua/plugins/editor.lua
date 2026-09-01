@@ -950,7 +950,6 @@ return {
             -- | FzfLua.lsp_typedefs()              | Snacks.picker.lsp_typedefs()          | Jump to type definition                       |
             -- | FzfLua.lsp_implementations()       | Snacks.picker.lsp_implementations()   | Jump to implementation                        |
             -- | FzfLua.lsp_document_symbols()      | Snacks.picker.lsp_symbols()           | Filter treesitter/LSP symbols in buffer       |
-            -- | FzfLua.lsp_workspace_symbols()     | Snacks.picker.lsp_workspace_symbols() | Search symbols across workspace               |
             -- | FzfLua.diagnostics_document()      | Snacks.picker.diagnostics()           | Buffer diagnostics (errors/warnings)          |
             -- | FzfLua.diagnostics_workspace()     | Snacks.picker.diagnostics()           | Workspace-wide diagnostics                    |
             -- | (None)                             | Snacks.picker.explorer()              | Built-in sidebar file tree explorer           |
