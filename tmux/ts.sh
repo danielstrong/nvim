@@ -34,7 +34,7 @@ find_dirs() {
     fi
   done
 
-  for path in "${TS_SEARCH_PATHS[@]}"; do
+  for path in "${TS_EXTRA_PATHS[@]}"; do
     if [[ -d "$path" ]]; then
       echo "$path"
     fi
