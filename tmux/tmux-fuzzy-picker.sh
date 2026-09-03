@@ -46,9 +46,13 @@ done
 case "$mode" in
   session)
     prompt="session> "
-    listing=$(tmux list-sessions \
-      -F "#{?session_attached,1,0}	#{session_name} (#{session_path})	#{session_id}" |
-      awk -F'\t' '{ printf "%s%d  %s\t%s\n", ($1 == "1" ? "*" : " "), NR, $2, $3 }')
+    raw=$(tmux list-sessions \
+      -F "#{?session_attached,1,0}	#{session_name}	#{session_path}	#{session_id}")
+    listing=$(paste -d'\t' \
+      <(printf '%s\n' "$raw" |
+        awk -F'\t' '{ printf "%s%d\t%s\t(%s)\n", ($1 == "1" ? "*" : " "), NR, $2, $3 }' |
+        column -t -s '	') \
+      <(printf '%s\n' "$raw" | awk -F'\t' '{ print $4 }'))
     ;;
   window)
     prompt="window> "
@@ -57,9 +61,13 @@ case "$mode" in
     ;;
   pane)
     prompt="pane> "
-    listing=$(tmux list-panes -s \
-      -F "#{?#{&&:#{pane_active},#{window_active}},1,0}	#{window_name} #{pane_current_command} (#{pane_current_path})	#{pane_id}" |
-      awk -F'\t' '{ printf "%s%d  %s\t%s\n", ($1 == "1" ? "*" : " "), NR, $2, $3 }')
+    raw=$(tmux list-panes -s \
+      -F "#{?#{&&:#{pane_active},#{window_active}},1,0}	#{window_name}	#{pane_current_command}	#{pane_current_path}	#{pane_id}")
+    listing=$(paste -d'\t' \
+      <(printf '%s\n' "$raw" |
+        awk -F'\t' '{ printf "%s%d\t%s\t%s\t(%s)\n", ($1 == "1" ? "*" : " "), NR, $2, $3, $4 }' |
+        column -t -s '	') \
+      <(printf '%s\n' "$raw" | awk -F'\t' '{ print $5 }'))
     ;;
 esac
 

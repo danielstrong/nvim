@@ -27,9 +27,16 @@ else
 fi
 
 list_sessions() {
-  tmux list-sessions \
-    -F "#{?session_attached,1,0}	#{session_name} (#{session_path})	#{session_id}" 2>/dev/null |
-    awk -F'\t' '{ printf "%s%d  %s\tsession\t%s\n", ($1 == "1" ? "*" : " "), NR, $2, $3 }'
+  local raw
+  raw=$(tmux list-sessions \
+    -F "#{?session_attached,1,0}	#{session_name}	#{session_path}	#{session_id}" 2>/dev/null) || return 0
+  [[ -n "$raw" ]] || return 0
+
+  paste -d'\t' \
+    <(printf '%s\n' "$raw" |
+      awk -F'\t' '{ printf "%s%d\t%s\t(%s)\n", ($1 == "1" ? "*" : " "), NR, $2, $3 }' |
+      column -t -s '	') \
+    <(printf '%s\n' "$raw" | awk -F'\t' '{ printf "session\t%s\n", $4 }')
 }
 
 list_dirs() {
