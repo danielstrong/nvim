@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-usage="usage: tw.sh [-w|-p]"
+usage="usage: tmux-fuzzy-picker.sh [-w|-p]"
 
 die() {
   if [[ -n "$TMUX" ]]; then
@@ -41,7 +41,7 @@ while [[ $# -gt 0 ]]; do
   shift
 done
 
-[[ -n "$TMUX" ]] || die "tw.sh only works inside tmux"
+[[ -n "$TMUX" ]] || die "tmux-fuzzy-picker.sh only works inside tmux"
 
 case "$mode" in
   session)
