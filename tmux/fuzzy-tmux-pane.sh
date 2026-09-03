@@ -71,7 +71,7 @@ list_dirs() {
 selected=$({
   list_panes
   [[ "$attach_only" == 1 ]] || list_dirs
-} | sk --cycle --prompt "pane> " -d '\t' --with-nth 1)
+} | sk --cycle --layout=reverse --prompt "pane> " -d '\t' --with-nth 1)
 
 if [[ -z "$selected" ]]; then
   exit 0

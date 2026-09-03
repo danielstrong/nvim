@@ -75,7 +75,7 @@ selected=$({
   if [[ "$attach_only" == false ]]; then
     list_dirs | awk '{ printf "%s\tdir\t%s\n", $0, $0 }'
   fi
-} | sk --cycle --prompt "session> " -d '\t' --with-nth 1)
+} | sk --cycle --layout=reverse --prompt "session> " -d '\t' --with-nth 1)
 
 if [[ -z "$selected" ]]; then
   exit 0
