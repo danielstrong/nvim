@@ -65,16 +65,16 @@ fi
 IFS=$'\t' read -r _ kind target <<<"$selected"
 
 case "$kind" in
-  session) ;;
-  dir)
-    session=$(basename "$target" | tr . _)
-    tmux has-session -t "=$session" 2>/dev/null ||
-      tmux new-session -ds "$session" -c "$target"
-    target="=$session"
-    ;;
-  *)
-    die "could not parse selection: $selected"
-    ;;
+session) ;;
+dir)
+  session=$(basename "$target" | tr . _)
+  tmux has-session -t "=$session" 2>/dev/null ||
+    tmux new-session -ds "$session" -c "$target"
+  target="=$session"
+  ;;
+*)
+  die "could not parse selection: $selected"
+  ;;
 esac
 
 if [[ -n "$TMUX" ]]; then
