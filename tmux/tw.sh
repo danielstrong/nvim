@@ -12,12 +12,6 @@ die() {
   exit 1
 }
 
-# sk's default layout draws the first line nearest the prompt, so feeding the list
-# bottom-up keeps it anchored to the prompt while reading 1..N from the top down.
-reverse_lines() {
-  awk '{ lines[NR] = $0 } END { for (i = NR; i > 0; i--) print lines[i] }'
-}
-
 if ! command -v tmux &>/dev/null; then
   die "tmux is not installed. Please install it first"
 fi
@@ -54,20 +48,18 @@ case "$mode" in
     prompt="session> "
     listing=$(tmux list-sessions \
       -F "#{?session_attached,1,0}	#{session_name} (#{session_path})	#{session_id}" |
-      awk -F'\t' '{ printf "%s%d  %s\t%s\n", ($1 == "1" ? "*" : " "), NR, $2, $3 }' |
-      reverse_lines)
+      awk -F'\t' '{ printf "%s%d  %s\t%s\n", ($1 == "1" ? "*" : " "), NR, $2, $3 }')
     ;;
   window)
     prompt="window> "
     listing=$(tmux list-windows \
-      -F "#{?window_active,*, }#{window_index}  #{window_name}" | reverse_lines)
+      -F "#{?window_active,*, }#{window_index}  #{window_name}")
     ;;
   pane)
     prompt="pane> "
     listing=$(tmux list-panes -s \
       -F "#{?#{&&:#{pane_active},#{window_active}},1,0}	#{pane_current_command} (#{pane_current_path})	#{pane_id}" |
-      awk -F'\t' '{ printf "%s%d  %s\t%s\n", ($1 == "1" ? "*" : " "), NR, $2, $3 }' |
-      reverse_lines)
+      awk -F'\t' '{ printf "%s%d  %s\t%s\n", ($1 == "1" ? "*" : " "), NR, $2, $3 }')
     ;;
 esac
 
