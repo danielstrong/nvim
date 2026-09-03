@@ -2,6 +2,7 @@
 set -e
 
 config_file="$HOME/.config/tmux/create-session.conf"
+usage="usage: fuzzy-tmux-session.sh [-a]"
 
 die() {
   if [[ -n "$TMUX" ]]; then
@@ -20,10 +21,26 @@ if ! command -v sk &>/dev/null; then
   die "sk is not installed. Please install it first"
 fi
 
-if [[ -f "$config_file" ]]; then
-  source "$config_file"
-else
-  die "Config file not found: $config_file"
+attach_only=false
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+  -a)
+    attach_only=true
+    ;;
+  *)
+    die "unknown option $1; $usage"
+    ;;
+  esac
+  shift
+done
+
+if [[ "$attach_only" == false ]]; then
+  if [[ -f "$config_file" ]]; then
+    source "$config_file"
+  else
+    die "Config file not found: $config_file"
+  fi
 fi
 
 list_sessions() {
@@ -55,7 +72,9 @@ list_dirs() {
 
 selected=$({
   list_sessions
-  list_dirs | awk '{ printf "%s\tdir\t%s\n", $0, $0 }'
+  if [[ "$attach_only" == false ]]; then
+    list_dirs | awk '{ printf "%s\tdir\t%s\n", $0, $0 }'
+  fi
 } | sk --cycle --prompt "session> " -d '\t' --with-nth 1)
 
 if [[ -z "$selected" ]]; then
