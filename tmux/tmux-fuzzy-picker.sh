@@ -58,7 +58,7 @@ case "$mode" in
   pane)
     prompt="pane> "
     listing=$(tmux list-panes -s \
-      -F "#{?#{&&:#{pane_active},#{window_active}},1,0}	#{pane_current_command} (#{pane_current_path})	#{pane_id}" |
+      -F "#{?#{&&:#{pane_active},#{window_active}},1,0}	#{window_name} #{pane_current_command} (#{pane_current_path})	#{pane_id}" |
       awk -F'\t' '{ printf "%s%d  %s\t%s\n", ($1 == "1" ? "*" : " "), NR, $2, $3 }')
     ;;
 esac
