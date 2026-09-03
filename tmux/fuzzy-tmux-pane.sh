@@ -2,6 +2,7 @@
 set -e
 
 max_depth=8
+usage="usage: fuzzy-tmux-pane.sh [-a]"
 
 die() {
   if [[ -n "$TMUX" ]]; then
@@ -19,6 +20,20 @@ fi
 if ! command -v sk &>/dev/null; then
   die "sk is not installed. Please install it first"
 fi
+
+attach_only=0
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+  -a)
+    attach_only=1
+    ;;
+  *)
+    die "unknown option $1; $usage"
+    ;;
+  esac
+  shift
+done
 
 list_panes() {
   local scope=-s
@@ -55,7 +70,7 @@ list_dirs() {
 
 selected=$({
   list_panes
-  list_dirs
+  [[ "$attach_only" == 1 ]] || list_dirs
 } | sk --cycle --prompt "pane> " -d '\t' --with-nth 1)
 
 if [[ -z "$selected" ]]; then
