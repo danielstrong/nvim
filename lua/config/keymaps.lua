@@ -582,6 +582,37 @@ Snacks.toggle
 
 Snacks.toggle
     .new({
+        name = "Toggle Bigfile",
+        get = function()
+            return vim.bo.filetype == "bigfile"
+        end,
+        set = function(state)
+            local buf = vim.api.nvim_get_current_buf()
+            if state then
+                vim.b[buf].bigfile_original_filetype = vim.bo[buf].filetype
+                vim.bo[buf].filetype = "bigfile"
+            else
+                local original_ft = vim.b[buf].bigfile_original_filetype
+                if original_ft == nil then
+                    original_ft = vim.filetype.match({ buf = buf }) or ""
+                end
+
+                vim.opt_local.foldmethod = nil
+                vim.opt_local.statuscolumn = nil
+                vim.opt_local.conceallevel = nil
+                vim.b[buf].completion = nil
+                vim.b[buf].minianimate_disable = nil
+                vim.b[buf].minihipatterns_disable = nil
+                vim.b[buf].bigfile_original_filetype = nil
+
+                vim.bo[buf].filetype = original_ft
+            end
+        end,
+    })
+    :map("<localleader>uF")
+
+Snacks.toggle
+    .new({
         name = "Mouse",
         get = function()
             return vim.wo.number or vim.wo.relativenumber

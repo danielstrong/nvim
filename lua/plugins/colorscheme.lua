@@ -73,15 +73,20 @@ return {
             overrides = function(colors)
                 local theme = colors.theme
                 return {
+                    -- OverContext is the line, OverChange is the specific text within a line
+                    -- MiniDiffOverContext = { bg = "#672e30", fg = "#dcd7ba" },
+                    -- MiniDiffOverAdd = { bg = "#4a5f32", fg = "#dcd7ba" },
+                    -- MiniDiffOverContextBuff = { bg = "#151515" }, -- "#2A2A37"
+                    -- MiniDiffOverChange = { bg = "#a35d21", fg = "#2b1d02" },
+                    -- MiniDiffOverChangeBuf = { bg = "#a35d21", fg = "#2b1d02" },
 
-                    MiniDiffOverContext = { bg = "#672e30", fg = "#dcd7ba" },
-                    MiniDiffOverAdd = { bg = "#4a5f32", fg = "#dcd7ba" },
-                    MiniDiffOverContextBuff = { bg = "#151515" },
-                    -- MiniDiffOverContextBuff = { bg = "#2A2A37" },
-                    -- MiniDiffOverContextBuff = { bg = "#2A2A37" },
-                    MiniDiffOverChange = { bg = "#a35d21", fg = "#2b1d02" },
-                    -- MiniDiffOverChange = { bg = "#cc6c00", fg = "#2b1d02" },
-                    MiniDiffOverChangeBuf = { bg = "#a35d21", fg = "#2b1d02" },
+                    -- OverContext is the line, OverChange is the specific text within a line
+                    MiniDiffOverContext = { bg = "#4f1e20", fg = "#000000" },
+                    MiniDiffOverChange = { bg = "#511d1c", fg = "#000000" },
+                    MiniDiffOverAdd = { bg = "#293d1c" },
+                    MiniDiffOverContextBuff = { bg = "#552808" },
+                    MiniDiffOverChangeBuf = { bg = "#552808" },
+
                     GitSignsCurrentLineBlame = { fg = "#cccccc", italic = true },
                     SpellBad = { fg = "#E82424" },
                     SpellCap = { fg = "#FF9E3B" },

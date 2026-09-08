@@ -443,12 +443,12 @@ return {
                             height = 0.99,
                             {
                                 box = "vertical",
-                                border = true,
+                                border = "top", -- border = true
                                 title = "{title} {live} {flags}",
-                                { win = "input", height = 1, border = "bottom" },
+                                { win = "input", height = 1, border = "none" }, -- border = "bottom"
                                 { win = "list", border = "none" },
                             },
-                            { win = "preview", title = "{preview}", border = true, width = 0.525 },
+                            { win = "preview", title = "{preview}", border = false, width = 0.525 }, -- border = true
                         },
                     },
                     explorer_float_center_dropdown = {
@@ -460,13 +460,13 @@ return {
                             height = 0.99,
                             border = "none",
                             box = "vertical",
-                            { win = "preview", title = "{preview}", height = 0.4, border = true },
+                            { win = "preview", title = "{preview}", height = 0.4, border = false }, -- border = true
                             {
                                 box = "vertical",
-                                border = true,
+                                border = "top", -- border = true
                                 title = "{title} {live} {flags}",
                                 title_pos = "center",
-                                { win = "input", height = 1, border = "bottom" },
+                                { win = "input", height = 1, border = false }, -- border = "bottom"
                                 { win = "list", border = "none" },
                             },
                         },
@@ -576,17 +576,17 @@ return {
                     files = {
                         hidden = true,
                         ignored = true,
-                        exclude = { ".git", "node_modules" },
+                        exclude = { ".git", "node_modules", ".next" },
                     },
                     grep = {
                         hidden = true,
                         ignored = true,
-                        exclude = { ".git", "node_modules" },
+                        exclude = { ".git", "node_modules", ".next" },
                     },
                     grep_word = {
                         hidden = true,
                         ignored = true,
-                        exclude = { ".git", "node_modules" },
+                        exclude = { ".git", "node_modules", ".next" },
                     },
                     smart = {
                         hidden = true,
@@ -877,7 +877,7 @@ return {
 
         keys = {
             {
-                "<localleader>wA",
+                "<localleader>wD",
                 function()
                     -- Snacks.explorer.reveal({ cwd = LazyVim.root() })
                     Snacks.explorer({ cwd = LazyVim.root(), layout = "explorer_sidebar" })
@@ -885,7 +885,7 @@ return {
                 desc = "Explorer Snacks (root dir)",
             },
             {
-                "<localleader>wa",
+                "<localleader>wd",
                 function()
                     Snacks.explorer({ layout = "explorer_sidebar" })
                     -- Snacks.explorer()

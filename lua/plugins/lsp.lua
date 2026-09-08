@@ -210,6 +210,11 @@ return {
                         maxInlayHintLength = 500,
                     },
                     settings = {
+                        ["js/ts"] = {
+                            hover = {
+                                maximumLength = 20000, -- default is 500, raises the hover text truncation limit
+                            },
+                        },
                         typescript = {
                             preferences = {
                                 -- use `import type` when a code action imports only a type
