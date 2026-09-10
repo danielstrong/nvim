@@ -70,7 +70,7 @@ local function run_eslint(quiet, on_done)
                                 lnum = m.line or 1,
                                 col = m.column or 1,
                                 type = sev[m.severity] or "E",
-                                text = (m.ruleId and ("[" .. m.ruleId .. "] ") or "") .. (m.message or ""),
+                                text = (type(m.ruleId) == "string" and ("[" .. m.ruleId .. "] ") or "") .. (m.message or ""),
                             })
                         end
                     end
