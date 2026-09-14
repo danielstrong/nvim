@@ -158,7 +158,7 @@ return {
                 allowed_dirs = nil, -- Allow session restore/create in certain directories
                 bypass_save_filetypes = nil, -- List of filetypes to bypass auto save when the only buffer open is one of the file types listed, useful to ignore dashboards
                 close_filetypes_on_save = { "checkhealth" }, -- Buffers with matching filetypes will be closed before saving
-                close_unsupported_windows = true, -- Close windows that aren't backed by normal file before autosaving a session
+                close_unsupported_windows = { preserve_filetypes = { "help" } }, -- Close windows that aren't backed by normal file before autosaving a session
                 preserve_buffer_on_restore = nil, -- Function that returns true if a buffer should be preserved when restoring a session
 
                 -- Git / Session naming

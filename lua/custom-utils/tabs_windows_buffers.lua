@@ -16,6 +16,15 @@ function M.tab_name(tabnr, opts)
     if ok and name and name ~= "" then
         return name
     end
+    -- Begin special handling for Diffview
+    local lib = package.loaded["diffview.lib"]
+    local view = lib and lib.tabpage_to_view(tabpage)
+    if view and view.panel and not view.panel:is_open() then
+        local entry = view.cur_entry
+        local file = entry and entry.path and vim.fn.fnamemodify(entry.path, ":t")
+        return file and file ~= "" and ("Diffview - " .. file) or "Diffview"
+    end
+    -- End special handling for Diffview
     if not (opts and opts.splits) then
         return buf_label(vim.fn.tabpagebuflist(tabnr)[vim.fn.tabpagewinnr(tabnr)])
     end
