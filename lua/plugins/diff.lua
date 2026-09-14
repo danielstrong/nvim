@@ -187,7 +187,7 @@ return {
         },
         keys = {
             {
-                "<localleader>ou",
+                "<localleader>gu",
                 function()
                     local neogit = require("neogit")
                     if require("neogit.buffers.status").is_open() then
