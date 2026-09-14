@@ -41,24 +41,34 @@ local function target_path()
     return vim.fn.expand("%:p")
 end
 
-local function toggle_view(key, open)
+-- `kind` identifies the mapping, `key` the specific view it wants. Closing keys
+-- off `kind` recorded on the tabpage, not off `key`: a diff of a file with no
+-- changes has an empty file list, so `target_path()` cannot rebuild the `key`
+-- the tab was opened with and the view could never be closed from inside it.
+local function toggle_view(kind, key, open)
+    local lib = require("diffview.lib")
+    local cur = vim.api.nvim_get_current_tabpage()
+
+    if lib.tabpage_to_view(cur) and vim.t[cur].diffview_toggle_kind == kind then
+        tracked[vim.t[cur].diffview_toggle_key] = nil
+        vim.cmd("DiffviewClose")
+        return
+    end
+
     local tabpage = tracked[key]
-    if tabpage and vim.api.nvim_tabpage_is_valid(tabpage) and require("diffview.lib").tabpage_to_view(tabpage) then
-        if vim.api.nvim_get_current_tabpage() == tabpage then
-            tracked[key] = nil
-            vim.cmd("DiffviewClose")
-        else
-            vim.api.nvim_set_current_tabpage(tabpage)
-        end
+    if tabpage and vim.api.nvim_tabpage_is_valid(tabpage) and lib.tabpage_to_view(tabpage) then
+        vim.api.nvim_set_current_tabpage(tabpage)
         return
     end
 
     tracked[key] = nil
     open()
 
-    local view = require("diffview.lib").get_current_view()
+    local view = lib.get_current_view()
     if view then
         tracked[key] = view.tabpage
+        vim.t[view.tabpage].diffview_toggle_kind = kind
+        vim.t[view.tabpage].diffview_toggle_key = key
     end
 end
 
@@ -85,7 +95,7 @@ return {
             {
                 "<localleader>oo",
                 function()
-                    toggle_view("open", function()
+                    toggle_view("open", "open", function()
                         vim.cmd("DiffviewOpen")
                     end)
                 end,
@@ -107,7 +117,7 @@ return {
                 "<localleader>od",
                 function()
                     local path = target_path()
-                    toggle_view("file:" .. path, function()
+                    toggle_view("file", "file:" .. path, function()
                         open_file_diff("--", vim.fn.fnameescape(path))
                     end)
                 end,
@@ -120,7 +130,7 @@ return {
                 "<localleader>oD",
                 function()
                     local path = target_path()
-                    toggle_view("file@HEAD~1:" .. path, function()
+                    toggle_view("file@HEAD~1", "file@HEAD~1:" .. path, function()
                         open_file_diff("HEAD~1", "--", vim.fn.fnameescape(path))
                     end)
                 end,
@@ -133,7 +143,7 @@ return {
                 "<localleader>oh",
                 function()
                     local path = target_path()
-                    toggle_view("history:" .. path, function()
+                    toggle_view("history", "history:" .. path, function()
                         vim.cmd("DiffviewFileHistory " .. vim.fn.fnameescape(path))
                     end)
                 end,
@@ -143,7 +153,7 @@ return {
             {
                 "<localleader>oH",
                 function()
-                    toggle_view("history:@repo", function()
+                    toggle_view("history@repo", "history:@repo", function()
                         vim.cmd("DiffviewFileHistory")
                     end)
                 end,
@@ -166,7 +176,7 @@ return {
                     local line = vim.api.nvim_win_get_cursor(0)[1]
                     -- Keyed by file, not line: a line-history tab is reachable
                     -- (and closable) from the same file regardless of cursor row.
-                    toggle_view("line-history:" .. target_path(), function()
+                    toggle_view("line-history", "line-history:" .. target_path(), function()
                         vim.cmd(line .. "DiffviewFileHistory --follow")
                     end)
                 end,
@@ -182,7 +192,7 @@ return {
                     local result = vim.fn.systemlist({ "git", "rev-parse", "--verify", "main" })
                     local ok = vim.v.shell_error == 0 and result[1] ~= nil and result[1] ~= ""
                     local branch = ok and "main" or "master"
-                    toggle_view("branch:" .. branch, function()
+                    toggle_view("branch", "branch:" .. branch, function()
                         vim.cmd("DiffviewOpen " .. branch)
                     end)
                 end,
