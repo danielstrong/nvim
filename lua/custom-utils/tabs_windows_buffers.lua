@@ -5,26 +5,7 @@ local function buf_label(bufnr)
     return fname ~= "" and fname or "[No Name]"
 end
 
--- Display name of a tab: its `tab_name` var when set, otherwise the file name(s)
--- it shows. With opts.splits every real window is listed, not just the current one.
-function M.tab_name(tabnr, opts)
-    local tabpage = vim.api.nvim_list_tabpages()[tabnr]
-    if not tabpage then
-        return nil
-    end
-    local ok, name = pcall(vim.api.nvim_tabpage_get_var, tabpage, "tab_name")
-    if ok and name and name ~= "" then
-        return name
-    end
-    -- Begin special handling for Diffview
-    local lib = package.loaded["diffview.lib"]
-    local view = lib and lib.tabpage_to_view(tabpage)
-    if view and view.panel and not view.panel:is_open() then
-        local entry = view.cur_entry
-        local file = entry and entry.path and vim.fn.fnamemodify(entry.path, ":t")
-        return file and file ~= "" and ("Diffview - " .. file) or "Diffview"
-    end
-    -- End special handling for Diffview
+local function default_tab_name(tabnr, tabpage, opts)
     if not (opts and opts.splits) then
         return buf_label(vim.fn.tabpagebuflist(tabnr)[vim.fn.tabpagewinnr(tabnr)])
     end
@@ -38,6 +19,21 @@ function M.tab_name(tabnr, opts)
         end
     end
     return #names > 0 and table.concat(names, " | ") or "[No Name]"
+end
+--
+-- Display name of a tab: its `tab_name` var when set, otherwise the file name(s)
+-- it shows. With opts.splits every real window is listed, not just the current one.
+function M.tab_name(tabnr, opts)
+    local tabpage = vim.api.nvim_list_tabpages()[tabnr]
+    if not tabpage then
+        return nil
+    end
+    local ok, name = pcall(vim.api.nvim_tabpage_get_var, tabpage, "tab_name")
+    if ok and name and name ~= "" then
+        return name
+    end
+    -- Delete the next line to drop Diffview-aware tab names.
+    return require("custom-utils.diffview_windows_buffers").tab_name(tabpage) or default_tab_name(tabnr, tabpage, opts)
 end
 
 local function real_win_entries(make)

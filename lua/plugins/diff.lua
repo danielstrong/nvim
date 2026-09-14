@@ -206,6 +206,9 @@ return {
                 win_config = { position = "left", width = 35 }, -- Use "auto" to fit content
                 show = true,
             },
+            file_history_panel = {
+                win_config = { position = "left", width = 60 },
+            },
             hooks = {
                 -- Restore cursor position in the working-tree ("b") buffer
                 -- when it matches the file we opened the diff from.
