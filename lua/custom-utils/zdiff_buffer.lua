@@ -182,13 +182,72 @@ local function follow_source(path, lnum)
     end, on_key_ns)
 end
 
+local git_patched = false
+-- Whether the open session wants the worktree compared against the index.
+local unstaged_session = false
+-- Whether the mode currently being loaded is that unstaged one. zdiff routes
+-- every mode change through a `diff` call before it loads any file content, so
+-- the target seen there is authoritative for the `show` calls that follow.
+local unstaged_mode = false
+
+---Rewrite a zdiff git invocation so its no-base-ref mode diffs the worktree
+---against the index instead of HEAD, hiding changes that are already staged.
+---@param args string[] argv after `git -C <root>`
+---@return string[]
+local function rewrite_git_args(args)
+    if args[1] == "diff" then
+        -- zdiff puts the diff target after its options and before any `--`
+        for i = 2, #args do
+            local arg = args[i]
+            if arg == "--" then
+                break
+            elseif arg == "HEAD" then
+                unstaged_mode = unstaged_session
+                if unstaged_mode then
+                    args = vim.deepcopy(args)
+                    table.remove(args, i)
+                end
+                return args
+            elseif arg == "--cached" or arg:find("...", 1, true) then
+                unstaged_mode = false
+                return args
+            end
+        end
+    elseif args[1] == "show" and unstaged_mode and args[2] then
+        -- the old side of the diff is the index now, not the last commit
+        local path = args[2]:match("^HEAD:(.*)$")
+        if path then
+            args = vim.deepcopy(args)
+            args[2] = ":" .. path
+        end
+    end
+    return args
+end
+
+local function patch_git()
+    if git_patched then
+        return
+    end
+    git_patched = true
+    local git = require("zdiff.git")
+    for _, name in ipairs({ "run_lines", "run_async" }) do
+        local original = git[name]
+        git[name] = function(root, args, ...)
+            return original(root, rewrite_git_args(args), ...)
+        end
+    end
+end
+
 ---Open zdiff, or close it if it is already showing in a window.
----@param base_ref? string git ref to diff against. nil shows uncommitted changes.
-function M.toggle(base_ref)
+---@param base_ref? string git ref to diff against. nil compares against HEAD.
+---@param opts? {unstaged?: boolean} compare the worktree against the index instead
+function M.toggle(base_ref, opts)
     local zdiff = require("zdiff")
     local _, buf = find_zdiff_win()
     if not buf then
         hook_renders()
+        patch_git()
+        unstaged_session = (opts or {}).unstaged == true
         local path, lnum = source_position()
         if path and lnum then
             follow_source(path, lnum)

@@ -89,9 +89,16 @@ return {
             {
                 "<localleader>ge",
                 function()
+                    require("custom-utils.zdiff_buffer").toggle(nil, { unstaged = true })
+                end,
+                desc = "Zdiff (unstaged)",
+            },
+            {
+                "<localleader>gw",
+                function()
                     require("custom-utils.zdiff_buffer").toggle()
                 end,
-                desc = "Zdiff",
+                desc = "Zdiff (vs HEAD)",
             },
             {
                 "<localleader>gE",
