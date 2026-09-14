@@ -776,11 +776,12 @@ return {
             -- stylua: ignore start
             { "<localleader>fb", function() Snacks.picker.buffers() end, desc = "fuzzy buffers", },
             -- { "<localleader>fb", function() Snacks.picker.git_grep() end, desc = "fuzzy buffers", },
-            { "<localleader>fd", function() Snacks.picker.git_files() end, desc = "fuzzy git files", },
-            { "<localleader>fD", function() Snacks.picker.git_diff() end, desc = "fuzzy git diff", },
+            { "<localleader>fd", function() Snacks.picker.git_status() end, desc = "fuzzy git status", },
             { "<localleader>fe", function() Snacks.picker.files() end, desc = "fuzzy files", },
             { "<localleader>fE", function() require("custom-utils.snacks_search").files_with_filter_prompt() end, desc = "fuzzy files with include/exclude filters", },
             { "<localleader>ff", function() Snacks.picker.resume() end, desc = "fuzzy resume", },
+            { "<localleader>fg", function() Snacks.picker.git_files() end, desc = "fuzzy git files", },
+            { "<localleader>fG", function() Snacks.picker.git_diff() end, desc = "fuzzy git diff", },
             { "<localleader>fj", function() Snacks.picker.jumps({ focus = "list" }) end, desc = "fuzzy jumps", },
             { "<localleader>fl", function() Snacks.picker.lines({ args = { "--fixed-strings" }, }) end, desc = "fuzzy lines text search", },
             { "<localleader>fL", function() Snacks.picker.lines() end, desc = "fuzzy lines grep search", },
@@ -850,9 +851,9 @@ return {
             { "<localleader>gb", function() Snacks.picker.git_log_line({ focus = "list"}) end, desc = "fuzzy git blame line", },
             { "<localleader>gc", function() Snacks.picker.git_log({ focus = "list"}) end, desc = "fuzzy git log", },
             { "<localleader>gC", function() Snacks.picker.git_log_file({ focus = "list"}) end, desc = "fuzzy git log file", },
+            { "<localleader>gd", function() Snacks.picker.git_status({ focus = "list"}) end, desc = "fuzzy git status", },
             { "<localleader>gn", function() Snacks.picker.git_branches({ focus = "list"}) end, desc = "fuzzy git branch", },
             { "<localleader>gr", function() Snacks.picker.git_stash({ focus = "list"}) end, desc = "fuzzy git stash", },
-            { "<localleader>gs", function() Snacks.picker.git_status({ focus = "list"}) end, desc = "fuzzy git status", },
             { "<localleader>gi", function() Snacks.picker.gh_issue() end, desc = "fuzzy git issue (open)", },
             { "<localleader>gI", function() Snacks.picker.gh_issue({state="all"}) end, desc = "fuzzy git issue (all)", },
             { "<localleader>gp", function() Snacks.picker.gh_pr() end, desc = "fuzzy github pr (open)", },
@@ -1290,6 +1291,40 @@ return {
                     end,
                 })
                 :map("<localleader>ud")
+
+            local overlay_all = false
+
+            local function sync_overlay(buf)
+                local diff = require("mini.diff")
+                local data = diff.get_buf_data(buf)
+                if data ~= nil and data.overlay ~= overlay_all then
+                    diff.toggle_overlay(buf)
+                end
+            end
+
+            vim.api.nvim_create_autocmd("User", {
+                pattern = "MiniDiffUpdated",
+                callback = function(args)
+                    if overlay_all then
+                        sync_overlay(args.buf)
+                    end
+                end,
+            })
+
+            Snacks.toggle
+                .new({
+                    name = "Mini Diff Overlay (all buffers)",
+                    get = function()
+                        return overlay_all
+                    end,
+                    set = function(state)
+                        overlay_all = state
+                        for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+                            sync_overlay(buf)
+                        end
+                    end,
+                })
+                :map("<localleader>uD")
         end,
         opts = {
             view = {
@@ -1329,6 +1364,9 @@ return {
     {
         "lewis6991/gitsigns.nvim",
         event = "LazyFile",
+        enabled = true,
+        -- TODO: get rid of this in favor of https://github.com/yt20chill/inline_git_blame.nvim
+        -- find different pluginf or side by side diffs, dont even know if want that, diffview?
         dependencies = {
             {
                 -- dep because my config uses repeatable-move
@@ -1383,36 +1421,26 @@ return {
                 local repeat_move = require("repeatable_move")
                 local repeatable_next_hunk, repeatable_prev_hunk = repeat_move.make_repeatable_move_pair(next_hunk, prev_hunk)
 
+                -- stylua: ignore start
                 map("n", "]h", repeatable_next_hunk, "Next Hunk")
                 map("n", "[h", repeatable_prev_hunk, "Prev Hunk")
-                map("n", "]H", function()
-                    gs.nav_hunk("last")
-                end, "Last Hunk")
-                map("n", "[H", function()
-                    gs.nav_hunk("first")
-                end, "First Hunk")
-                map("n", "ghs", gs.stage_hunk, "Stage Hunk")
-                map("x", "ghs", function()
-                    gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
-                end, "Stage Hunk (Visual)")
-                map("n", "ghr", gs.reset_hunk, "Reset Hunk")
-                map("x", "ghr", function()
-                    gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
-                end, "Reset Hunk (Visual)")
-                map("n", "<localleader>hY", gs.stage_buffer, "Stage Buffer")
+                map("n", "]H", function() gs.nav_hunk("last") end, "Last Hunk")
+                map("n", "[H", function() gs.nav_hunk("first") end, "First Hunk")
 
+                map("n", "ghs", gs.stage_hunk, "Stage Hunk")
+                map("x", "ghs", function() gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") }) end, "Stage Hunk (Visual)")
                 map("n", "ghS", gs.undo_stage_hunk, "Undo Stage Hunk")
+                map("n", "ghr", gs.reset_hunk, "Reset Hunk")
+                map("x", "ghr", function() gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") }) end, "Reset Hunk (Visual)")
 
                 map("n", "<localleader>hR", gs.reset_buffer, "Reset Buffer")
+                map("n", "<localleader>hs", gs.stage_buffer, "Stage Buffer")
 
                 map("n", "ghd", gs.preview_hunk_inline, "Hunk Diff Preview Inline")
                 map("n", "ghh", gs.preview_hunk, "Hunk Diff Hover")
-                map("n", "<localleader>hB", function()
-                    Snacks.git.blame_line()
-                end, "Snacks Blame Line")
-                map("n", "ghb", function()
-                    gs.blame_line({ full = true })
-                end, "Blame Line")
+                map("n", "<localleader>hB", function() Snacks.git.blame_line() end, "Snacks Blame Line")
+                map("n", "ghb", function() gs.blame_line({ full = true }) end, "Blame Line")
+                -- stylua: ignore end
                 Snacks.toggle
                     .new({
                         name = "Blame Buffer",
@@ -1460,6 +1488,17 @@ return {
                         end,
                     })
                     :map("<localleader>uh")
+                Snacks.toggle
+                    .new({
+                        name = "Deleted Lines",
+                        get = function()
+                            return require("gitsigns.config").config.show_deleted
+                        end,
+                        set = function()
+                            gs.toggle_deleted()
+                        end,
+                    })
+                    :map("<localleader>uH")
 
                 local function close_gitsigns_diff()
                     vim.cmd("diffoff!")
@@ -1483,7 +1522,7 @@ return {
                     return nil
                 end
 
-                map("n", "<localleader>gd", function()
+                map("n", "<localleader>gf", function()
                     local mode = gitsigns_diff_mode()
                     if mode == "head" then
                         close_gitsigns_diff()
@@ -1497,7 +1536,7 @@ return {
                     end
                 end, "Diff This (against staged)")
 
-                map("n", "<localleader>gD", function()
+                map("n", "<localleader>gF", function()
                     local mode = gitsigns_diff_mode()
                     if mode == "tilde" then
                         close_gitsigns_diff()

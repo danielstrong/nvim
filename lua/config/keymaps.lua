@@ -458,7 +458,7 @@ Snacks.toggle
             vim.diagnostic.enable(state)
         end,
     })
-    :map("<localleader>uD")
+    :map("<localleader>uk")
 
 Snacks.toggle
     .new({

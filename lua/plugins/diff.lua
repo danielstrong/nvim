@@ -72,6 +72,23 @@ local function toggle_view(kind, key, open)
     end
 end
 
+-- Open the entry under the file panel cursor in the main window as the cursor
+-- moves, without stealing focus from the panel.
+local function follow_panel_cursor()
+    local view = require("diffview.lib").get_current_view()
+    if not view or not view.panel or not view.panel:is_focused() then
+        return
+    end
+
+    local item = view.panel:get_item_at_cursor()
+    -- Directory nodes in the tree listing carry a `collapsed` field.
+    if not item or type(item.collapsed) == "boolean" or item == view.panel.cur_file then
+        return
+    end
+
+    view:set_file(item, false)
+end
+
 local function open_file_diff(...)
     local cursor = vim.api.nvim_win_get_cursor(0)
     pending_cursor = { path = vim.api.nvim_buf_get_name(0), line = cursor[1], col = cursor[2] }
@@ -112,7 +129,7 @@ return {
             { "<localleader>oE", "<cmd>DiffviewToggleFiles<cr>", mode = "n", desc = "Toggle file panel" },
             { "<localleader>ox", "<cmd>DiffviewClose<cr>", desc = "Diffview close" },
 
-            -- Toggle diff for the current file only (Diffview alternative to <localleader>gd)
+            -- Toggle diff for the current file only
             {
                 "<localleader>od",
                 function()
@@ -125,7 +142,7 @@ return {
                 desc = "Toggle file diff (Diffview)",
             },
 
-            -- Toggle diff for the current file against the last commit (Diffview alternative to <localleader>gD)
+            -- Toggle diff for the current file against the last commit
             {
                 "<localleader>oD",
                 function()
@@ -220,6 +237,17 @@ return {
                 win_config = { position = "left", width = 60 },
             },
             hooks = {
+                view_opened = function(view)
+                    local bufnr = view.panel and view.panel.bufid
+                    if not bufnr or vim.bo[bufnr].filetype ~= "DiffviewFiles" then
+                        return
+                    end
+                    vim.api.nvim_create_autocmd("CursorMoved", {
+                        group = vim.api.nvim_create_augroup("diffview_follow_cursor_" .. bufnr, { clear = true }),
+                        buffer = bufnr,
+                        callback = follow_panel_cursor,
+                    })
+                end,
                 -- Restore cursor position in the working-tree ("b") buffer
                 -- when it matches the file we opened the diff from.
                 diff_buf_win_enter = function(bufnr, winid, ctx)
@@ -284,7 +312,7 @@ return {
         },
         keys = {
             {
-                "<localleader>gu",
+                "<localleader>ou",
                 function()
                     local neogit = require("neogit")
                     if require("neogit.buffers.status").is_open() then
