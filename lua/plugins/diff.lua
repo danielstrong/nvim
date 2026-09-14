@@ -18,6 +18,50 @@ local function toggle_panel_focus()
     end
 end
 
+-- Maps a logical view key (what a mapping asks for) to the tabpage holding it,
+-- so the same mapping can close the view when focused, or jump to its tab when
+-- it lives elsewhere. Diffview only dedupes `DiffviewOpen`, never file history.
+local tracked = {}
+
+-- The file a mapping should act on. Inside a Diffview tab the current buffer may
+-- be a panel or a `diffview://` revision buffer, so ask the view for its current
+-- entry instead — otherwise the key can never match the one used to open it.
+local function target_path()
+    local view = require("diffview.lib").get_current_view()
+    if view then
+        local entry
+        if type(view.cur_file) == "function" then
+            entry = view:cur_file()
+        end
+        entry = entry or view.cur_entry or (view.panel and view.panel.cur_file)
+        if entry and entry.absolute_path then
+            return entry.absolute_path
+        end
+    end
+    return vim.fn.expand("%:p")
+end
+
+local function toggle_view(key, open)
+    local tabpage = tracked[key]
+    if tabpage and vim.api.nvim_tabpage_is_valid(tabpage) and require("diffview.lib").tabpage_to_view(tabpage) then
+        if vim.api.nvim_get_current_tabpage() == tabpage then
+            tracked[key] = nil
+            vim.cmd("DiffviewClose")
+        else
+            vim.api.nvim_set_current_tabpage(tabpage)
+        end
+        return
+    end
+
+    tracked[key] = nil
+    open()
+
+    local view = require("diffview.lib").get_current_view()
+    if view then
+        tracked[key] = view.tabpage
+    end
+end
+
 local function open_file_diff(...)
     local cursor = vim.api.nvim_win_get_cursor(0)
     pending_cursor = { path = vim.api.nvim_buf_get_name(0), line = cursor[1], col = cursor[2] }
@@ -38,7 +82,16 @@ return {
         --     "DiffviewLog",
         -- },
         keys = {
-            { "<localleader>oo", "<cmd>DiffviewToggle<cr>", mode = "n", desc = "Toggle Diffview" },
+            {
+                "<localleader>oo",
+                function()
+                    toggle_view("open", function()
+                        vim.cmd("DiffviewOpen")
+                    end)
+                end,
+                mode = "n",
+                desc = "Toggle Diffview",
+            },
             { "<localleader>oO", "<cmd>DiffviewOpen<cr>", desc = "Diffview open" },
             {
                 "<localleader>oe",
@@ -53,11 +106,10 @@ return {
             {
                 "<localleader>od",
                 function()
-                    if require("diffview.lib").get_current_view() then
-                        vim.cmd("DiffviewClose")
-                    else
-                        open_file_diff("--", vim.fn.fnameescape(vim.fn.expand("%:p")))
-                    end
+                    local path = target_path()
+                    toggle_view("file:" .. path, function()
+                        open_file_diff("--", vim.fn.fnameescape(path))
+                    end)
                 end,
                 mode = "n",
                 desc = "Toggle file diff (Diffview)",
@@ -67,19 +119,37 @@ return {
             {
                 "<localleader>oD",
                 function()
-                    if require("diffview.lib").get_current_view() then
-                        vim.cmd("DiffviewClose")
-                    else
-                        open_file_diff("HEAD~1", "--", vim.fn.fnameescape(vim.fn.expand("%:p")))
-                    end
+                    local path = target_path()
+                    toggle_view("file@HEAD~1:" .. path, function()
+                        open_file_diff("HEAD~1", "--", vim.fn.fnameescape(path))
+                    end)
                 end,
                 mode = "n",
                 desc = "Toggle file diff against last commit (Diffview)",
             },
 
             -- File history
-            { "<localleader>oh", "<cmd>DiffviewFileHistory %<cr>", mode = "n", desc = "File history (current file)" },
-            { "<localleader>oH", "<cmd>DiffviewFileHistory<cr>", mode = "n", desc = "File history (repo)" },
+            {
+                "<localleader>oh",
+                function()
+                    local path = target_path()
+                    toggle_view("history:" .. path, function()
+                        vim.cmd("DiffviewFileHistory " .. vim.fn.fnameescape(path))
+                    end)
+                end,
+                mode = "n",
+                desc = "File history (current file)",
+            },
+            {
+                "<localleader>oH",
+                function()
+                    toggle_view("history:@repo", function()
+                        vim.cmd("DiffviewFileHistory")
+                    end)
+                end,
+                mode = "n",
+                desc = "File history (repo)",
+            },
 
             -- Visual mode: history for selection
             {
@@ -90,7 +160,19 @@ return {
             },
 
             -- Single line history
-            { "<localleader>ol", "<cmd>.DiffviewFileHistory --follow<CR>", mode = "n", desc = "Line history" },
+            {
+                "<localleader>ol",
+                function()
+                    local line = vim.api.nvim_win_get_cursor(0)[1]
+                    -- Keyed by file, not line: a line-history tab is reachable
+                    -- (and closable) from the same file regardless of cursor row.
+                    toggle_view("line-history:" .. target_path(), function()
+                        vim.cmd(line .. "DiffviewFileHistory --follow")
+                    end)
+                end,
+                mode = "n",
+                desc = "Line history",
+            },
 
             -- Diff against main/master branch (useful before merging)
             {
@@ -100,7 +182,9 @@ return {
                     local result = vim.fn.systemlist({ "git", "rev-parse", "--verify", "main" })
                     local ok = vim.v.shell_error == 0 and result[1] ~= nil and result[1] ~= ""
                     local branch = ok and "main" or "master"
-                    vim.cmd("DiffviewOpen " .. branch)
+                    toggle_view("branch:" .. branch, function()
+                        vim.cmd("DiffviewOpen " .. branch)
+                    end)
                 end,
                 mode = "n",
                 desc = "Diff against main/master",
