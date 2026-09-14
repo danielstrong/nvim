@@ -81,11 +81,21 @@ return {
                     -- MiniDiffOverChangeBuf = { bg = "#a35d21", fg = "#2b1d02" },
 
                     -- OverContext is the line, OverChange is the specific text within a line
-                    MiniDiffOverContext = { bg = "#4f1e20", fg = "#000000" },
-                    MiniDiffOverChange = { bg = "#511d1c", fg = "#000000" },
-                    MiniDiffOverAdd = { bg = "#293d1c" },
-                    MiniDiffOverContextBuff = { bg = "#552808" },
-                    MiniDiffOverChangeBuf = { bg = "#552808" },
+                    -- MiniDiffOverContext = { bg = "#4f1e20", fg = "#000000" },
+                    -- MiniDiffOverChange = { bg = "#511d1c", fg = "#000000" },
+                    -- MiniDiffOverAdd = { bg = "#293d1c" },
+                    -- MiniDiffOverContextBuff = { bg = "#552808" },
+                    -- MiniDiffOverChangeBuf = { bg = "#552808" },
+
+                    MiniDiffOverContext = { bg = "#43242B", fg = "#C34043" },
+                    MiniDiffOverChange = { bg = "#43242B", fg = "#C34043" },
+                    MiniDiffOverContextBuff = { bg = "#2B3328" },
+                    MiniDiffOverChangeBuf = { bg = "#2B3328" },
+                    DiffDelete = { bg = "#43242B", fg = "#C34043" },
+                    DiffChange = { bg = "#4A3521" },
+                    DiffText = { bg = "#2B3328" },
+                    DiffAdd = { bg = "#2B3328" },
+                    DiffTextAdd = { bg = "#2B3328" },
 
                     GitSignsCurrentLineBlame = { fg = "#cccccc", italic = true },
                     SpellBad = { fg = "#E82424" },

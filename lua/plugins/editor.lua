@@ -999,6 +999,25 @@ return {
             { "<localleader>nC", function() Snacks.picker.highlights() end, desc = "fuzzy color highlights", },
             { "<localleader>nh", function() Snacks.picker.help() end, desc = "fuzzy help", },
             { "<localleader>nn", function() Snacks.picker.notifications({ focus = "list" }) end, desc = "fuzzy notifications", },
+            { "<localleader>nM", '<cmd>messages<cr>', desc = "show messages", },
+            { "<localleader>nm", function() 
+                local result = vim.api.nvim_exec2("messages", { output = true })
+                local messages = vim.split(result.output, "\n")
+                local win = Snacks.win({
+                    title = " Messages ",
+                    title_pos = "center",
+                    text = messages,
+                    ft = "log",
+                    width = 0.8,
+                    height = 0.8,
+                    border = "rounded",
+                    enter = true,
+                    wo = {number = false, relativenumber = false, wrap = false},
+                    bo = {modifiable = false, readonly = true},
+                    keys = {q = "close"},
+                })
+                vim.api.nvim_win_set_cursor(win.win, { #messages, 0})
+            end, desc = "show messages float", },
             { "<localleader>nL", function() Snacks.picker.lsp_config({ focus = "list" }) end, desc = "fuzzy lsp_info", },
             { "<localleader>no", function() Snacks.picker.treesitter() end, desc = "fuzzy treesitter", },
             { "<localleader>np", function() Snacks.picker.commands({ focus = "input" }) end, desc = "fuzzy commands picker", },
@@ -1176,6 +1195,7 @@ return {
             sort = { "alphanum", "order", "mod" },
             spec = {
                 { "<localleader>a", group = "Actions", mode = { "n", "x" } },
+                { "<localleader>o", group = "Diffview", mode = { "n", "x" } },
                 { "<localleader>K", group = "LSP Buffer", mode = { "n", "x" } },
                 { "<localleader>N", group = "Nvim Raw", mode = { "n", "x" } },
                 { "<localleader>Q", group = "Quick", mode = { "n", "x" } },
@@ -1463,7 +1483,16 @@ return {
                     delete = "",
                 },
             },
-
+            options = {
+                -- algorithm = "myers",
+                -- algorithm = "minimal",
+                algorithm = "histogram",
+                -- algorithm = "patience",
+                indent_whitespace = true,
+                indent_whitespace_change = true,
+                indent_heuristic = true,
+                linematch = 0,
+            },
             mappings = {
                 apply = "",
                 reset = "",
@@ -1545,26 +1574,26 @@ return {
                 map("n", "[H", function()
                     gs.nav_hunk("first")
                 end, "First Hunk")
-                map("n", "<localleader>hy", gs.stage_hunk, "Stage Hunk")
-                map("x", "<localleader>hy", function()
+                map("n", "ghs", gs.stage_hunk, "Stage Hunk")
+                map("x", "ghs", function()
                     gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
                 end, "Stage Hunk (Visual)")
-                map("n", "<localleader>hr", gs.reset_hunk, "Reset Hunk")
-                map("x", "<localleader>hr", function()
+                map("n", "ghr", gs.reset_hunk, "Reset Hunk")
+                map("x", "ghr", function()
                     gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
                 end, "Reset Hunk (Visual)")
                 map("n", "<localleader>hY", gs.stage_buffer, "Stage Buffer")
 
-                map("n", "<localleader>hn", gs.undo_stage_hunk, "Undo Stage Hunk")
+                map("n", "ghS", gs.undo_stage_hunk, "Undo Stage Hunk")
 
                 map("n", "<localleader>hR", gs.reset_buffer, "Reset Buffer")
 
-                map("n", "<localleader>he", gs.preview_hunk_inline, "Hunk Diff Preview Inline")
-                map("n", "<localleader>hh", gs.preview_hunk, "Hunk Diff Hover")
+                map("n", "ghd", gs.preview_hunk_inline, "Hunk Diff Preview Inline")
+                map("n", "ghh", gs.preview_hunk, "Hunk Diff Hover")
                 map("n", "<localleader>hB", function()
                     Snacks.git.blame_line()
                 end, "Snacks Blame Line")
-                map("n", "<localleader>hb", function()
+                map("n", "ghb", function()
                     gs.blame_line({ full = true })
                 end, "Blame Line")
                 Snacks.toggle

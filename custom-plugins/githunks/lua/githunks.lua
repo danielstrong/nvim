@@ -183,7 +183,11 @@ local function sync_gitsigns_base(base)
     if last_gitsigns_base ~= GITSIGNS_BASE_UNSET and last_gitsigns_base == base then
         return
     end
-    require("gitsigns").change_base(base, true)
+    local ok, gitsigns = pcall(require, "gitsigns")
+    if not ok then
+        return
+    end
+    gitsigns.change_base(base, true)
     last_gitsigns_base = base
 end
 
