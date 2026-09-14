@@ -30,6 +30,34 @@ return {
             },
             { "<localleader>ox", "<cmd>DiffviewClose<cr>", desc = "Diffview close" },
 
+            -- Toggle diff for the current file only (Diffview alternative to <localleader>gd)
+            {
+                "<localleader>od",
+                function()
+                    if require("diffview.lib").get_current_view() then
+                        vim.cmd("DiffviewClose")
+                    else
+                        vim.cmd("DiffviewOpen -- " .. vim.fn.fnameescape(vim.fn.expand("%:p")))
+                    end
+                end,
+                mode = "n",
+                desc = "Toggle file diff (Diffview)",
+            },
+
+            -- Toggle diff for the current file against the last commit (Diffview alternative to <localleader>gD)
+            {
+                "<localleader>oD",
+                function()
+                    if require("diffview.lib").get_current_view() then
+                        vim.cmd("DiffviewClose")
+                    else
+                        vim.cmd("DiffviewOpen HEAD~1 -- " .. vim.fn.fnameescape(vim.fn.expand("%:p")))
+                    end
+                end,
+                mode = "n",
+                desc = "Toggle file diff against last commit (Diffview)",
+            },
+
             -- File history
             { "<localleader>oh", "<cmd>DiffviewFileHistory %<cr>", mode = "n", desc = "File history (current file)" },
             { "<localleader>oH", "<cmd>DiffviewFileHistory<cr>", mode = "n", desc = "File history (repo)" },
