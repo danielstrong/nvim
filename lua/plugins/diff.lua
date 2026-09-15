@@ -93,21 +93,38 @@ local function open_branch_diff(ref, jump_only)
     end
 end
 
+-- Only the newest scheduled follow runs; earlier ones see a stale token.
+local follow_token = 0
+
 -- Open the entry under the file panel cursor in the main window as the cursor
 -- moves, without stealing focus from the panel.
+--
+-- Debounced so holding `j` loads only the entry the cursor settles on. Each
+-- `set_file` starts async buffer loads, and diffview toggles the *global*
+-- `eventignore` while attaching a file, so overlapping loads can swallow a
+-- buffer's FileType event and leave it with no syntax highlighting.
 local function follow_panel_cursor()
-    local view = require("diffview.lib").get_current_view()
-    if not view or not view.panel or not view.panel:is_focused() then
-        return
-    end
+    follow_token = follow_token + 1
+    local token = follow_token
 
-    local item = view.panel:get_item_at_cursor()
-    -- Directory nodes in the tree listing carry a `collapsed` field.
-    if not item or type(item.collapsed) == "boolean" or item == view.panel.cur_file then
-        return
-    end
+    vim.defer_fn(function()
+        if token ~= follow_token then
+            return
+        end
 
-    view:set_file(item, false)
+        local view = require("diffview.lib").get_current_view()
+        if not view or not view.panel or not view.panel:is_focused() then
+            return
+        end
+
+        local item = view.panel:get_item_at_cursor()
+        -- Directory nodes in the tree listing carry a `collapsed` field.
+        if not item or type(item.collapsed) == "boolean" or item == view.panel.cur_file then
+            return
+        end
+
+        view:set_file(item, false)
+    end, 80)
 end
 
 local function open_file_diff(...)
