@@ -1671,6 +1671,8 @@ return {
                 end, "Diff This (against last commit)")
 
                 map({ "x", "o" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
+
+                require("custom-utils.clue_triggers").ensure(buffer)
             end,
         },
     },

@@ -201,6 +201,8 @@ return {
                         end
                     end, delay)
                 end, { buffer = bufnr, noremap = true, silent = true, desc = "Diagnostics to Quickfix" })
+
+                require("custom-utils.clue_triggers").ensure(bufnr)
             end,
             hijack_netrw = false,
             view = {
