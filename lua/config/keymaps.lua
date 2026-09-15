@@ -26,6 +26,13 @@ local function cmd_echo(command, text)
     end
 end
 
+pcall(vim.keymap.del, { "n" }, "grn")
+pcall(vim.keymap.del, { "n" }, "grx")
+pcall(vim.keymap.del, { "n" }, "grr")
+pcall(vim.keymap.del, { "n" }, "gri")
+pcall(vim.keymap.del, { "n" }, "grt")
+pcall(vim.keymap.del, { "n", "x" }, "gra")
+
 map("n", "gh", "<Nop>")
 map("n", "gH", "<Nop>")
 map("n", "g<C-h>", "<Nop>")
@@ -373,7 +380,7 @@ map("n", "<localleader>nw", function()
     end
     vim.cmd(ll_open and "lclose" or "lopen")
 end, { desc = "Toggle Quickfix" })
-map("n", "<localleader>kd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
+map("n", "<localleader>kC", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
 map("n", "L", function()
     local bufnr, win = vim.diagnostic.open_float()
     if bufnr and win then

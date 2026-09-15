@@ -975,32 +975,18 @@ return {
                 -- Array of opt-in triggers which start custom key query process.
                 -- **Needs to have something in order to show clues**.
                 triggers = {
-                    -- Leader triggers
                     { mode = { "n", "x" }, keys = "<Leader>" },
                     { mode = { "n", "x" }, keys = "<LocalLeader>" },
-
-                    -- `[` and `]` keys
                     { mode = "n", keys = "[" },
                     { mode = "n", keys = "]" },
-
-                    -- Built-in completion
                     { mode = "i", keys = "<C-x>" },
-
-                    -- `g` key
                     { mode = { "n", "x" }, keys = "g" },
-
-                    -- Marks
                     { mode = { "n", "x" }, keys = "'" },
                     { mode = { "n", "x" }, keys = "`" },
-
-                    -- Registers
                     { mode = { "n", "x" }, keys = '"' },
                     { mode = { "i", "c" }, keys = "<C-r>" },
-
-                    -- Window commands
                     { mode = "n", keys = "<C-w>" },
-
-                    -- `z` key
+                    { mode = "n", keys = "<C-q>" },
                     { mode = { "n", "x" }, keys = "z" },
                 },
 
@@ -1049,14 +1035,24 @@ return {
                 -- Clue window settings
                 window = {
                     -- Floating window config
-                    config = {
+                    config = function(buf_id)
+                        local lines = vim.api.nvim_buf_get_lines(buf_id, 0, -1, false)
+                        local content_width = 0
+                        for _, line in ipairs(lines) do
+                            content_width = math.max(content_width, vim.fn.strdisplaywidth(line))
+                        end
 
-                        -- Compute window width automatically
-                        width = "auto",
+                        local has_statusline = vim.o.laststatus > 0
+                        local has_tabline = vim.o.showtabline == 2 or (vim.o.showtabline == 1 and #vim.api.nvim_list_tabpages() > 1)
+                        local avail_height = vim.o.lines - vim.o.cmdheight - (has_tabline and 1 or 0) - (has_statusline and 1 or 0) - 2
 
-                        -- Use double-line border
-                        border = "rounded",
-                    },
+                        return {
+                            width = math.max(30, math.min(content_width + 1, 60)),
+                            height = math.max(1, math.min(math.max(#lines, 4), math.floor(0.75 * vim.o.lines), avail_height)),
+                            border = "rounded",
+                            title_pos = "left",
+                        }
+                    end,
 
                     -- Delay before showing clue window
                     delay = 200,
@@ -1066,6 +1062,24 @@ return {
                     scroll_up = "<C-u>",
                 },
             })
+
+            local function clue_highlights()
+                local links = {
+                    MiniClueBorder = "FloatBorder",
+                    MiniClueTitle = "FloatTitle",
+                    MiniClueDescGroup = "Keyword",
+                    MiniClueDescSingle = "Identifier",
+                    MiniClueNextKey = "Function",
+                    MiniClueNextKeyWithPostkeys = "Function",
+                    MiniClueSeparator = "Comment",
+                }
+                for group, target in pairs(links) do
+                    vim.api.nvim_set_hl(0, group, { link = target })
+                end
+            end
+
+            clue_highlights()
+            vim.api.nvim_create_autocmd("ColorScheme", { pattern = "*", callback = clue_highlights })
         end,
     },
     {
