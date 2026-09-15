@@ -94,7 +94,12 @@ end
 -- remote is configured (honoring M.prefer_remote_tracking), else a local
 -- main/master branch. Returns the ref to diff against and to display, e.g.
 -- "origin/main" or "main".
-local function resolve_default_branch(root)
+function M.resolve_default_branch(root)
+    root = root or repo_root()
+    if not root then
+        return nil
+    end
+
     local symref = git({ "symbolic-ref", "refs/remotes/origin/HEAD" }, root)
     if symref then
         local name = vim.trim(symref):match("^refs/remotes/origin/(.+)$")
@@ -140,7 +145,7 @@ local function collect_comparebranch_hunks()
         return nil
     end
 
-    local default_ref = resolve_default_branch(root)
+    local default_ref = M.resolve_default_branch(root)
     if not default_ref then
         vim.notify("Could not determine default branch", vim.log.levels.WARN)
         return nil

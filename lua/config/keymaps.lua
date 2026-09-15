@@ -57,7 +57,7 @@ map("x", "#", "gc", { remap = true, desc = "Toggle comment" })
 
 map({ "n", "x" }, "x", '"_x')
 map({ "n", "x" }, "X", '"_X')
-map({ "n", "x" }, "<localleader>vb", "<C-v>", { desc = "Enter visual block mode" })
+map({ "n", "x" }, "<localleader><localleader>v", "<C-v>", { desc = "Enter visual block mode" })
 
 local function window_map(keys, rhs, opts)
     opts = vim.tbl_extend("force", opts or {}, { remap = false })
@@ -368,7 +368,7 @@ map("n", "<localleader>nw", function()
     end
     vim.cmd(ll_open and "lclose" or "lopen")
 end, { desc = "Toggle Quickfix" })
-map("n", "<localleader>dd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
+map("n", "<localleader>kd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
 map("n", "L", function()
     local bufnr, win = vim.diagnostic.open_float()
     if bufnr and win then
@@ -407,7 +407,7 @@ map({ "i", "n", "s" }, "<esc>", function()
     return "<esc>"
 end, { expr = true, desc = "Escape and Clear hlsearch" })
 
-map("n", "<localleader>dc", function()
+map("n", "<localleader>kc", function()
     local diags = vim.diagnostic.get(0, { lnum = vim.fn.line(".") - 1 })
     if #diags == 0 then
         vim.notify("No diagnostics on this line", vim.log.levels.INFO)

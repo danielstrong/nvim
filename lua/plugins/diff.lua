@@ -41,19 +41,9 @@ local function target_path()
     return vim.fn.expand("%:p")
 end
 
--- `kind` identifies the mapping, `key` the specific view it wants. Closing keys
--- off `kind` recorded on the tabpage, not off `key`: a diff of a file with no
--- changes has an empty file list, so `target_path()` cannot rebuild the `key`
--- the tab was opened with and the view could never be closed from inside it.
-local function toggle_view(kind, key, open)
+-- Jumps to the view tracked under `key` when it is still alive, else opens it.
+local function open_view(kind, key, open)
     local lib = require("diffview.lib")
-    local cur = vim.api.nvim_get_current_tabpage()
-
-    if lib.tabpage_to_view(cur) and vim.t[cur].diffview_toggle_kind == kind then
-        tracked[vim.t[cur].diffview_toggle_key] = nil
-        vim.cmd("DiffviewClose")
-        return
-    end
 
     local tabpage = tracked[key]
     if tabpage and vim.api.nvim_tabpage_is_valid(tabpage) and lib.tabpage_to_view(tabpage) then
@@ -69,6 +59,37 @@ local function toggle_view(kind, key, open)
         tracked[key] = view.tabpage
         vim.t[view.tabpage].diffview_toggle_kind = kind
         vim.t[view.tabpage].diffview_toggle_key = key
+    end
+end
+
+-- `kind` identifies the mapping, `key` the specific view it wants. Closing keys
+-- off `kind` recorded on the tabpage, not off `key`: a diff of a file with no
+-- changes has an empty file list, so `target_path()` cannot rebuild the `key`
+-- the tab was opened with and the view could never be closed from inside it.
+local function toggle_view(kind, key, open)
+    local lib = require("diffview.lib")
+    local cur = vim.api.nvim_get_current_tabpage()
+
+    if lib.tabpage_to_view(cur) and vim.t[cur].diffview_toggle_kind == kind then
+        tracked[vim.t[cur].diffview_toggle_key] = nil
+        vim.cmd("DiffviewClose")
+        return
+    end
+
+    open_view(kind, key, open)
+end
+
+-- Opens a diff of the working tree against `ref`. The kind is per-ref so that
+-- switching bases jumps between tabs instead of closing the one in view.
+local function open_branch_diff(ref, jump_only)
+    local kind = "branch:" .. ref
+    local open = function()
+        vim.cmd("DiffviewOpen " .. vim.fn.fnameescape(ref))
+    end
+    if jump_only then
+        open_view(kind, kind, open)
+    else
+        toggle_view(kind, kind, open)
     end
 end
 
@@ -201,20 +222,42 @@ return {
                 desc = "Line history",
             },
 
-            -- Diff against main/master branch (useful before merging)
+            -- Diff against the repo's default branch (useful before merging)
             {
                 "<localleader>om",
                 function()
-                    -- Try main first, fall back to master
-                    local result = vim.fn.systemlist({ "git", "rev-parse", "--verify", "main" })
-                    local ok = vim.v.shell_error == 0 and result[1] ~= nil and result[1] ~= ""
-                    local branch = ok and "main" or "master"
-                    toggle_view("branch", "branch:" .. branch, function()
-                        vim.cmd("DiffviewOpen " .. branch)
-                    end)
+                    local ref = require("githunks").resolve_default_branch()
+                    if not ref then
+                        vim.notify("Could not determine default branch", vim.log.levels.WARN)
+                        return
+                    end
+                    open_branch_diff(ref)
                 end,
                 mode = "n",
-                desc = "Diff against main/master",
+                desc = "Diff against default branch",
+            },
+
+            -- Diff against a branch chosen from a picker
+            {
+                "<localleader>oM",
+                function()
+                    Snacks.picker.git_branches({
+                        all = true,
+                        confirm = function(picker, item)
+                            picker:close()
+                            local ref = item and (item.branch or item.commit)
+                            if not ref then
+                                return
+                            end
+                            -- `git branch --all` lists remote-tracking refs as
+                            -- `remotes/origin/x`; the stripped form reads better
+                            -- in the Diffview title and resolves the same.
+                            open_branch_diff((ref:gsub("^remotes/", "")), true)
+                        end,
+                    })
+                end,
+                mode = "n",
+                desc = "Diff against branch (picker)",
             },
         },
         opts = {

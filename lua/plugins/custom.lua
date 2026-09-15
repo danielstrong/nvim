@@ -104,21 +104,21 @@ return {
         dev = true,
         keys = {
             {
-                "<localleader>ds",
+                "<localleader>kj",
                 function()
                     require("project-check").run_checks(true)
                 end,
                 desc = "TSC + ESLint to Quickfix",
             },
             {
-                "<localleader>dS",
+                "<localleader>kJ",
                 function()
                     require("project-check").run_checks(false)
                 end,
                 desc = "TSC + ESLint to Quickfix (include warnings)",
             },
             {
-                "<localleader>nl",
+                "<localleader>kl",
                 function()
                     require("project-check").view_project_check_logs()
                 end,
