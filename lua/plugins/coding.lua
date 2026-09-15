@@ -46,4 +46,47 @@ return {
             sort = { prefix = "gms" },
         },
     },
+    {
+        "Wansmer/treesj",
+        dependencies = { "nvim-treesitter/nvim-treesitter" }, -- if you install parsers with `nvim-treesitter`
+        keys = {
+            {
+                "gmk",
+                function()
+                    require("treesj").split()
+                end,
+                mode = { "n", "x" },
+                desc = "Split Line",
+            },
+            {
+                "gmK",
+                function()
+                    require("treesj").split({ split = { recursive = true } })
+                end,
+                mode = { "n", "x" },
+                desc = "Split Line (recursive)",
+            },
+            {
+                "gmj",
+                function()
+                    require("treesj").join()
+                end,
+                mode = { "n", "x" },
+                desc = "Join Line",
+            },
+            {
+                "gmJ",
+                function()
+                    require("treesj").join({ split = { recursive = true } })
+                end,
+                mode = { "n", "x" },
+                desc = "Join Line (recursive)",
+            },
+        },
+        opts = {
+            use_default_keymaps = false,
+            max_join_length = 15000,
+            dot_repeat = false,
+        },
+    },
 }

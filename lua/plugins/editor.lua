@@ -1034,6 +1034,7 @@ return {
                 { "<localleader>u", group = "UI", mode = { "n", "x" } },
                 { "<localleader>z", group = "Session", mode = { "n", "x" } },
                 { "Z", group = "File", mode = { "n", "x" } },
+                { "gm", group = "Modify Code", mode = { "n", "x" } },
                 { "<localleader>=", group = "Fix Indention", mode = { "n", "x" } },
                 { "<localleader>=z", group = "Formatters", mode = { "n", "x" } },
                 {
