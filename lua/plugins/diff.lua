@@ -127,6 +127,31 @@ local function follow_panel_cursor()
     end, 80)
 end
 
+-- Scrolls the main diff window from a panel without moving focus. `distance` is
+-- a fraction of the window height; whole numbers are read as a line count.
+local function scroll_diff(distance)
+    return function()
+        require("diffview.actions").scroll_view(distance)()
+    end
+end
+
+-- Line-precise counterpart to `scroll_diff`, negative for up. Not routed through
+-- `scroll_view`: that formats whole-number distances straight into `norm!`, so a
+-- negative count runs a leading `-` as a motion and moves the cursor too.
+local function scroll_diff_lines(lines)
+    return function()
+        local view = require("diffview.lib").get_current_view()
+        local main = view and view.cur_layout and view.cur_layout:get_main_win()
+        if not main or not main:is_valid() then
+            return
+        end
+        local keys = math.abs(lines) .. vim.keycode(lines < 0 and "<C-y>" or "<C-e>")
+        vim.api.nvim_win_call(main.id, function()
+            vim.cmd("normal! " .. keys)
+        end)
+    end
+end
+
 local function open_file_diff(...)
     local cursor = vim.api.nvim_win_get_cursor(0)
     pending_cursor = { path = vim.api.nvim_buf_get_name(0), line = cursor[1], col = cursor[2] }
@@ -337,9 +362,26 @@ return {
                 },
                 file_panel = {
                     { "n", "<localleader>e", toggle_panel_focus, { desc = "Toggle file panel focus" } },
+                    { "n", "f", scroll_diff(0.25), { desc = "Scroll the diff view down" } },
+                    { "n", "b", scroll_diff(-0.25), { desc = "Scroll the diff view up" } },
+                    { "n", "e", scroll_diff_lines(1), { desc = "Scroll the diff view down one line" } },
+                    { "n", "r", scroll_diff_lines(-1), { desc = "Scroll the diff view up one line" } },
+                    -- Default `f`, displaced by the scroll mapping above.
+                    {
+                        "n",
+                        "zf",
+                        function()
+                            require("diffview.actions").toggle_flatten_dirs()
+                        end,
+                        { desc = "Flatten empty subdirectories in tree listing style" },
+                    },
                 },
                 file_history_panel = {
                     { "n", "<localleader>e", toggle_panel_focus, { desc = "Toggle file panel focus" } },
+                    { "n", "f", scroll_diff(0.25), { desc = "Scroll the diff view down" } },
+                    { "n", "b", scroll_diff(-0.25), { desc = "Scroll the diff view up" } },
+                    { "n", "e", scroll_diff_lines(1), { desc = "Scroll the diff view down one line" } },
+                    { "n", "r", scroll_diff_lines(-1), { desc = "Scroll the diff view up one line" } },
                 },
             }, -- See :h diffview-config-keymaps
             -- keymaps = {
