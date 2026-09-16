@@ -1498,9 +1498,10 @@ return {
         "nvim-mini/mini.clue",
         version = false,
         enabled = true,
-        config = function(_, opts)
+        opts = function()
             local miniclue = require("mini.clue")
-            miniclue.setup({
+
+            return {
                 triggers = {
                     { keys = "'", mode = { "n", "x" } },
                     { keys = "<C-q>", mode = "n" },
@@ -1521,11 +1522,8 @@ return {
                 },
 
                 clues = {
-                    -- { mode = "n", keys = "]b", postkeys = "]" },
-                    -- { mode = "n", keys = "]w", postkeys = "]" },
-
-                    -- { mode = "n", keys = "[b", postkeys = "[" },
-                    -- { mode = "n", keys = "[w", postkeys = "[" },
+                    { mode = "n", keys = "]b", postkeys = "]" },
+                    { mode = "n", keys = "[b", postkeys = "[" },
                     { keys = "<C-q>", desc = "+Tabs", mode = { "n", "x" } },
                     { keys = "<C-q>m", desc = "+Move Tab", mode = { "n", "x" } },
                     { keys = "<localleader><localleader>", desc = "+Ctrl", mode = { "n", "x" } },
@@ -1575,11 +1573,16 @@ return {
                         local has_tabline = vim.o.showtabline == 2 or (vim.o.showtabline == 1 and #vim.api.nvim_list_tabpages() > 1)
                         local avail_height = vim.o.lines - vim.o.cmdheight - (has_tabline and 1 or 0) - (has_statusline and 1 or 0) - 2
 
+                        local height = math.max(1, math.min(math.max(#lines, 4), math.floor(0.75 * vim.o.lines), avail_height))
+                        local is_scrollable = height < #lines
+
                         return {
                             width = math.max(30, math.min(content_width + 1, 60)),
-                            height = math.max(1, math.min(math.max(#lines, 4), math.floor(0.75 * vim.o.lines), avail_height)),
+                            height = height,
                             border = "rounded",
                             title_pos = "left",
+                            footer = is_scrollable and "  <C-d>/<C-u> ▼/▲  " or nil,
+                            footer_pos = is_scrollable and "center" or nil,
                         }
                     end,
 
@@ -1590,7 +1593,7 @@ return {
                     scroll_down = "<C-d>",
                     scroll_up = "<C-u>",
                 },
-            })
+            }
         end,
     },
 }
