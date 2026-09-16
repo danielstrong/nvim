@@ -1,10 +1,8 @@
--- mini.clue triggers are buffer-local mappings that only honor <nowait> while they are the
--- newest ones for that key. Plugins that map buffer-locally after mini.clue's BufWinEnter /
--- LspAttach pass (gitsigns, nvim-tree) must call ensure() so the triggers are recreated last.
 local M = {}
 
 local pending = {}
 
+-- helps to ensure the clue triggers are defined last. however this seems to not be perfect so i have to od this and also define clue at the bottom of editor.lua
 function M.ensure(bufnr)
     bufnr = (bufnr == nil or bufnr == 0) and vim.api.nvim_get_current_buf() or bufnr
     if pending[bufnr] then
