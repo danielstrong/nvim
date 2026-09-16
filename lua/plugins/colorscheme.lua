@@ -143,6 +143,7 @@ return {
                 -- group = augroup("colorscheme"),
                 pattern = "*",
                 callback = function()
+                    -- vim.api.nvim_create_autocmd("ColorScheme", { pattern = "*", callback = clue_highlights })
                     -- vim.api.nvim_set_hl(0, "StatusLine", { fg = "#cccccc", bg = "#090909" })
                     -- vim.api.nvim_set_hl(0, "StatusLineNC", { fg = "#cccccc", bg = "#090909" })
                     -- vim.api.nvim_set_hl(0, "StatusLineSection", { fg = "#cccccc", bg = "#090909" })
@@ -189,6 +190,20 @@ return {
                     --     vim.api.nvim_set_hl(0, "SpellRare", { fg = "#7E9CD8" })
                     --     vim.api.nvim_set_hl(0, "SpellLocal", { fg = "#98BB6C" })
                     -- end
+
+                    -- remap/relink colors
+                    local links = {
+                        MiniClueBorder = "FloatBorder",
+                        MiniClueTitle = "FloatTitle",
+                        MiniClueDescGroup = "Keyword",
+                        MiniClueDescSingle = "Identifier",
+                        MiniClueNextKey = "Function",
+                        MiniClueNextKeyWithPostkeys = "Function",
+                        MiniClueSeparator = "Comment",
+                    }
+                    for group, target in pairs(links) do
+                        vim.api.nvim_set_hl(0, group, { link = target })
+                    end
                 end,
             })
         end,

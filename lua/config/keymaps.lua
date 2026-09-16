@@ -1,6 +1,4 @@
--- Keymaps are automatically loaded on the VeryLazy event
--- Default keymaps that are always set:
--- https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
+-- ~/.local/share/nvim/lazy/LazyVim/lua/lazyvim
 -- ~/.local/share/nvim/lazy/LazyVim/lua/lazyvim/config/keymaps.lua
 -- "n"    Normal
 -- "s"    Select
@@ -86,7 +84,7 @@ window_map("mJ", "<C-W>J", { desc = "Move Window Far Bottom" })
 window_map("mK", "<C-W>K", { desc = "Move Window Far Top" })
 
 local function tab_map(keys, rhs, opts)
-    map({ "n", "x" }, "<localleader>t" .. keys, rhs, opts)
+    map({ "n", "x" }, "<localleader>q" .. keys, rhs, opts)
     map({ "n", "x" }, "<C-q>" .. keys, rhs, opts)
 end
 
@@ -117,7 +115,13 @@ tab_map("m]", "<cmd>+tabmove<cr>", { desc = "Move tab to right" })
 tab_map("mh", "<cmd>-tabmove<cr>", { desc = "Move tab to left" })
 tab_map("ml", "<cmd>+tabmove<cr>", { desc = "Move tab to right" })
 for i = 1, 9 do
-    tab_map("m" .. i, "<cmd>tabmove " .. (i == 1 and 0 or i) .. "<cr>", { desc = "Move tab to " .. i })
+    tab_map("m" .. i, function()
+        local current = vim.fn.tabpagenr()
+        if i == current then
+            return
+        end
+        vim.cmd("tabmove " .. (i < current and (i - 1) or i))
+    end, { desc = "Move tab to " .. i })
 end
 tab_map("m0", "<cmd>tabmove 0<cr>", { desc = "Move tab to first" })
 tab_map("m$", "<cmd>tabmove $<cr>", { desc = "Move tab to end" })

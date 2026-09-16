@@ -1,6 +1,4 @@
--- Options are automatically loaded before lazy.nvim startup
--- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
--- Add any additional options here
+-- ~/.local/share/nvim/lazy/LazyVim/lua/lazyvim
 -- ~/.local/share/nvim/lazy/LazyVim/lua/lazyvim/config/options.lua
 vim.g.mapleader = "|"
 vim.g.maplocalleader = "\\"
