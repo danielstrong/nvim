@@ -14,6 +14,7 @@
 
 local map = vim.keymap.set
 local tabs_windows_buffers_close = require("custom-utils.tabs_windows_buffers_close")
+local clue_toggle = require("custom-utils.clue_toggle")
 
 -- Runs an ex command and echoes it at the bottom of the screen, so the
 -- keymap makes it obvious what just ran.
@@ -464,200 +465,231 @@ map("n", "<localleader>gg", function()
     Snacks.terminal("gitui")
 end, { desc = "GitUI" })
 
-Snacks.toggle
-    .new({
-        name = "Diagnostics",
-        get = function()
-            return vim.diagnostic.is_enabled()
-        end,
-        set = function(state)
-            vim.diagnostic.enable(state)
-        end,
-    })
-    :map("<localleader>uk")
+clue_toggle.toggle_map({ "<localleader>uk" }, {
+    name = "Diagnostics",
+    get = function()
+        return vim.diagnostic.is_enabled()
+    end,
+    set = function(state)
+        vim.diagnostic.enable(state)
+    end,
+})
 
-Snacks.toggle
-    .new({
-        name = "Diagnostic Virtual Text",
-        get = function()
-            return vim.diagnostic.config().virtual_text ~= false
-        end,
-        set = function(state)
-            vim.diagnostic.config({ virtual_text = state })
-        end,
-    })
-    :map("<localleader>uL")
+clue_toggle.toggle_map({ "<localleader>uL" }, {
+    name = "Diagnostic Virtual Text",
+    get = function()
+        return vim.diagnostic.config().virtual_text ~= false
+    end,
+    set = function(state)
+        vim.diagnostic.config({ virtual_text = state })
+    end,
+})
 
-Snacks.toggle
-    .new({
-        name = "ESLint",
-        get = function()
-            return #vim.lsp.get_clients({ name = "eslint", bufnr = 0 }) > 0
-        end,
-        set = function(state)
-            if state then
-                vim.cmd("LspStart eslint")
-            else
-                for _, client in ipairs(vim.lsp.get_clients({ name = "eslint", bufnr = 0 })) do
-                    client:stop()
-                end
+clue_toggle.toggle_map({ "<localleader>ul" }, {
+    name = "ESLint",
+    get = function()
+        return #vim.lsp.get_clients({ name = "eslint", bufnr = 0 }) > 0
+    end,
+    set = function(state)
+        if state then
+            vim.cmd("LspStart eslint")
+        else
+            for _, client in ipairs(vim.lsp.get_clients({ name = "eslint", bufnr = 0 })) do
+                client:stop()
             end
-        end,
-    })
-    :map("<localleader>ul")
+        end
+    end,
+})
 
-Snacks.toggle
-    .new({
-        name = "Codelens",
-        get = function()
-            return vim.lsp.codelens.is_enabled()
-        end,
-        set = function(state)
-            vim.lsp.codelens.enable(state)
-        end,
-    })
-    :map("<localleader>ur")
+clue_toggle.toggle_map({ "<localleader>ur" }, {
+    name = "Codelens",
+    get = function()
+        return vim.lsp.codelens.is_enabled()
+    end,
+    set = function(state)
+        vim.lsp.codelens.enable(state)
+    end,
+})
 
-Snacks.toggle
-    .new({
-        name = "Word Wrap",
-        get = function()
-            return vim.wo.wrap
-        end,
-        set = function(state)
-            vim.wo.wrap = state
-        end,
-    })
-    :map("<localleader>uw")
+clue_toggle.toggle_map({ "<localleader>uw" }, {
+    name = "Word Wrap",
+    get = function()
+        return vim.wo.wrap
+    end,
+    set = function(state)
+        vim.wo.wrap = state
+    end,
+})
 
-Snacks.toggle
-    .new({
-        name = "Spelling",
-        get = function()
-            return vim.wo.spell
-        end,
-        set = function(state)
-            vim.wo.spell = state
-        end,
-    })
-    :map("<localleader>us")
+clue_toggle.toggle_map({ "<localleader>us" }, {
+    name = "Spelling",
+    get = function()
+        return vim.wo.spell
+    end,
+    set = function(state)
+        vim.wo.spell = state
+    end,
+})
 
-Snacks.toggle
-    .new({
-        name = "Smooth Scroll",
-        get = function()
-            return vim.wo.smoothscroll == true
-        end,
-        set = function(state)
-            vim.wo.smoothscroll = state and true or false
-        end,
-    })
-    :map("<localleader>uW")
+clue_toggle.toggle_map({ "<localleader>uW" }, {
+    name = "Smooth Scroll",
+    get = function()
+        return vim.wo.smoothscroll == true
+    end,
+    set = function(state)
+        vim.wo.smoothscroll = state and true or false
+    end,
+})
 
-Snacks.toggle
-    .new({
-        name = "Animations",
-        get = function()
-            return Snacks.scroll.enabled
-        end,
-        set = function(state)
-            if state then
-                Snacks.scroll.enable()
-                vim.g.snacks_animate = true
-            else
-                Snacks.scroll.disable()
-                vim.g.snacks_animate = false
-            end
-        end,
-    })
-    :map("<localleader>ua")
+clue_toggle.toggle_map({ "<localleader>ua" }, {
+    name = "Animations",
+    get = function()
+        return Snacks.scroll.enabled
+    end,
+    set = function(state)
+        if state then
+            Snacks.scroll.enable()
+            vim.g.snacks_animate = true
+        else
+            Snacks.scroll.disable()
+            vim.g.snacks_animate = false
+        end
+    end,
+})
 
-Snacks.toggle
-    .new({
-        name = "Show Tabs",
-        get = function()
-            return vim.o.showtabline == 1
-        end,
-        set = function(state)
-            vim.o.showtabline = state and 1 or 0
-        end,
-    })
-    :map("<localleader>ut")
+clue_toggle.toggle_map({ "<localleader>ut" }, {
+    name = "Show Tabs",
+    get = function()
+        return vim.o.showtabline == 1
+    end,
+    set = function(state)
+        vim.o.showtabline = state and 1 or 0
+    end,
+})
 
-Snacks.toggle
-    .new({
-        name = "Force Statusline",
-        get = function()
-            return vim.o.laststatus == 2
-        end,
-        set = function(state)
-            vim.o.laststatus = state and 2 or 1
-        end,
-    })
-    :map("<localleader>uf")
+clue_toggle.toggle_map({ "<localleader>uf" }, {
+    name = "Force Statusline",
+    get = function()
+        return vim.o.laststatus == 2
+    end,
+    set = function(state)
+        vim.o.laststatus = state and 2 or 1
+    end,
+})
 
-Snacks.toggle
-    .new({
-        name = "Toggle Bigfile",
-        get = function()
-            return vim.bo.filetype == "bigfile"
-        end,
-        set = function(state)
-            local buf = vim.api.nvim_get_current_buf()
-            if state then
-                vim.b[buf].bigfile_original_filetype = vim.bo[buf].filetype
-                vim.bo[buf].filetype = "bigfile"
-            else
-                local original_ft = vim.b[buf].bigfile_original_filetype
-                if original_ft == nil then
-                    original_ft = vim.filetype.match({ buf = buf }) or ""
-                end
-
-                vim.opt_local.foldmethod = nil
-                vim.opt_local.statuscolumn = nil
-                vim.opt_local.conceallevel = nil
-                vim.b[buf].completion = nil
-                vim.b[buf].minianimate_disable = nil
-                vim.b[buf].minihipatterns_disable = nil
-                vim.b[buf].bigfile_original_filetype = nil
-
-                vim.bo[buf].filetype = original_ft
-            end
-        end,
-    })
-    :map("<localleader>uF")
-
-Snacks.toggle
-    .new({
-        name = "Mouse",
-        get = function()
-            return vim.wo.number or vim.wo.relativenumber
-        end,
-        set = function(state)
-            if vim.g.original_signcolumn == nil then
-                vim.g.original_signcolumn = vim.wo.signcolumn
-                vim.g.original_relativenumber = vim.wo.relativenumber
+clue_toggle.toggle_map({ "<localleader>uF" }, {
+    name = "Toggle Bigfile",
+    get = function()
+        return vim.bo.filetype == "bigfile"
+    end,
+    set = function(state)
+        local buf = vim.api.nvim_get_current_buf()
+        if state then
+            vim.b[buf].bigfile_original_filetype = vim.bo[buf].filetype
+            vim.bo[buf].filetype = "bigfile"
+        else
+            local original_ft = vim.b[buf].bigfile_original_filetype
+            if original_ft == nil then
+                original_ft = vim.filetype.match({ buf = buf }) or ""
             end
 
-            if state then
-                vim.wo.number = true
-                vim.wo.relativenumber = vim.g.original_relativenumber
-                vim.o.mouse = "a"
-                vim.wo.signcolumn = vim.g.original_signcolumn
-            else
-                vim.wo.number = false
-                vim.wo.relativenumber = false
-                vim.wo.signcolumn = "no"
-                vim.o.mouse = ""
-            end
-        end,
-    })
-    :map("<localleader>uc")
+            vim.opt_local.foldmethod = nil
+            vim.opt_local.statuscolumn = nil
+            vim.opt_local.conceallevel = nil
+            vim.b[buf].completion = nil
+            vim.b[buf].minianimate_disable = nil
+            vim.b[buf].minihipatterns_disable = nil
+            vim.b[buf].bigfile_original_filetype = nil
+
+            vim.bo[buf].filetype = original_ft
+        end
+    end,
+})
+
+clue_toggle.toggle_map({ "<localleader>uc" }, {
+    name = "Mouse",
+    get = function()
+        return vim.wo.number or vim.wo.relativenumber
+    end,
+    set = function(state)
+        if vim.g.original_signcolumn == nil then
+            vim.g.original_signcolumn = vim.wo.signcolumn
+            vim.g.original_relativenumber = vim.wo.relativenumber
+        end
+
+        if state then
+            vim.wo.number = true
+            vim.wo.relativenumber = vim.g.original_relativenumber
+            vim.o.mouse = "a"
+            vim.wo.signcolumn = vim.g.original_signcolumn
+        else
+            vim.wo.number = false
+            vim.wo.relativenumber = false
+            vim.wo.signcolumn = "no"
+            vim.o.mouse = ""
+        end
+    end,
+})
+
 --
-Snacks.toggle.zoom():map("<localleader>wz"):map("<localleader>uZ"):map("<C-w>z")
-Snacks.toggle.zen():map("<localleader>uz")
-Snacks.toggle.profiler():map("<leader>pp")
-Snacks.toggle.profiler_highlights():map("<leader>ph")
+local zoom_opts = {
+    name = "Zoom Mode",
+    get = function()
+        return Snacks.zen.win and Snacks.zen.win:valid() or false
+    end,
+    set = function(state)
+        if state then
+            Snacks.zen.zoom()
+        elseif Snacks.zen.win then
+            Snacks.zen.win:close()
+        end
+    end,
+}
+clue_toggle.toggle_map({ "<localleader>wz" }, zoom_opts)
+clue_toggle.toggle_map({ "<localleader>uZ" }, zoom_opts)
+clue_toggle.toggle_map({ "<C-w>z" }, zoom_opts)
+
+clue_toggle.toggle_map({ "<localleader>uz" }, {
+    name = "Zen Mode",
+    get = function()
+        return Snacks.zen.win and Snacks.zen.win:valid() or false
+    end,
+    set = function(state)
+        if state then
+            Snacks.zen()
+        elseif Snacks.zen.win then
+            Snacks.zen.win:close()
+        end
+    end,
+})
+
+clue_toggle.toggle_map({ "<leader>pp" }, {
+    name = "Profiler",
+    get = function()
+        return Snacks.profiler.running()
+    end,
+    set = function(state)
+        if state then
+            Snacks.profiler.start()
+        else
+            Snacks.profiler.stop()
+        end
+    end,
+})
+
+clue_toggle.toggle_map({ "<leader>ph" }, {
+    name = "Profiler Highlights",
+    get = function()
+        return Snacks.profiler.ui.enabled
+    end,
+    set = function(state)
+        if state then
+            Snacks.profiler.ui.show()
+        else
+            Snacks.profiler.ui.hide()
+        end
+    end,
+})
 map({ "n" }, "<leader>ps", function()
     Snacks.profiler.scratch()
 end, { desc = "Profiler Scratch Bufer" })

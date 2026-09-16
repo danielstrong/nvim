@@ -784,24 +784,19 @@ return {
             { "<localleader>gP", function() Snacks.picker.gh_pr({state="all"}) end, desc = "fuzzy github pr (all)", },
 
             -- stylua: ignore end
-            {
-                "<localleader>uR",
-                function()
-                    Snacks.toggle
-                        .new({
-                            name = "Filter Import Statements from LSP References",
-                            get = function()
-                                return vim.g.snacks_filter_import_refs ~= false
-                            end,
-                            set = function(state)
-                                vim.g.snacks_filter_import_refs = state
-                            end,
-                        })
-                        :toggle()
-                end,
-                desc = "toggle lsp references import filtering",
-            },
         },
+        config = function(_, opts)
+            require("snacks").setup(opts)
+            require("custom-utils.clue_toggle").toggle_map({ "<localleader>uR" }, {
+                name = "Filter Import Statements from LSP References",
+                get = function()
+                    return vim.g.snacks_filter_import_refs ~= false
+                end,
+                set = function(state)
+                    vim.g.snacks_filter_import_refs = state
+                end,
+            })
+        end,
     },
     {
         "christoomey/vim-tmux-navigator",
@@ -841,21 +836,19 @@ return {
             })
             -- Uncoment below to show gitsigns in the minimap
             -- require("scrollview.contrib.gitsigns").setup({ enabled = true, only_first_line = true })
-            Snacks.toggle
-                .new({
-                    name = "Scrollview",
-                    get = function()
-                        return vim.g.scrollview_enabled
-                    end,
-                    set = function(state)
-                        if state then
-                            vim.cmd("ScrollViewEnable")
-                        else
-                            vim.cmd("ScrollViewDisable")
-                        end
-                    end,
-                })
-                :map("<localleader>uM")
+            require("custom-utils.clue_toggle").toggle_map({ "<localleader>uM" }, {
+                name = "Scrollview",
+                get = function()
+                    return vim.g.scrollview_enabled
+                end,
+                set = function(state)
+                    if state then
+                        vim.cmd("ScrollViewEnable")
+                    else
+                        vim.cmd("ScrollViewDisable")
+                    end
+                end,
+            })
         end,
     },
     {
@@ -921,17 +914,16 @@ return {
                     zindex = 10,
                 },
             })
-            Snacks.toggle
-                .new({
-                    name = "Mini Map",
-                    get = function()
-                        return require("mini.map").current.win_id ~= nil
-                    end,
-                    set = function()
-                        require("mini.map").toggle()
-                    end,
-                })
-                :map("<localleader>um")
+            require("custom-utils.clue_toggle").toggle_map({ "<localleader>um" }, {
+                name = "Mini Map",
+                get = function()
+                    local win_id = require("mini.map").current.win_data[vim.api.nvim_get_current_tabpage()]
+                    return win_id ~= nil and vim.api.nvim_win_is_valid(win_id)
+                end,
+                set = function()
+                    require("mini.map").toggle()
+                end,
+            })
         end,
     },
     {
@@ -940,18 +932,16 @@ return {
         enabled = true,
         config = function(_, opts)
             require("mini.diff").setup(opts)
-            Snacks.toggle
-                .new({
-                    name = "Mini Diff Overlay",
-                    get = function()
-                        local data = require("mini.diff").get_buf_data(0)
-                        return data ~= nil and data.overlay == true
-                    end,
-                    set = function()
-                        require("mini.diff").toggle_overlay(0)
-                    end,
-                })
-                :map("<localleader>ud")
+            require("custom-utils.clue_toggle").toggle_map({ "<localleader>ud" }, {
+                name = "Mini Diff Overlay",
+                get = function()
+                    local data = require("mini.diff").get_buf_data(0)
+                    return data ~= nil and data.overlay == true
+                end,
+                set = function()
+                    require("mini.diff").toggle_overlay(0)
+                end,
+            })
 
             local overlay_all = false
 
@@ -972,20 +962,18 @@ return {
                 end,
             })
 
-            Snacks.toggle
-                .new({
-                    name = "Mini Diff Overlay (all buffers)",
-                    get = function()
-                        return overlay_all
-                    end,
-                    set = function(state)
-                        overlay_all = state
-                        for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-                            sync_overlay(buf)
-                        end
-                    end,
-                })
-                :map("<localleader>uD")
+            require("custom-utils.clue_toggle").toggle_map({ "<localleader>uD" }, {
+                name = "Mini Diff Overlay (all buffers)",
+                get = function()
+                    return overlay_all
+                end,
+                set = function(state)
+                    overlay_all = state
+                    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+                        sync_overlay(buf)
+                    end
+                end,
+            })
         end,
         opts = {
             view = {
@@ -1101,64 +1089,56 @@ return {
                 map("n", "<localleader>hB", function() Snacks.git.blame_line() end, "Snacks Blame Line")
                 map("n", "ghb", function() gs.blame_line({ full = true }) end, "Blame Line")
                 -- stylua: ignore end
-                Snacks.toggle
-                    .new({
-                        name = "Blame Buffer",
-                        get = function()
+                require("custom-utils.clue_toggle").toggle_map({ "<localleader>uB" }, {
+                    name = "Blame Buffer",
+                    get = function()
+                        for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+                            local name = vim.api.nvim_buf_get_name(buf)
+                            if name:match("^gitsigns%-blame:") then
+                                return true
+                            end
+                        end
+                        return false
+                    end,
+                    set = function(state)
+                        if state then
+                            gs.blame()
+                        else
                             for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-                                local name = vim.api.nvim_buf_get_name(buf)
-                                if name:match("^gitsigns%-blame:") then
-                                    return true
+                                if vim.api.nvim_buf_get_name(buf):match("^gitsigns%-blame:") then
+                                    vim.api.nvim_buf_delete(buf, { force = true })
                                 end
                             end
-                            return false
-                        end,
-                        set = function(state)
-                            if state then
-                                gs.blame()
-                            else
-                                for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-                                    if vim.api.nvim_buf_get_name(buf):match("^gitsigns%-blame:") then
-                                        vim.api.nvim_buf_delete(buf, { force = true })
-                                    end
-                                end
-                            end
-                        end,
-                    })
-                    :map("<localleader>uB")
-                Snacks.toggle
-                    .new({
-                        name = "Inline Blame",
-                        get = function()
-                            return require("gitsigns.config").config.current_line_blame
-                        end,
-                        set = function()
-                            gs.toggle_current_line_blame()
-                        end,
-                    })
-                    :map("<localleader>ub")
-                Snacks.toggle
-                    .new({
-                        name = "Word Diff",
-                        get = function()
-                            return require("gitsigns.config").config.word_diff
-                        end,
-                        set = function()
-                            gs.toggle_word_diff()
-                        end,
-                    })
-                    :map("<localleader>uh")
-                Snacks.toggle
-                    .new({
-                        name = "Deleted Lines",
-                        get = function()
-                            return require("gitsigns.config").config.show_deleted
-                        end,
-                        set = function()
-                            gs.toggle_deleted()
-                        end,
-                    })
-                    :map("<localleader>uH")
+                        end
+                    end,
+                })
+                require("custom-utils.clue_toggle").toggle_map({ "<localleader>ub" }, {
+                    name = "Inline Blame",
+                    get = function()
+                        return require("gitsigns.config").config.current_line_blame
+                    end,
+                    set = function()
+                        gs.toggle_current_line_blame()
+                    end,
+                })
+                require("custom-utils.clue_toggle").toggle_map({ "<localleader>uh" }, {
+                    name = "Word Diff",
+                    get = function()
+                        return require("gitsigns.config").config.word_diff
+                    end,
+                    set = function()
+                        gs.toggle_word_diff()
+                    end,
+                })
+                require("custom-utils.clue_toggle").toggle_map({ "<localleader>uH" }, {
+                    name = "Deleted Lines",
+                    get = function()
+                        return require("gitsigns.config").config.show_deleted
+                    end,
+                    set = function()
+                        gs.toggle_deleted()
+                    end,
+                })
 
                 local function close_gitsigns_diff()
                     vim.cmd("diffoff!")
@@ -1469,28 +1449,24 @@ return {
             }
             require("blink.cmp").setup(opts)
 
-            Snacks.toggle
-                .new({
-                    name = "Tab Show Blink Completion Menu",
-                    get = function()
-                        return vim.g.blink_tab_show == true
-                    end,
-                    set = function(state)
-                        vim.g.blink_tab_show = state
-                    end,
-                })
-                :map("<localleader>u<Tab>")
-            Snacks.toggle
-                .new({
-                    name = "Auto Show Blink Completion Menu",
-                    get = function()
-                        return vim.g.blink_auto_show == true
-                    end,
-                    set = function(state)
-                        vim.g.blink_auto_show = state
-                    end,
-                })
-                :map("<localleader>uy")
+            require("custom-utils.clue_toggle").toggle_map({ "<localleader>u<Tab>" }, {
+                name = "Tab Show Blink Completion Menu",
+                get = function()
+                    return vim.g.blink_tab_show == true
+                end,
+                set = function(state)
+                    vim.g.blink_tab_show = state
+                end,
+            })
+            require("custom-utils.clue_toggle").toggle_map({ "<localleader>uy" }, {
+                name = "Auto Show Blink Completion Menu",
+                get = function()
+                    return vim.g.blink_auto_show == true
+                end,
+                set = function(state)
+                    vim.g.blink_auto_show = state
+                end,
+            })
         end,
     },
     {
