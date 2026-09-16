@@ -318,7 +318,7 @@ local nvim_default_statusline = table.concat({
     [[%{% &showcmdloc == 'statusline' ? '%-10.S ' : '' %}]],
     [[%{% exists('b:keymap_name') ? '<'..b:keymap_name..'> ' : '' %}]],
     [[%{% &busy > 0 ? '◐ ' : '' %}]],
-    [[%{% luaeval('(package.loaded[''config.lsp_progress''] and require(''config.lsp_progress'').status()) or ''''')%}]],
+    [[%{% luaeval('(package.loaded[''custom-utils.lsp_progress''] and require(''custom-utils.lsp_progress'').status()) or ''''')%}]],
     [[%{% luaeval('(package.loaded[''vim.diagnostic''] and next(vim.diagnostic.count()) and vim.diagnostic.status() .. '''') or ''''') %}]],
     [[ %Y]],
     [[ %{% &ruler ? ( &rulerformat == '' ? '%-14.(%l,%c%V%) %P' : &rulerformat ) : '' %} ]],

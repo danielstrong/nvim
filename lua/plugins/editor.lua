@@ -110,82 +110,6 @@ return {
         },
     },
     {
-        -- similair to fidget but little differnet also turns vim.notify into floating windows
-        "nvim-mini/mini.notify",
-        enabled = false,
-        version = true,
-        opts = { -- Content management
-            content = {
-                -- Function which formats the notification message
-                -- By default prepends message with notification time
-                format = nil,
-
-                -- Function which orders notification array from most to least important
-                -- By default orders first by level and then by update timestamp
-                sort = nil,
-            },
-
-            -- Notifications about LSP progress
-            lsp_progress = {
-                -- Whether to enable showing
-                enable = true,
-
-                -- Notification level
-                level = "INFO",
-
-                -- Duration (in ms) of how long last message should be shown
-                duration_last = 2000,
-            },
-
-            -- Window options
-            window = {
-                -- Floating window config
-                config = {
-                    anchor = "SE",
-                    col = vim.o.columns,
-                    row = vim.o.lines - vim.o.cmdheight - 1,
-                },
-
-                -- Maximum window width as share (between 0 and 1) of available columns
-                max_width_share = 0.382,
-
-                -- Value of 'winblend' option
-                winblend = 25,
-            },
-        },
-    },
-    {
-        "nvim-mini/mini.files",
-        enabled = false,
-        -- lazy = true,
-        opts = {
-            windows = {
-                preview = true,
-                width_focus = 30,
-                width_preview = 50,
-            },
-            options = {
-                use_as_default_explorer = false,
-            },
-        },
-        keys = {
-            {
-                "<localleader>wf",
-                function()
-                    require("mini.files").open(vim.api.nvim_buf_get_name(0), true)
-                end,
-                desc = "Open mini.files (Directory of Current File)",
-            },
-            {
-                "<localleader>wF",
-                function()
-                    require("mini.files").open(vim.uv.cwd(), true)
-                end,
-                desc = "Open mini.files (cwd)",
-            },
-        },
-    },
-    {
         "folke/snacks.nvim",
         -- enabled = false,
         -- @type snacks.Config
@@ -880,39 +804,6 @@ return {
         },
     },
     {
-        "rcarriga/nvim-notify",
-        enabled = false,
-        event = "VeryLazy",
-        keys = {
-            {
-                "<localleader>nd",
-                function()
-                    require("notify").dismiss({ silent = false, pending = true })
-                end,
-                desc = "Dismiss notifications",
-            },
-            { "<localleader>nh", "<cmd>Notifications<CR>", desc = "Notification History" },
-        },
-        opts = {
-            timeout = 3000,
-            stages = "static",
-            render = "wrapped-compact",
-            merge_duplicates = 2,
-            top_down = true,
-            -- max_height = function()
-            --     return math.floor(vim.o.lines * 0.75)
-            -- end,
-            -- max_width = function()
-            --     return math.floor(vim.o.columns * 0.75)
-            -- end,
-        },
-        config = function(_, opts)
-            local notify = require("notify")
-            notify.setup(opts)
-            vim.notify = notify
-        end,
-    },
-    {
         "christoomey/vim-tmux-navigator",
         event = "VimEnter",
         cmd = {
@@ -931,7 +822,6 @@ return {
             { "<c-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>" },
         },
     },
-    -- minimilistic minimap
     {
         "dstein64/nvim-scrollview",
         enabled = true,

@@ -145,4 +145,4 @@ vim.api.nvim_create_autocmd("VimEnter", {
 --     end,
 -- })
 -- Lsp progress in the statusline
-require("config.lsp_progress").setup()
+require("custom-utils.lsp_progress").setup()
