@@ -1470,6 +1470,36 @@ return {
         end,
     },
     {
+        "nvim-mini/mini.bracketed",
+        version = false,
+        opts = {
+            -- First-level elements are tables describing behavior of a target:
+            --
+            -- - <suffix> - single character suffix. Used after `[` / `]` in mappings.
+            --   For example, with `b` creates `[B`, `[b`, `]b`, `]B` mappings.
+            --   Supply empty string `''` to not create mappings.
+            --
+            -- - <options> - table overriding target options.
+            --
+            -- See `:h MiniBracketed.config` for more info.
+
+            buffer = { suffix = "", options = {} },
+            comment = { suffix = "@", options = { add_to_jumplist = true } },
+            conflict = { suffix = "x", options = { add_to_jumplist = true } },
+            diagnostic = { suffix = "!", options = {} },
+            file = { suffix = "k", options = {} },
+            indent = { suffix = "", options = { add_to_jumplist = true } },
+            jump = { suffix = "j", options = {} },
+            location = { suffix = "l", options = {} },
+            oldfile = { suffix = "o", options = {} },
+            quickfix = { suffix = "", options = {} },
+            treesitter = { suffix = "r", options = { add_to_jumplist = true } },
+            undo = { suffix = "", options = {} },
+            window = { suffix = "v", options = {} },
+            yank = { suffix = "y", options = { add_to_jumplist = true } },
+        },
+    },
+    {
         -- NOTE: this needs to be defined last so it picks up on keys defined by plugins above
         "nvim-mini/mini.clue",
         version = false,
