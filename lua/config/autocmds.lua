@@ -146,3 +146,23 @@ vim.api.nvim_create_autocmd("VimEnter", {
 -- })
 -- Lsp progress in the statusline
 require("custom-utils.lsp_progress").setup()
+
+-- Relative line numbers in visual/visual-line/visual-block modes only
+vim.api.nvim_create_autocmd("ModeChanged", {
+    group = augroup("visual_relativenumber"),
+    pattern = "*",
+    callback = function()
+        -- vim.wo.relativenumber = vim.fn.mode():match("^[vV\22]") ~= nil
+        -- vim.wo.relativenumber = string.find(vim.fn.mode(), '^[V\22]') ~= nil
+        vim.wo.relativenumber = string.find(vim.fn.mode(), "^[vV\22]") ~= nil
+    end,
+})
+
+-- vim.api.nvim_create_autocmd("ModeChanged", {
+--     group = augroup("visual_relativenumber"),
+--     pattern = "*",
+--     callback = function()
+--         local mode = vim.fn.mode()
+--         vim.wo.relativenumber = vim.wo.number and (mode == "V" or mode == "\22")
+--     end,
+-- })
