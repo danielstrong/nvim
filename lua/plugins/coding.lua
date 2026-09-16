@@ -1,9 +1,5 @@
 return {
     {
-        "nvim-mini/mini.pairs",
-        enabled = false,
-    },
-    {
         "nvim-mini/mini.surround",
         keys = function(_, keys)
             -- Populate the keys based on the user's options

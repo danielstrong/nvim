@@ -880,91 +880,6 @@ return {
         },
     },
     {
-        "folke/trouble.nvim",
-        cmd = { "Trouble" },
-        enabled = false,
-        -- lazy = true,
-        dependencies = {
-            {
-                -- dep because my config uses repeatable-move
-                "kiyoon/repeatable-move.nvim",
-                dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
-            },
-        },
-        opts = {
-            focus = true,
-            pinned = false, -- When pinned, the opened trouble window will be bound to the current buffer
-            warn_no_results = true, -- show a warning when there are no results
-            open_no_results = true, -- open the trouble window when there are no results
-
-            position = "bottom",
-            modes = {
-                lsp = {
-                    win = { position = "bottom" },
-                },
-                symbols = {
-                    win = { type = "split", position = "bottom" },
-                },
-            },
-        },
-        keys = {
-            { "<localleader>kq", "<cmd>Trouble qflist toggle<cr>", desc = "Quickfix List (Trouble)" },
-            { "<localleader>kw", "<cmd>Trouble loclist toggle<cr>", desc = "Location List (Trouble)" },
-
-            { "<localleader>ky", "<cmd>Trouble lsp toggle<cr>", desc = "LSP references/definitions/... (Trouble)" },
-            { "<localleader>kr", "<cmd>Trouble lsp_references toggle<cr>", desc = "LSP references (Trouble)" },
-            { "<localleader>kd", "<cmd>Trouble lsp_definitions toggle<cr>", desc = "LSP definitions (Trouble)" },
-            { "<localleader>kD", "<cmd>Trouble lsp_declarations toggle<cr>", desc = "LSP declarations (Trouble)" },
-            { "<localleader>ky", "<cmd>Trouble lsp_type_definitions toggle<cr>", desc = "LSP type definitions (Trouble)" },
-            { "<localleader>kI", "<cmd>Trouble lsp_implementations toggle<cr>", desc = "LSP implementations (Trouble)" },
-            { "<localleader>ks", "<cmd>Trouble symbols toggle focus=true<cr>", desc = "Symbols (Trouble)" },
-            { "<localleader>kt", "<cmd>Trouble todo toggle<cr>", desc = "Todo (Trouble)" },
-            { "<localleader>kT", "<cmd>Trouble todo toggle filter = {tag = {TODO,FIX,FIXME}}<cr>", desc = "TODO/FIX/FIXME Filtered (Trouble)" },
-
-            { "<localleader>ka", "<cmd>Trouble diagnostics toggle<cr>", desc = "Workspae Diagnostics (Trouble)" },
-            { "<localleader>kb", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>", desc = "Buffer Diagnostics (Trouble)" },
-            -- bare triggers: loading runs config() which sets the real handlers, then the key is replayed
-            -- { "[q", mode = { "n", "x", "o" }, desc = "Previous Trouble/Quickfix Item" },
-            -- { "]q", mode = { "n", "x", "o" }, desc = "Next Trouble/Quickfix Item" },
-        },
-        config = function(_, opts)
-            require("trouble").setup(opts)
-
-            local function trouble_qf_next()
-                if require("trouble").is_open() then
-                    require("trouble").next({ skip_groups = true, jump = true })
-                else
-                    local ok = pcall(vim.cmd.cnext)
-                    if not ok then
-                        local ok2 = pcall(vim.cmd, "cc 1")
-                        if not ok2 then
-                            vim.notify("No quickfix list errors", vim.log.levels.ERROR)
-                        end
-                    end
-                end
-            end
-
-            local function trouble_qf_prev()
-                if require("trouble").is_open() then
-                    require("trouble").prev({ skip_groups = true, jump = true })
-                else
-                    local ok = pcall(vim.cmd.cprev)
-                    if not ok then
-                        local ok2 = pcall(vim.cmd, "cc 1")
-                        if not ok2 then
-                            vim.notify("No quickfix list errors", vim.log.levels.ERROR)
-                        end
-                    end
-                end
-            end
-
-            local repeatable_qf_next, repeatable_qf_prev = require("repeatable_move").make_repeatable_move_pair(trouble_qf_next, trouble_qf_prev)
-
-            vim.keymap.set({ "n", "x", "o" }, "[q", repeatable_qf_prev, { desc = "Previous Trouble/Quickfix Item" })
-            vim.keymap.set({ "n", "x", "o" }, "]q", repeatable_qf_next, { desc = "Next Trouble/Quickfix Item" })
-        end,
-    },
-    {
         "rcarriga/nvim-notify",
         enabled = false,
         event = "VeryLazy",
@@ -1138,10 +1053,6 @@ return {
         end,
     },
     {
-        "folke/flash.nvim",
-        enabled = false,
-    },
-    {
         "nvim-mini/mini.diff",
         event = "VeryLazy",
         enabled = true,
@@ -1225,7 +1136,6 @@ return {
         },
     },
     {
-        -- this is configured at the bottom of keymaps.lua because its used to modify mappings set by other plugins
         "kiyoon/repeatable-move.nvim",
         dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
     },
