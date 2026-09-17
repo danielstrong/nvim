@@ -1550,6 +1550,8 @@ return {
                     { keys = "<localleader>n", desc = "+Nvim", mode = { "n", "x" } },
                     { keys = "<localleader>o", desc = "+Diffview", mode = { "n", "x" } },
                     { keys = "<localleader>q", desc = "+Tabs", mode = { "n", "x" } },
+                    { keys = "<localleader>bm", desc = "+Move Buffer", mode = { "n", "x" } },
+                    { keys = "<localleader>wm", desc = "+Move Window", mode = { "n", "x" } },
                     { keys = "<localleader>qm", desc = "+Move Tab", mode = { "n", "x" } },
                     { keys = "<localleader>r", desc = "+Replace", mode = { "n", "x" } },
                     { keys = "<localleader>u", desc = "+UI", mode = { "n", "x" } },
