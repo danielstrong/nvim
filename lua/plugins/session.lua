@@ -114,8 +114,13 @@ return {
                 purge_after_minutes = nil, -- Sessions older than purge_after_minutes will be deleted asynchronously on startup, e.g. set to 14400 to delete sessions that haven't been accessed for more than 10 days, defaults to off (no purging), requires >= nvim 0.10
 
                 -- Saving extra data
-                save_extra_data = nil, -- Function that returns extra data that should be saved with the session. Will be passed to restore_extra_data on restore
-                restore_extra_data = nil, -- Function called when there's extra data saved for a session
+                -- Persist pinned buffer slots (<localleader>bm#) with the session.
+                save_extra_data = function(_)
+                    return require("custom-utils.buffer_numbers").session_save_data()
+                end,
+                restore_extra_data = function(_, extra_data)
+                    require("custom-utils.buffer_numbers").session_restore_data(extra_data)
+                end,
 
                 -- Argument handling
                 args_allow_single_directory = true, -- Follow normal session save/load logic if launched with a single directory as the only argument

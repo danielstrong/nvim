@@ -287,4 +287,57 @@ function M.update_clue_descs()
     end
 end
 
+-- Persists pinned slots (see `move_current_buf_to`) across a session
+-- save/restore by keying on each pinned buffer's file path rather than its
+-- buffer number, which isn't stable across restarts. Wired up via
+-- auto-session's `save_extra_data`/`restore_extra_data` in
+-- lua/plugins/session.lua.
+function M.session_save_data()
+    local pinned = {}
+    for slot, buf in pairs(M.pinned_slots) do
+        if vim.api.nvim_buf_is_valid(buf) then
+            local name = vim.api.nvim_buf_get_name(buf)
+            if name ~= "" then
+                pinned[tostring(slot)] = name
+            end
+        end
+    end
+    if vim.tbl_isempty(pinned) then
+        return nil
+    end
+    return vim.json.encode({ pinned_by_slot = pinned })
+end
+
+function M.session_restore_data(extra_data)
+    local ok, decoded = pcall(vim.json.decode, extra_data)
+    if not ok or type(decoded) ~= "table" or type(decoded.pinned_by_slot) ~= "table" then
+        return
+    end
+
+    local by_name = {}
+    for _, buf in ipairs(M.listed_buffers_sorted()) do
+        by_name[vim.api.nvim_buf_get_name(buf)] = buf
+    end
+
+    for slot = 1, 9 do
+        local path = decoded.pinned_by_slot[tostring(slot)]
+        local buf = path and by_name[path]
+        if buf then
+            local order = M.order
+            local from_idx
+            for idx, b in ipairs(order) do
+                if b == buf then
+                    from_idx = idx
+                    break
+                end
+            end
+            if from_idx and from_idx ~= slot then
+                order[from_idx], order[slot] = order[slot], order[from_idx]
+            end
+            M.pinned_slots[slot] = buf
+        end
+    end
+    M.update_clue_descs()
+end
+
 return M
