@@ -39,15 +39,37 @@ function M.bufname(buf)
     return n_parents < #parts and ("…/" .. result) or result
 end
 
--- Stable per-session numbering: sorted by bufnr (creation order), full
--- listed-buffer list (current buffer included), so a slot only shifts when
--- a buffer is created/deleted, never when you switch buffers.
+local function is_listed(buf)
+    return vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buflisted
+end
+
+-- Stable per-session numbering: buffers keep the slot they were assigned
+-- last time, so a slot only shifts when a buffer is created/deleted, never
+-- when you switch buffers. New buffers are appended in bufnr (creation)
+-- order; `M.move_current_buf_to` lets you pin a buffer to a specific slot,
+-- overriding this default ordering.
+M.order = nil
+
 function M.listed_buffers_sorted()
-    local bufs = vim.tbl_filter(function(buf)
-        return vim.bo[buf].buflisted
-    end, vim.api.nvim_list_bufs())
-    table.sort(bufs)
-    return bufs
+    local listed = vim.tbl_filter(is_listed, vim.api.nvim_list_bufs())
+    table.sort(listed)
+
+    local seen = {}
+    local order = {}
+    for _, buf in ipairs(M.order or {}) do
+        if is_listed(buf) then
+            table.insert(order, buf)
+            seen[buf] = true
+        end
+    end
+    for _, buf in ipairs(listed) do
+        if not seen[buf] then
+            table.insert(order, buf)
+        end
+    end
+
+    M.order = order
+    return order
 end
 
 function M.switch_to_buf(i)
@@ -58,6 +80,34 @@ function M.switch_to_buf(i)
     end
     vim.api.nvim_set_current_buf(buf)
     vim.api.nvim_echo({ { "Switch to Buffer " .. i .. ": " .. M.bufname(buf), "None" } }, false, {})
+end
+
+-- Pins the current buffer to slot `i`, swapping it with whatever buffer
+-- currently occupies that slot (which takes the mover's old slot), like
+-- swapping window/tab positions.
+function M.move_current_buf_to(i)
+    local order = M.listed_buffers_sorted()
+    if i < 1 or i > #order then
+        vim.notify(("No buffer slot %d (only %d open)"):format(i, #order), vim.log.levels.WARN)
+        return
+    end
+
+    local cur = vim.api.nvim_get_current_buf()
+    local from_idx
+    for idx, buf in ipairs(order) do
+        if buf == cur then
+            from_idx = idx
+            break
+        end
+    end
+    if not from_idx or from_idx == i then
+        return
+    end
+
+    order[from_idx], order[i] = order[i], order[from_idx]
+    M.order = order
+    M.update_clue_descs()
+    vim.api.nvim_echo({ { "Buffer " .. i .. ": " .. M.bufname(cur), "None" } }, false, {})
 end
 
 -- Detects the <localleader>b clue window (identified by its "Switch to ..."

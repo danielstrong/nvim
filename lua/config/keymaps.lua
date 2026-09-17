@@ -184,6 +184,9 @@ for i = 1, 9 do
     map({ "n", "x" }, "<localleader>b" .. i, function()
         buffer_numbers.switch_to_buf(i)
     end, { desc = "Switch to buffer " .. i })
+    map({ "n", "x" }, "<localleader>bm" .. i, function()
+        buffer_numbers.move_current_buf_to(i)
+    end, { desc = "Move buffer to slot " .. i })
 end
 
 -- config.autocmds always loads before config.keymaps (LazyVim loads both on
