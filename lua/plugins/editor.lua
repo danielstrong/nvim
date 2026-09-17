@@ -1493,10 +1493,10 @@ return {
             location = { suffix = "l", options = {} },
             oldfile = { suffix = "o", options = {} },
             quickfix = { suffix = "", options = {} },
-            treesitter = { suffix = "r", options = { add_to_jumplist = true } },
+            treesitter = { suffix = "", options = { add_to_jumplist = true } },
             undo = { suffix = "", options = {} },
             window = { suffix = "v", options = {} },
-            yank = { suffix = "y", options = { add_to_jumplist = true } },
+            yank = { suffix = "r", options = { add_to_jumplist = true } },
         },
     },
     {
