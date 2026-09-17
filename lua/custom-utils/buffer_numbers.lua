@@ -93,14 +93,32 @@ function M.clue_grid_window_config(buf_id, lines)
         entry_width = math.max(entry_width, vim.fn.strdisplaywidth(entry.text))
     end
 
+    local has_statusline = vim.o.laststatus > 0
+    local has_tabline = vim.o.showtabline == 2 or (vim.o.showtabline == 1 and #vim.api.nvim_list_tabpages() > 1)
+    local avail_height = vim.o.lines - vim.o.cmdheight - (has_tabline and 1 or 0) - (has_statusline and 1 or 0) - 2
+
     -- Fixed column width (based on the widest entry) so every entry lines up
     -- in a grid instead of a free-flowing wrap.
-    local cols = math.max(1, math.min(#entries, math.floor((max_width + gap) / (entry_width + gap))))
-    local num_rows = math.ceil(#entries / cols)
+    local max_cols = math.max(1, math.min(#entries, math.floor((max_width + gap) / (entry_width + gap))))
+    local row_major = M.grid_fill_direction == "row"
+    local cols, num_rows
+
+    if not row_major then
+        -- Prefer stacking into up to 9 rows, so the buffer-number keymaps
+        -- (1..9) line up in a single column, as long as it still fits.
+        local preferred_rows = math.min(9, #entries, avail_height)
+        local preferred_cols = math.ceil(#entries / preferred_rows)
+        if preferred_cols <= max_cols then
+            num_rows, cols = preferred_rows, preferred_cols
+        end
+    end
+    if not num_rows then
+        cols = max_cols
+        num_rows = math.ceil(#entries / cols)
+    end
 
     -- Fill order depends on `M.grid_fill_direction`, tracking each cell's
     -- byte offset so it can be highlighted afterwards.
-    local row_major = M.grid_fill_direction == "row"
     local rows, row_marks = {}, {}
     for r = 1, num_rows do
         rows[r] = ""
@@ -143,9 +161,6 @@ function M.clue_grid_window_config(buf_id, lines)
         end
     end
 
-    local has_statusline = vim.o.laststatus > 0
-    local has_tabline = vim.o.showtabline == 2 or (vim.o.showtabline == 1 and #vim.api.nvim_list_tabpages() > 1)
-    local avail_height = vim.o.lines - vim.o.cmdheight - (has_tabline and 1 or 0) - (has_statusline and 1 or 0) - 2
     local height = math.max(1, math.min(#rows, avail_height))
     local is_scrollable = height < #rows
 

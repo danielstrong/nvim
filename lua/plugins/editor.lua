@@ -1599,7 +1599,7 @@ return {
                     end,
 
                     -- Delay before showing clue window
-                    delay = 200,
+                    delay = 150,
 
                     -- Keys to scroll inside the clue window
                     scroll_down = "<C-d>",
