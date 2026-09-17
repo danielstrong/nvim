@@ -186,6 +186,11 @@ for i = 1, 9 do
     end, { desc = "Switch to buffer " .. i })
 end
 
+-- config.autocmds always loads before config.keymaps (LazyVim loads both on
+-- VeryLazy, autocmds first), so the descs set there run too early to see
+-- these mappings. Set them again now that they actually exist.
+buffer_numbers.update_clue_descs()
+
 local quit_keys = {
     { "A", tabs_windows_buffers_close.quit_clear_agent_comments, "save quit agent file" },
     { "Q", "<cmd>q<cr>", "quit window" },

@@ -1570,6 +1570,12 @@ return {
                     -- Floating window config
                     config = function(buf_id)
                         local lines = vim.api.nvim_buf_get_lines(buf_id, 0, -1, false)
+
+                        local buffer_grid_config = require("custom-utils.buffer_numbers").clue_grid_window_config(buf_id, lines)
+                        if buffer_grid_config then
+                            return buffer_grid_config
+                        end
+
                         local content_width = 0
                         for _, line in ipairs(lines) do
                             content_width = math.max(content_width, vim.fn.strdisplaywidth(line))
