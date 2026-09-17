@@ -1510,9 +1510,10 @@ return {
             return {
                 triggers = {
                     { keys = "'", mode = { "n", "x" } },
-                    { keys = "<C-q>", mode = "n" },
                     { keys = "<C-r>", mode = { "i", "c" } },
-                    { keys = "<C-w>", mode = "n" },
+                    { keys = "<C-w>", desc = "+Windows", mode = { "n", "x" } },
+                    { keys = "<C-q>", desc = "+Buffers", mode = { "n", "x" } },
+                    { keys = "<C-Tab>", desc = "+Tabs", mode = { "n", "x" } },
                     { keys = "<C-x>", mode = "i" },
                     { keys = "<Leader>", mode = { "n", "x" } },
                     { keys = "<LocalLeader>", mode = { "n", "x" } },
@@ -1530,8 +1531,9 @@ return {
                 clues = {
                     { mode = "n", keys = "]b", postkeys = "]" },
                     { mode = "n", keys = "[b", postkeys = "[" },
-                    { keys = "<C-q>", desc = "+Tabs", mode = { "n", "x" } },
-                    { keys = "<C-q>m", desc = "+Move Tab", mode = { "n", "x" } },
+                    { keys = "<C-w>m", desc = "+Move Window", mode = { "n", "x" } },
+                    { keys = "<C-q>m", desc = "+Move Buffer", mode = { "n", "x" } },
+                    { keys = "<C-t>m", desc = "+Move Tab", mode = { "n", "x" } },
                     { keys = "<localleader><localleader>", desc = "+Ctrl", mode = { "n", "x" } },
                     { keys = "<localleader>=", desc = "+Fix Indention", mode = { "n", "x" } },
                     { keys = "<localleader>=z", desc = "+Formatters", mode = { "n", "x" } },
@@ -1540,7 +1542,6 @@ return {
                     { keys = "<localleader>Q", desc = "+Quick", mode = { "n", "x" } },
                     { keys = "<localleader>W", desc = "+Save", mode = { "n", "x" } },
                     { keys = "<localleader>a", desc = "+Actions", mode = { "n", "x" } },
-                    { keys = "<localleader>b", desc = "+Buffers", mode = "n" },
                     { keys = "<localleader>d", desc = "+Diff Tools", mode = { "n", "x" } },
                     { keys = "<localleader>f", desc = "+Fuzzy", mode = { "n", "x" } },
                     { keys = "<localleader>g", desc = "+Git", mode = { "n", "x" } },
@@ -1549,12 +1550,14 @@ return {
                     { keys = "<localleader>k", desc = "+Language Tools", mode = { "n", "x" } },
                     { keys = "<localleader>n", desc = "+Nvim", mode = { "n", "x" } },
                     { keys = "<localleader>o", desc = "+Diffview", mode = { "n", "x" } },
-                    { keys = "<localleader>q", desc = "+Tabs", mode = { "n", "x" } },
+                    { keys = "<localleader>b", desc = "+Buffers", mode = "n" },
                     { keys = "<localleader>bm", desc = "+Move Buffer", mode = { "n", "x" } },
-                    { keys = "<localleader>wm", desc = "+Move Window", mode = { "n", "x" } },
-                    { keys = "<localleader>qm", desc = "+Move Tab", mode = { "n", "x" } },
                     { keys = "<localleader>r", desc = "+Replace", mode = { "n", "x" } },
+                    { keys = "<localleader><tab>", desc = "+Tabs", mode = { "n", "x" } },
+                    { keys = "<localleader><tab>m", desc = "+Move Tab", mode = { "n", "x" } },
                     { keys = "<localleader>u", desc = "+UI", mode = { "n", "x" } },
+                    { keys = "<localleader>w", desc = "+Windows", mode = { "n", "x" } },
+                    { keys = "<localleader>wm", desc = "+Move Window", mode = { "n", "x" } },
                     { keys = "<localleader>z", desc = "+Session", mode = { "n", "x" } },
                     { keys = "Z", desc = "+File", mode = { "n", "x" } },
                     { keys = "gm", desc = "+Modify Code", mode = { "n", "x" } },
@@ -1573,10 +1576,10 @@ return {
                     config = function(buf_id)
                         local lines = vim.api.nvim_buf_get_lines(buf_id, 0, -1, false)
 
-                        local buffer_grid_config = require("custom-utils.buffer_numbers").clue_grid_window_config(buf_id, lines)
-                        if buffer_grid_config then
-                            return buffer_grid_config
-                        end
+                        -- local buffer_grid_config = require("custom-utils.buffer_numbers").clue_grid_window_config(buf_id, lines)
+                        -- if buffer_grid_config then
+                        --     return buffer_grid_config
+                        -- end
 
                         local content_width = 0
                         for _, line in ipairs(lines) do

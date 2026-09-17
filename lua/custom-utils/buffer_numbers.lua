@@ -111,20 +111,24 @@ function M.move_current_buf_to(i)
 end
 
 -- Detects the <localleader>b and <localleader>bm clue windows (identified by
--- their "Switch to ..."/"Move to ..." entries) and rewrites them to lay every
--- entry out left-to-right, wrapping to further rows as needed, in a window
--- spanning 95% of the screen width, centered, along the top. Returns a window
--- config table to use for it, or nil if `lines` isn't one of those windows.
+-- their 1..9 entries showing the buffer name at that slot, matching
+-- `M.listed_buffers_sorted()`) and rewrites them to lay every entry out
+-- left-to-right, wrapping to further rows as needed, in a window spanning
+-- 95% of the screen width, centered, along the top. Returns a window config
+-- table to use for it, or nil if `lines` isn't one of those windows.
 function M.clue_grid_window_config(buf_id, lines)
+    local order = M.listed_buffers_sorted()
     local entries = {}
     local is_buffer_clue = false
     for _, line in ipairs(lines) do
         local key, desc = line:match("^ (%S+) │ (.*)$")
         if key then
-            local short_desc = desc:match("^Switch to (.*)$") or desc:match("^Move to (.*)$")
-            if short_desc then
-                is_buffer_clue = true
-                desc = short_desc
+            local slot = tonumber(key)
+            if slot and slot >= 1 and slot <= 9 then
+                local expected = order[slot] and M.bufname(order[slot]) or ""
+                if desc == expected then
+                    is_buffer_clue = true
+                end
             end
             table.insert(entries, { key = key, desc = desc, text = key .. " │ " .. desc })
         end
@@ -235,11 +239,12 @@ function M.update_clue_descs()
     local bufs = M.listed_buffers_sorted()
     for i = 1, 9 do
         local buf = bufs[i]
-        local switch_desc = buf and ("Switch to " .. M.bufname(buf)) or ""
-        local move_desc = buf and ("Move to " .. M.bufname(buf)) or ""
+        local desc = buf and M.bufname(buf) or ""
         for _, mode in ipairs({ "n", "x" }) do
-            pcall(miniclue.set_mapping_desc, mode, "<localleader>b" .. i, switch_desc)
-            pcall(miniclue.set_mapping_desc, mode, "<localleader>bm" .. i, move_desc)
+            pcall(miniclue.set_mapping_desc, mode, "<localleader>b" .. i, desc)
+            pcall(miniclue.set_mapping_desc, mode, "<localleader>bm" .. i, desc)
+            pcall(miniclue.set_mapping_desc, mode, "<C-q>" .. i, desc)
+            pcall(miniclue.set_mapping_desc, mode, "<C-q>m" .. i, desc)
         end
     end
 end

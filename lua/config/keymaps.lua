@@ -93,8 +93,8 @@ for i = 1, 9 do
 end
 
 local function tab_map(keys, rhs, opts)
-    map({ "n", "x" }, "<localleader>q" .. keys, rhs, opts)
-    map({ "n", "x" }, "<C-q>" .. keys, rhs, opts)
+    map({ "n", "x" }, "<localleader><Tab>" .. keys, rhs, opts)
+    map({ "n", "x" }, "<C-Tab>" .. keys, rhs, opts)
 end
 
 tab_map("f", function()
@@ -166,25 +166,31 @@ function _G.TabLineSplits()
     return render_tabline(true)
 end
 
-map({ "n", "x" }, "<localleader>bx", tabs_windows_buffers_close.real_delete_buffer_without_closing_nvim, { desc = "close buffer" })
-map({ "n", "x" }, "<localleader>bo", tabs_windows_buffers_close.delete_unshown_buffers, { desc = "kill unshown buffers" })
-map({ "n", "x" }, "<localleader>bO", "<cmd>%bd |e# | bd#<cr>", { desc = "only buffer" })
-map({ "n", "x" }, "<localleader>bX", "<cmd>bn | bd #<cr>", { desc = "kill buffer" })
+local function buffer_map(keys, rhs, opts)
+    opts = vim.tbl_extend("force", opts or {}, { remap = false })
+    map({ "n", "x" }, "<localleader>b" .. keys, rhs, opts)
+    map({ "n", "x" }, "<C-q>" .. keys, rhs, opts)
+end
+
+buffer_map("x", tabs_windows_buffers_close.real_delete_buffer_without_closing_nvim, { desc = "close buffer" })
+buffer_map("o", tabs_windows_buffers_close.delete_unshown_buffers, { desc = "kill unshown buffers" })
+buffer_map("O", "<cmd>%bd |e# | bd#<cr>", { desc = "only buffer" })
+buffer_map("X", "<cmd>bn | bd #<cr>", { desc = "kill buffer" })
 map({ "n", "x" }, "<localleader>l", "<cmd>e<cr>", { desc = "reload buffer" })
-map({ "n", "x" }, "<localleader>bl", "<cmd>e<cr>", { desc = "reload buffer" })
-map({ "n", "x" }, "<localleader>bD", tabs_windows_buffers_close.delete_buffer, { desc = "buffer delete" })
-map({ "n", "x" }, "<localleader>bd", "<cmd>bd<cr>", { desc = "buffer delete" })
-map({ "n", "x" }, "<localleader>be", "<cmd>b#<cr>", { desc = "switch to last buffer" })
-map({ "n", "x" }, "<localleader>bL", tabs_windows_buffers_close.reload_all_buffers, { desc = "reload all buffers" })
+buffer_map("l", "<cmd>e<cr>", { desc = "reload buffer" })
+buffer_map("D", tabs_windows_buffers_close.delete_buffer, { desc = "buffer delete" })
+buffer_map("d", "<cmd>bd<cr>", { desc = "buffer delete" })
+buffer_map("e", "<cmd>b#<cr>", { desc = "switch to last buffer" })
+buffer_map("L", tabs_windows_buffers_close.reload_all_buffers, { desc = "reload all buffers" })
 map({ "n", "x" }, "<localleader>L", tabs_windows_buffers_close.reload_all_buffers, { desc = "reload all buffers" })
 
 local buffer_numbers = require("custom-utils.buffer_numbers")
 
 for i = 1, 9 do
-    map({ "n", "x" }, "<localleader>b" .. i, function()
+    buffer_map(tostring(i), function()
         buffer_numbers.switch_to_buf(i)
     end, { desc = "Switch to buffer " .. i })
-    map({ "n", "x" }, "<localleader>bm" .. i, function()
+    buffer_map("m" .. i, function()
         buffer_numbers.move_current_buf_to(i)
     end, { desc = "Move buffer to slot " .. i })
 end
