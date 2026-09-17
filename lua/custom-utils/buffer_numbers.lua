@@ -15,6 +15,12 @@ M.grid_fill_direction = "column"
 -- M.buffer_name_compact_levels = nil
 M.buffer_name_compact_levels = 2
 
+-- Slots explicitly assigned with `<localleader>bm`. Keeping both the slot
+-- and buffer here means a buffer displaced by a later swap is no longer
+-- shown as pinned.
+M.pinned_slots = {}
+M.pinned_icon = "󰐃"
+
 function M.bufname(buf)
     local name = vim.api.nvim_buf_get_name(buf)
     if name == "" then
@@ -37,6 +43,14 @@ function M.bufname(buf)
 
     local result = table.concat(kept, "/")
     return n_parents < #parts and ("…/" .. result) or result
+end
+
+function M.bufdesc(buf, slot)
+    local desc = M.bufname(buf)
+    if M.pinned_slots[slot] == buf then
+        desc = desc .. " " .. M.pinned_icon
+    end
+    return desc
 end
 
 local function is_listed(buf)
@@ -100,11 +114,17 @@ function M.move_current_buf_to(i)
             break
         end
     end
-    if not from_idx or from_idx == i then
+    if not from_idx then
         return
     end
 
-    order[from_idx], order[i] = order[i], order[from_idx]
+    -- Only the buffer explicitly moved to the destination is pinned. Clear
+    -- any pins attached to its old slot or to the displaced destination.
+    M.pinned_slots[from_idx] = nil
+    M.pinned_slots[i] = cur
+    if from_idx ~= i then
+        order[from_idx], order[i] = order[i], order[from_idx]
+    end
     M.order = order
     M.update_clue_descs()
     vim.api.nvim_echo({ { "Buffer " .. i .. ": " .. M.bufname(cur), "None" } }, false, {})
@@ -125,7 +145,7 @@ function M.clue_grid_window_config(buf_id, lines)
         if key then
             local slot = tonumber(key)
             if slot and slot >= 1 and slot <= 9 then
-                local expected = order[slot] and M.bufname(order[slot]) or ""
+                local expected = order[slot] and M.bufdesc(order[slot], slot) or ""
                 if desc == expected then
                     is_buffer_clue = true
                 end
@@ -239,12 +259,12 @@ function M.update_clue_descs()
     local bufs = M.listed_buffers_sorted()
     for i = 1, 9 do
         local buf = bufs[i]
-        local desc = buf and M.bufname(buf) or ""
+        local desc = buf and M.bufdesc(buf, i) or ""
         for _, mode in ipairs({ "n", "x" }) do
             pcall(miniclue.set_mapping_desc, mode, "<localleader>b" .. i, desc)
             pcall(miniclue.set_mapping_desc, mode, "<localleader>bm" .. i, desc)
-            pcall(miniclue.set_mapping_desc, mode, "<C-q>" .. i, desc)
-            pcall(miniclue.set_mapping_desc, mode, "<C-q>m" .. i, desc)
+            pcall(miniclue.set_mapping_desc, mode, "<C-a>" .. i, desc)
+            pcall(miniclue.set_mapping_desc, mode, "<C-a>m" .. i, desc)
         end
     end
 end
