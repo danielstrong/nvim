@@ -1511,9 +1511,10 @@ return {
                 triggers = {
                     { keys = "'", mode = { "n", "x" } },
                     { keys = "<C-r>", mode = { "i", "c" } },
+                    { keys = "<C-t>", desc = "+Tabs", mode = { "n", "x" } },
                     { keys = "<C-w>", desc = "+Windows", mode = { "n", "x" } },
+                    { keys = "<C-q>", desc = "+Buffers", mode = { "n", "x" } },
                     { keys = "<C-a>", desc = "+Buffers", mode = { "n", "x" } },
-                    { keys = "<C-q>", desc = "+Tabs", mode = { "n", "x" } },
                     { keys = "<C-x>", mode = "i" },
                     { keys = "<Leader>", mode = { "n", "x" } },
                     { keys = "<LocalLeader>", mode = { "n", "x" } },
@@ -1531,9 +1532,10 @@ return {
                 clues = {
                     { mode = "n", keys = "]b", postkeys = "]" },
                     { mode = "n", keys = "[b", postkeys = "[" },
+                    { keys = "<C-t>m", desc = "+Move Tab", mode = { "n", "x" } },
                     { keys = "<C-w>m", desc = "+Move Window", mode = { "n", "x" } },
+                    { keys = "<C-q>m", desc = "+Move Buffer", mode = { "n", "x" } },
                     { keys = "<C-a>m", desc = "+Move Buffer", mode = { "n", "x" } },
-                    { keys = "<C-q>m", desc = "+Move Tab", mode = { "n", "x" } },
                     { keys = "<localleader><localleader>", desc = "+Ctrl", mode = { "n", "x" } },
                     { keys = "<localleader>=", desc = "+Fix Indention", mode = { "n", "x" } },
                     { keys = "<localleader>=z", desc = "+Formatters", mode = { "n", "x" } },

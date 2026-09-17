@@ -94,7 +94,7 @@ end
 
 local function tab_map(keys, rhs, opts)
     map({ "n", "x" }, "<localleader><Tab>" .. keys, rhs, opts)
-    map({ "n", "x" }, "<C-q>" .. keys, rhs, opts)
+    map({ "n", "x" }, "<C-T>" .. keys, rhs, opts)
 end
 
 tab_map("f", function()
@@ -169,6 +169,7 @@ end
 local function buffer_map(keys, rhs, opts)
     opts = vim.tbl_extend("force", opts or {}, { remap = false })
     map({ "n", "x" }, "<localleader>b" .. keys, rhs, opts)
+    map({ "n", "x" }, "<C-q>" .. keys, rhs, opts)
     map({ "n", "x" }, "<C-a>" .. keys, rhs, opts)
 end
 

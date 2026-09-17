@@ -86,6 +86,22 @@ function M.listed_buffers_sorted()
     return order
 end
 
+-- Return the current buffer's jump-key slot. Only slots with a corresponding
+-- `<localleader>b#` mapping count as numbered buffers.
+function M.current_slot()
+    local current = vim.api.nvim_get_current_buf()
+    for slot, buf in ipairs(M.listed_buffers_sorted()) do
+        if buf == current then
+            return slot <= 9 and slot or nil
+        end
+    end
+end
+
+function M.ruler_slot()
+    local slot = M.current_slot()
+    return slot and ("%d "):format(slot) or ""
+end
+
 function M.switch_to_buf(i)
     local buf = M.listed_buffers_sorted()[i]
     if not buf then
@@ -263,6 +279,8 @@ function M.update_clue_descs()
         for _, mode in ipairs({ "n", "x" }) do
             pcall(miniclue.set_mapping_desc, mode, "<localleader>b" .. i, desc)
             pcall(miniclue.set_mapping_desc, mode, "<localleader>bm" .. i, desc)
+            pcall(miniclue.set_mapping_desc, mode, "<C-q>" .. i, desc)
+            pcall(miniclue.set_mapping_desc, mode, "<C-q>m" .. i, desc)
             pcall(miniclue.set_mapping_desc, mode, "<C-a>" .. i, desc)
             pcall(miniclue.set_mapping_desc, mode, "<C-a>m" .. i, desc)
         end
