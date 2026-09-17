@@ -178,6 +178,14 @@ map({ "n", "x" }, "<localleader>be", "<cmd>b#<cr>", { desc = "switch to last buf
 map({ "n", "x" }, "<localleader>bL", tabs_windows_buffers_close.reload_all_buffers, { desc = "reload all buffers" })
 map({ "n", "x" }, "<localleader>L", tabs_windows_buffers_close.reload_all_buffers, { desc = "reload all buffers" })
 
+local buffer_numbers = require("custom-utils.buffer_numbers")
+
+for i = 1, 9 do
+    map({ "n", "x" }, "<localleader>b" .. i, function()
+        buffer_numbers.switch_to_buf(i)
+    end, { desc = "Switch to buffer " .. i })
+end
+
 local quit_keys = {
     { "A", tabs_windows_buffers_close.quit_clear_agent_comments, "save quit agent file" },
     { "Q", "<cmd>q<cr>", "quit window" },

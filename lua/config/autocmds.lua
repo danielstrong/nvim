@@ -166,3 +166,15 @@ vim.api.nvim_create_autocmd("ModeChanged", {
 --         vim.wo.relativenumber = vim.wo.number and (mode == "V" or mode == "\22")
 --     end,
 -- })
+
+-- Keep the <localleader>b1..9 clue descriptions in sync with which buffer
+-- each slot currently points to (see lua/config/keymaps.lua).
+local buffer_numbers = require("custom-utils.buffer_numbers")
+vim.api.nvim_create_autocmd({ "BufAdd", "BufDelete", "BufFilePost" }, {
+    group = augroup("buffer_number_descs"),
+    callback = function()
+        vim.schedule(buffer_numbers.update_clue_descs)
+    end,
+})
+
+buffer_numbers.update_clue_descs()
