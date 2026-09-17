@@ -608,6 +608,16 @@ clue_toggle.toggle_map({ "<localleader>uf" }, {
     end,
 })
 
+clue_toggle.toggle_map({ "<localleader>ug" }, {
+    name = "Show Cmd",
+    get = function()
+        return vim.o.cmdheight == 1
+    end,
+    set = function(state)
+        vim.o.cmdheight = state and 1 or 0
+    end,
+})
+
 clue_toggle.toggle_map({ "<localleader>uF" }, {
     name = "Toggle Bigfile",
     get = function()
