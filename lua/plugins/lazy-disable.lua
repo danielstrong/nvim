@@ -85,40 +85,6 @@ return {
                     end,
                     mode = { "n", "x" },
                 },
-                {
-                    "<localleader>w",
-                    group = "Windows",
-                    proxy = "<c-w>",
-                    expand = function()
-                        return require("custom-utils.tabs_windows_buffers").wk_window_jump_expand()
-                    end,
-                    mode = { "n", "x" },
-                },
-                {
-                    "<localleader>wm",
-                    group = "Move Window",
-                    expand = function()
-                        return require("custom-utils.tabs_windows_buffers").wk_window_move_expand()
-                    end,
-                    mode = { "n", "x" },
-                },
-                {
-                    "<C-w>",
-                    group = "Windows",
-                    expand = function()
-                        return require("custom-utils.tabs_windows_buffers").wk_window_jump_expand()
-                    end,
-                    mode = { "n", "x" },
-                },
-                {
-                    "<C-w>m",
-                    group = "Move Window",
-                    expand = function()
-                        return require("custom-utils.tabs_windows_buffers").wk_window_move_expand()
-                    end,
-                    mode = { "n", "x" },
-                },
-                unpack(require("custom-utils.tabs_windows_buffers").wk_tab_specs()),
             },
         },
         keys = {
