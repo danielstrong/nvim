@@ -84,6 +84,14 @@ window_map("mH", "<C-W>H", { desc = "Move Window Far Left" })
 window_map("mJ", "<C-W>J", { desc = "Move Window Far Bottom" })
 window_map("mK", "<C-W>K", { desc = "Move Window Far Top" })
 
+for i = 1, 9 do
+    window_map(tostring(i), cmd_echo(i .. "wincmd w", "Focus Window " .. i), { desc = "Focus window " .. i })
+    window_map("m" .. i, function()
+        require("window-move").window_swap_to(i)
+        vim.api.nvim_echo({ { "Move Window to " .. i, "None" } }, false, {})
+    end, { desc = "Move window to " .. i })
+end
+
 local function tab_map(keys, rhs, opts)
     map({ "n", "x" }, "<localleader>q" .. keys, rhs, opts)
     map({ "n", "x" }, "<C-q>" .. keys, rhs, opts)
