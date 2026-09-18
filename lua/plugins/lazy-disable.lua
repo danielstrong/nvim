@@ -9,17 +9,7 @@ return {
         lazy = true,
         enabled = false,
         opts = {
-            delay = function(ctx)
-                -- vim.notify(vim.inspect(ctx))
-                if ctx.mode == "o" then
-                    return 1000
-                elseif ctx.keys == "z" or ctx.keys == "g" then
-                    return 800
-                elseif ctx.keys == (vim.g.maplocalleader or "\\") then
-                    return 500
-                end
-                return 500
-            end,
+            delay = 200,
             -- preset = "classic",
             -- preset = "modern",
             preset = "helix",

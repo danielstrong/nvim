@@ -26,17 +26,23 @@ local function cmd_echo(command, text)
 end
 
 -- pcall(vim.keymap.del, { "n" }, "\\")
-pcall(vim.keymap.del, { "n" }, "grn")
-pcall(vim.keymap.del, { "n" }, "grx")
-pcall(vim.keymap.del, { "n" }, "grr")
-pcall(vim.keymap.del, { "n" }, "gri")
-pcall(vim.keymap.del, { "n" }, "grt")
-pcall(vim.keymap.del, { "n", "x" }, "gra")
-pcall(vim.keymap.del, { "n" }, "gh")
-pcall(vim.keymap.del, { "n" }, "gH")
-pcall(vim.keymap.del, { "n" }, "g")
-pcall(vim.keymap.del, { "n" }, "g<C-h>")
+pcall(vim.keymap.del, { "n" }, "grn") --disable default lsp reference jumps
+pcall(vim.keymap.del, { "n" }, "grx") --disable default lsp reference jumps
+pcall(vim.keymap.del, { "n" }, "grr") --disable default lsp reference jumps
+pcall(vim.keymap.del, { "n" }, "gri") --disable default lsp reference jumps
+pcall(vim.keymap.del, { "n" }, "grt") --disable default lsp reference jumps
+pcall(vim.keymap.del, { "n", "x" }, "gra") --disable default lsp reference jumps
+pcall(vim.keymap.del, { "n" }, "gh") -- disable select mode
+pcall(vim.keymap.del, { "n" }, "gH") -- disable select mode
+pcall(vim.keymap.del, { "n" }, "g<C-h>") -- disable select mode
+pcall(vim.keymap.del, { "n" }, "gs") -- disable sleep
+pcall(vim.keymap.del, { "n" }, "<C-t>") -- disable sleep
 
+map("n", "gh", "<nop>")
+map("n", "gH", "<nop>")
+map("n", "g<C-h>", "<nop>")
+map("n", "gs", "<nop>")
+map("n", "<C-t>", "<nop>")
 map("n", "=zj", "<cmd>%!jq .<CR>", { noremap = true, desc = "Format JSON with jq" })
 map("n", "=zg", "mggg=G'g", { noremap = true, desc = "Format File with =" })
 
@@ -95,7 +101,7 @@ for i = 1, 9 do
 end
 
 local function tab_map(keys, rhs, opts)
-    map({ "n", "x" }, "<localleader><Tab>" .. keys, rhs, opts)
+    map({ "n", "x" }, "<localleader>t" .. keys, rhs, opts)
     map({ "n", "x" }, "<C-T>" .. keys, rhs, opts)
 end
 
@@ -109,6 +115,7 @@ tab_map("n", cmd_echo("tabnew", "New Tab"), { desc = "Tab new" })
 tab_map("w", cmd_echo("tab split", "Split Tab"), { desc = "Open current window into new tab" })
 tab_map("s", cmd_echo("tab split", "Split Tab"), { desc = "Open current window into new tab" })
 tab_map("W", "<C-W>T", { desc = "Break out window into new tab" })
+tab_map("<C-t>", "<cmd>pop<cr>", { desc = "Pop Tagstack" })
 tab_map("x", "<cmd>tabclose<cr>", { desc = "Tab close" })
 tab_map("O", "<cmd>tabonly<cr>", { desc = "Kill other tabs" })
 tab_map("e", "<cmd>tabnext #<cr>", { desc = "Navigate tab to last accessed" })
@@ -179,13 +186,15 @@ buffer_map("x", tabs_windows_buffers_close.real_delete_buffer_without_closing_nv
 buffer_map("o", tabs_windows_buffers_close.delete_unshown_buffers, { desc = "kill unshown buffers" })
 buffer_map("O", "<cmd>%bd |e# | bd#<cr>", { desc = "only buffer" })
 buffer_map("X", "<cmd>bn | bd #<cr>", { desc = "kill buffer" })
-map({ "n", "x" }, "<localleader>l", "<cmd>e<cr>", { desc = "reload buffer" })
-buffer_map("l", "<cmd>e<cr>", { desc = "reload buffer" })
+buffer_map("r", "<cmd>e<cr>", { desc = "reload buffer" })
 buffer_map("D", tabs_windows_buffers_close.delete_buffer, { desc = "buffer delete" })
 buffer_map("d", "<cmd>bd<cr>", { desc = "buffer delete" })
 buffer_map("e", "<cmd>b#<cr>", { desc = "switch to last buffer" })
-buffer_map("L", tabs_windows_buffers_close.reload_all_buffers, { desc = "reload all buffers" })
-map({ "n", "x" }, "<localleader>L", tabs_windows_buffers_close.reload_all_buffers, { desc = "reload all buffers" })
+buffer_map("R", tabs_windows_buffers_close.reload_all_buffers, { desc = "reload all buffers" })
+buffer_map("k", "<cmd>bprev<cr>", { desc = "Navigate buffer prev" })
+buffer_map("j", "<cmd>bnext<cr>", { desc = "Navigate buffer next" })
+buffer_map("h", "<cmd>tabprev<cr>", { desc = "Navigate tab to left" })
+buffer_map("l", "<cmd>tabnext<cr>", { desc = "Navigate tab to right" })
 
 local buffer_numbers = require("custom-utils.buffer_numbers")
 
@@ -497,6 +506,10 @@ end, { desc = "Lazygit" })
 map("n", "<localleader>gg", function()
     Snacks.terminal("gitui")
 end, { desc = "GitUI" })
+
+vim.keymap.set("n", "<localleader>ne", function()
+    require("custom-utils.clue_triggers").ensure()
+end)
 
 clue_toggle.toggle_map({ "<localleader>uk" }, {
     name = "Diagnostics",

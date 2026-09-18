@@ -1063,7 +1063,7 @@ return {
             },
         },
         config = function(_, opts)
-            local on_attach_only = false
+            local on_attach_only = true
 
             local function setup_maps(buffer)
                 local gs = require("gitsigns")
@@ -1534,13 +1534,14 @@ return {
         "nvim-mini/mini.clue",
         version = false,
         enabled = true,
-        config = function(_, opts)
-            local miniclue = require("mini.clue")
-            miniclue.setup(opts)
-            vim.keymap.set("n", "<localleader>ne", function()
-                require("custom-utils.clue_triggers").ensure()
-            end)
-        end,
+        -- config = function(_, opts)
+        --     local miniclue = require("mini.clue")
+        --     miniclue.setup(opts)
+        --     -- require("custom-utils.clue_triggers").setup_lsp_ensure()
+        --     vim.keymap.set("n", "<localleader>ne", function()
+        --         require("custom-utils.clue_triggers").ensure()
+        --     end)
+        -- end,
         opts = function()
             local miniclue = require("mini.clue")
 
@@ -1556,25 +1557,31 @@ return {
                     { keys = "<Leader>", mode = { "n", "x" } },
                     { keys = "<LocalLeader>", mode = { "n", "x" } },
                     { keys = "Z", mode = { "n", "x" } },
-                    { keys = "[", mode = "n" },
-                    { keys = "]", mode = "n" },
+                    { keys = "[", mode = { "n", "x" } },
+                    { keys = "]", mode = { "n", "x" } },
                     { keys = "`", mode = { "n", "x" } },
-                    { keys = "c", mode = { "n", "x" } },
                     { keys = "g", mode = { "n", "x" } },
-                    { keys = "h", mode = { "n", "x" } },
                     { keys = "z", mode = { "n", "x" } },
                     { keys = "=", mode = { "n", "x" } },
                     { keys = '"', mode = { "n", "x" } },
+                    { keys = "cr", desc = "Change Replace", mode = { "n" } },
                 },
 
                 clues = {
+                    miniclue.gen_clues.square_brackets(),
+                    miniclue.gen_clues.builtin_completion(),
+                    miniclue.gen_clues.g(),
+                    miniclue.gen_clues.marks(),
+                    miniclue.gen_clues.registers(),
+                    miniclue.gen_clues.windows(),
+                    miniclue.gen_clues.z(),
                     { keys = "<C-a>m", desc = "+Move Buffer", mode = { "n", "x" } },
                     { keys = "<C-q>m", desc = "+Move Buffer", mode = { "n", "x" } },
                     { keys = "<C-t>m", desc = "+Move Tab", mode = { "n", "x" } },
                     { keys = "<C-w>m", desc = "+Move Window", mode = { "n", "x" } },
                     { keys = "<localleader><localleader>", desc = "+Ctrl", mode = { "n", "x" } },
-                    { keys = "<localleader><tab>", desc = "+Tabs", mode = { "n", "x" } },
-                    { keys = "<localleader><tab>m", desc = "+Move Tab", mode = { "n", "x" } },
+                    { keys = "<localleader>t", desc = "+Tabs", mode = { "n", "x" } },
+                    { keys = "<localleader>tm", desc = "+Move Tab", mode = { "n", "x" } },
                     { keys = "<localleader>K", desc = "+LSP Buffer", mode = { "n", "x" } },
                     { keys = "<localleader>N", desc = "+Nvim Raw", mode = { "n", "x" } },
                     { keys = "<localleader>Q", desc = "+Quick", mode = { "n", "x" } },
@@ -1589,6 +1596,7 @@ return {
                     { keys = "<localleader>j", desc = "+Copy Store", mode = { "n", "x" } },
                     { keys = "<localleader>k", desc = "+Language Tools", mode = { "n", "x" } },
                     { keys = "<localleader>n", desc = "+Nvim", mode = { "n", "x" } },
+                    { keys = "<localleader>r", desc = "+Replace Text", mode = { "n", "x" } },
                     { keys = "<localleader>o", desc = "+Diffview", mode = { "n", "x" } },
                     { keys = "<localleader>r", desc = "+Replace", mode = { "n", "x" } },
                     { keys = "<localleader>u", desc = "+UI", mode = { "n", "x" } },
@@ -1596,16 +1604,13 @@ return {
                     { keys = "<localleader>wm", desc = "+Move Window", mode = { "n", "x" } },
                     { keys = "<localleader>z", desc = "+Session", mode = { "n", "x" } },
                     { keys = "=z", desc = "+Formatters", mode = { "n", "x" } },
+                    { keys = "<localleader>Z", desc = "+File", mode = { "n", "x" } },
                     { keys = "Z", desc = "+File", mode = { "n", "x" } },
-                    { keys = "cr", desc = "+Replace word", mode = { "n", "x" } },
+                    { keys = "cr", desc = "+Replace word", mode = { "n" } },
+                    { keys = "gc", desc = "+Comment", mode = { "n" } },
+                    { keys = "gh", desc = "+Hunk", mode = { "n", "x" } },
+                    { keys = "gs", desc = "+Surround", mode = { "n", "x" } },
                     { keys = "gm", desc = "+Modify Code", mode = { "n", "x" } },
-                    miniclue.gen_clues.square_brackets(),
-                    miniclue.gen_clues.builtin_completion(),
-                    miniclue.gen_clues.g(),
-                    miniclue.gen_clues.marks(),
-                    miniclue.gen_clues.registers(),
-                    miniclue.gen_clues.windows(),
-                    miniclue.gen_clues.z(),
                 },
                 --
                 -- Clue window settings

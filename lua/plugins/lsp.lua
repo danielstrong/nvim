@@ -179,13 +179,12 @@ return {
                         { "<localleader>aC", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "x" }, has = "codeAction" },
                         { "<localleader>ad", vim.lsp.codelens.run, desc = "Run Codelens", mode = { "n", "x" }, has = "codeLens" },
                         {
-                            "<localleader>rf",
+                            "crG",
                             function()
                                 vim.cmd("wa")
                                 Snacks.rename.rename_file({
                                     on_rename = function(_, _, ok)
                                         if ok then
-                                            require("nvim-tree.api").tree.reload()
                                             vim.cmd("wa")
                                         end
                                     end,
@@ -196,7 +195,7 @@ return {
                             has = { "workspace/didRenameFiles", "workspace/willRenameFiles" },
                         },
                         {
-                            "<localleader>rc",
+                            "crg",
                             function()
                                 vim.cmd("wa")
                                 vim.lsp.buf.rename()
