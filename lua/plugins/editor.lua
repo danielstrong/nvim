@@ -291,6 +291,23 @@ return {
                         auto_close = true,
                         hidden = true,
                         ignored = true,
+                        actions = {
+                            diff = {
+                                action = function(picker)
+                                    picker:close()
+                                    local sel = picker:selected()
+                                    if #sel > 0 and sel then
+                                        Snacks.notify.info(sel[1].file)
+                                        vim.cmd("tabnew " .. sel[1].file)
+                                        vim.cmd("vert diffs " .. sel[2].file)
+                                        Snacks.notify.info("Diffing " .. sel[1].file .. " against " .. sel[2].file)
+                                        return
+                                    end
+
+                                    Snacks.notify.info("Select two entries for the diff")
+                                end,
+                            },
+                        },
                         win = {
                             list = {
                                 keys = {
@@ -300,6 +317,7 @@ return {
                                     ["<C-o>"] = { { "pick_win", "jump" }, mode = { "n", "i" } },
                                     ["s"] = "edit_split",
                                     ["S"] = "edit_vsplit",
+                                    ["D"] = "diff",
                                     ["<c-y>"] = { "yank_relative_path", mode = { "n", "i" } },
                                     ["<c-z>"] = { "yank_absolute_path", mode = { "n", "i" } },
                                     ["<C-e>"] = { "focus_preview", mode = { "n", "i" } },
@@ -1043,8 +1061,12 @@ return {
                 topdelete = { text = "" },
                 changedelete = { text = "▎" },
             },
-            on_attach = function(buffer)
-                local gs = package.loaded.gitsigns
+        },
+        config = function(_, opts)
+            local on_attach_only = false
+
+            local function setup_maps(buffer)
+                local gs = require("gitsigns")
 
                 local function map(mode, l, r, desc)
                     vim.keymap.set(mode, l, r, { buffer = buffer, desc = desc, silent = true })
@@ -1193,8 +1215,16 @@ return {
                 map({ "x", "o" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
 
                 require("custom-utils.clue_triggers").ensure(buffer)
-            end,
-        },
+            end
+
+            if on_attach_only then
+                opts.on_attach = setup_maps
+            else
+                setup_maps()
+            end
+
+            require("gitsigns").setup(opts)
+        end,
     },
     {
         "andymass/vim-matchup",
@@ -1504,6 +1534,13 @@ return {
         "nvim-mini/mini.clue",
         version = false,
         enabled = true,
+        config = function(_, opts)
+            local miniclue = require("mini.clue")
+            miniclue.setup(opts)
+            vim.keymap.set("n", "<localleader>ne", function()
+                require("custom-utils.clue_triggers").ensure()
+            end)
+        end,
         opts = function()
             local miniclue = require("mini.clue")
 
@@ -1526,24 +1563,25 @@ return {
                     { keys = "g", mode = { "n", "x" } },
                     { keys = "h", mode = { "n", "x" } },
                     { keys = "z", mode = { "n", "x" } },
+                    { keys = "=", mode = { "n", "x" } },
                     { keys = '"', mode = { "n", "x" } },
                 },
 
                 clues = {
-                    { mode = "n", keys = "]b", postkeys = "]" },
-                    { mode = "n", keys = "[b", postkeys = "[" },
+                    { keys = "<C-a>m", desc = "+Move Buffer", mode = { "n", "x" } },
+                    { keys = "<C-q>m", desc = "+Move Buffer", mode = { "n", "x" } },
                     { keys = "<C-t>m", desc = "+Move Tab", mode = { "n", "x" } },
                     { keys = "<C-w>m", desc = "+Move Window", mode = { "n", "x" } },
-                    { keys = "<C-q>m", desc = "+Move Buffer", mode = { "n", "x" } },
-                    { keys = "<C-a>m", desc = "+Move Buffer", mode = { "n", "x" } },
                     { keys = "<localleader><localleader>", desc = "+Ctrl", mode = { "n", "x" } },
-                    { keys = "<localleader>=", desc = "+Fix Indention", mode = { "n", "x" } },
-                    { keys = "<localleader>=z", desc = "+Formatters", mode = { "n", "x" } },
+                    { keys = "<localleader><tab>", desc = "+Tabs", mode = { "n", "x" } },
+                    { keys = "<localleader><tab>m", desc = "+Move Tab", mode = { "n", "x" } },
                     { keys = "<localleader>K", desc = "+LSP Buffer", mode = { "n", "x" } },
                     { keys = "<localleader>N", desc = "+Nvim Raw", mode = { "n", "x" } },
                     { keys = "<localleader>Q", desc = "+Quick", mode = { "n", "x" } },
                     { keys = "<localleader>W", desc = "+Save", mode = { "n", "x" } },
                     { keys = "<localleader>a", desc = "+Actions", mode = { "n", "x" } },
+                    { keys = "<localleader>b", desc = "+Buffers", mode = "n" },
+                    { keys = "<localleader>bm", desc = "+Move Buffer", mode = { "n", "x" } },
                     { keys = "<localleader>d", desc = "+Diff Tools", mode = { "n", "x" } },
                     { keys = "<localleader>f", desc = "+Fuzzy", mode = { "n", "x" } },
                     { keys = "<localleader>g", desc = "+Git", mode = { "n", "x" } },
@@ -1552,16 +1590,14 @@ return {
                     { keys = "<localleader>k", desc = "+Language Tools", mode = { "n", "x" } },
                     { keys = "<localleader>n", desc = "+Nvim", mode = { "n", "x" } },
                     { keys = "<localleader>o", desc = "+Diffview", mode = { "n", "x" } },
-                    { keys = "<localleader>b", desc = "+Buffers", mode = "n" },
-                    { keys = "<localleader>bm", desc = "+Move Buffer", mode = { "n", "x" } },
                     { keys = "<localleader>r", desc = "+Replace", mode = { "n", "x" } },
-                    { keys = "<localleader><tab>", desc = "+Tabs", mode = { "n", "x" } },
-                    { keys = "<localleader><tab>m", desc = "+Move Tab", mode = { "n", "x" } },
                     { keys = "<localleader>u", desc = "+UI", mode = { "n", "x" } },
                     { keys = "<localleader>w", desc = "+Windows", mode = { "n", "x" } },
                     { keys = "<localleader>wm", desc = "+Move Window", mode = { "n", "x" } },
                     { keys = "<localleader>z", desc = "+Session", mode = { "n", "x" } },
+                    { keys = "=z", desc = "+Formatters", mode = { "n", "x" } },
                     { keys = "Z", desc = "+File", mode = { "n", "x" } },
+                    { keys = "cr", desc = "+Replace word", mode = { "n", "x" } },
                     { keys = "gm", desc = "+Modify Code", mode = { "n", "x" } },
                     miniclue.gen_clues.square_brackets(),
                     miniclue.gen_clues.builtin_completion(),

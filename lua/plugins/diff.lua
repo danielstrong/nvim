@@ -322,9 +322,17 @@ return {
                 win_config = { position = "left", width = 60 },
             },
             hooks = {
+                -- Diffview's panel and `diffview://` buffers are unlisted, so
+                -- mini.clue's own BufWinEnter autocmd skips them and never
+                -- attaches the <localleader>/<leader> trigger keymaps that
+                -- pop up the clue window. Attach them ourselves.
                 view_opened = function(view)
                     local bufnr = view.panel and view.panel.bufid
-                    if not bufnr or vim.bo[bufnr].filetype ~= "DiffviewFiles" then
+                    if not bufnr or not vim.api.nvim_buf_is_valid(bufnr) then
+                        return
+                    end
+                    require("custom-utils.clue_triggers").ensure(bufnr)
+                    if vim.bo[bufnr].filetype ~= "DiffviewFiles" then
                         return
                     end
                     vim.api.nvim_create_autocmd("CursorMoved", {
@@ -332,6 +340,9 @@ return {
                         buffer = bufnr,
                         callback = follow_panel_cursor,
                     })
+                end,
+                diff_buf_read = function(bufnr)
+                    require("custom-utils.clue_triggers").ensure(bufnr)
                 end,
                 -- Restore cursor position in the working-tree ("b") buffer
                 -- when it matches the file we opened the diff from.

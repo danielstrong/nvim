@@ -25,16 +25,18 @@ local function cmd_echo(command, text)
     end
 end
 
+-- pcall(vim.keymap.del, { "n" }, "\\")
 pcall(vim.keymap.del, { "n" }, "grn")
 pcall(vim.keymap.del, { "n" }, "grx")
 pcall(vim.keymap.del, { "n" }, "grr")
 pcall(vim.keymap.del, { "n" }, "gri")
 pcall(vim.keymap.del, { "n" }, "grt")
 pcall(vim.keymap.del, { "n", "x" }, "gra")
+pcall(vim.keymap.del, { "n" }, "gh")
+pcall(vim.keymap.del, { "n" }, "gH")
+pcall(vim.keymap.del, { "n" }, "g")
+pcall(vim.keymap.del, { "n" }, "g<C-h>")
 
-map("n", "gh", "<Nop>")
-map("n", "gH", "<Nop>")
-map("n", "g<C-h>", "<Nop>")
 map("n", "=zj", "<cmd>%!jq .<CR>", { noremap = true, desc = "Format JSON with jq" })
 map("n", "=zg", "mggg=G'g", { noremap = true, desc = "Format File with =" })
 
