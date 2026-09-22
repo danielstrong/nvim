@@ -95,7 +95,7 @@ local function run_eslint(quiet, on_done)
                     elseif ok then
                         vim.notify("ESLint: no issues", vim.log.levels.INFO)
                     else
-                        vim.notify("ESLint failed (<localleader>nl to view log)", vim.log.levels.ERROR)
+                        vim.notify("ESLint failed (<localleader>kl to view log)", vim.log.levels.ERROR)
                     end
                 else
                     on_done(ok, #items)
@@ -170,7 +170,7 @@ local function run_tsc(on_done)
                     elseif code == 0 then
                         vim.notify("TSC: no issues", vim.log.levels.INFO)
                     else
-                        vim.notify("TSC failed (<localleader>nl to view log)", vim.log.levels.ERROR)
+                        vim.notify("TSC failed (<localleader>kl to view log)", vim.log.levels.ERROR)
                     end
                 else
                     on_done(code, #items)
@@ -186,16 +186,16 @@ function M.run_checks(quiet)
     run_tsc(function(tsc_code, tsc_count)
         if tsc_code ~= 0 then
             if tsc_count >= 0 then
-                vim.notify("TSC found " .. tsc_count .. " issue(s); ESLint not run (<localleader>nl for log)", vim.log.levels.ERROR)
+                vim.notify("TSC found " .. tsc_count .. " issue(s); ESLint not run (<localleader>kl for log)", vim.log.levels.ERROR)
             else
-                vim.notify("TSC failed; ESLint not run (<localleader>nl for log)", vim.log.levels.ERROR)
+                vim.notify("TSC failed; ESLint not run (<localleader>kl for log)", vim.log.levels.ERROR)
             end
             return
         end
         -- vim.notify("TSC clean — running ESLint" .. (quiet and "" or " (include warnings)") .. " …", vim.log.levels.INFO)
         run_eslint(quiet, function(ok, esl_count)
             if not ok then
-                vim.notify("TSC no issues; ESLint failed to run (<localleader>nl for log)", vim.log.levels.ERROR)
+                vim.notify("TSC no issues; ESLint failed to run (<localleader>kl for log)", vim.log.levels.ERROR)
             elseif esl_count > 0 then
                 vim.notify("TSC no issues; ESLint found " .. esl_count .. " issue(s) in quickfix", vim.log.levels.WARN)
             else
@@ -210,7 +210,7 @@ function M.view_project_check_logs()
         vim.notify("No check logs yet", vim.log.levels.INFO)
         return
     end
-    Snacks.win({
+    local win = Snacks.win({
         title = " Project Check Output ",
         title_pos = "center",
         text = project_check_logs,
@@ -223,5 +223,6 @@ function M.view_project_check_logs()
         bo = { modifiable = false, readonly = true },
         keys = { q = "close" },
     })
+    vim.api.nvim_win_set_cursor(win.win, { #project_check_logs, 0 })
 end
 return M

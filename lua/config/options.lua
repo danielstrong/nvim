@@ -50,7 +50,7 @@ require("vim._core.ui2").enable({
 local opt = vim.opt
 -- opt.title = true
 -- opt.titlestring = "hii"
-opt.cmdheight = 0
+opt.cmdheight = 1 -- keep the cmdline row reserved/stable instead of floating over the buffer (see laststatus=0 below for the space savings)
 opt.autowrite = false
 opt.autoread = true
 -- only set clipboard if not in ssh, to make sure the OSC 52
@@ -107,7 +107,7 @@ opt.ignorecase = true -- Ignore case
 opt.inccommand = "split" --nosplit -- preview incremental substitute
 opt.jumpoptions = "view"
 -- opt.showtabline = 0
-opt.laststatus = 2 -- 1 - only if split window, 2 always on
+opt.laststatus = 0 -- no per-window statusline; custom statusbar is merged into the cmdline row via 'ruler'/'rulerformat' below
 opt.linebreak = true -- Wrap lines at convenient points
 opt.list = false
 -- opt.listchars = { tab = "» ", trail = "·", nbsp = "␣", extends = "…" }
@@ -145,7 +145,7 @@ opt.pumblend = 10 -- Popup blend
 opt.pumheight = 10 -- Maximum number of entries in a popup
 opt.swapfile = false
 opt.relativenumber = false -- Relative line numbers
-opt.ruler = true -- Disable the default ruler
+opt.ruler = true -- shown on the cmdline row (laststatus=0), formatted via 'rulerformat' below
 opt.scrolloff = 4 -- Lines of context
 -- opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "help", "globals", "skiprtp", "folds" }
 -- opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "winpos", "help", "globals", "skiprtp", "folds", "localoptions" }
@@ -312,24 +312,56 @@ local nvim_default_statusline = table.concat({
     [[ %Y]],
     [[ %{% &ruler ? ( &rulerformat == '' ? '%-14.(%l,%c%V%) %P' : &rulerformat ) : '' %} ]],
 })
-local orig_statusline = opt.statusline
-opt.statusline = nvim_default_statusline
 
-vim.keymap.set("n", "<localleader>QD", function()
-    opt.statusline = nvim_default_statusline
-end)
-vim.keymap.set("n", "<localleader>QF", function()
-    opt.statusline = orig_statusline
-end)
-vim.keymap.set("n", "<localleader>QG", function()
-    opt.statusline = "[%n] %<%f%r%h%m%w %= %y %-14.(%l,%c%V%)%P "
-end)
-vim.keymap.set("n", "<localleader>QH", function()
-    opt.statusline = "[%n] %<%f %a%w%h%m%r%=%S %k%y %-14.(%l,%c%V%) %P "
-end)
+local nvim_short_statusline = table.concat({
+    -- [[%<%f %a%h%w%m%r ]],
+    [[%<%f %{% v:lua.require('custom-utils.buffer_numbers').ruler_slot() %}%a%h%w%m%r ]],
+    [[%{% v:lua.require('vim._core.util').term_exitcode() %}]],
+    [[%=]],
+    [[%{% &ruler ? ( &rulerformat == '' ? '%-14.(%l,%c%V%) %P' : &rulerformat ) : '' %}]],
+})
+opt.statusline = nvim_short_statusline
+
+-- vim.keymap.set("n", "<localleader>QD", function()
+--     opt.statusline = nvim_default_statusline
+-- end)
+-- vim.keymap.set("n", "<localleader>QF", function()
+--     opt.statusline = orig_statusline
+-- end)
+-- vim.keymap.set("n", "<localleader>QG", function()
+--     opt.statusline = "[%n] %<%f%r%h%m%w %= %y %-14.(%l,%c%V%)%P "
+-- end)
+-- vim.keymap.set("n", "<localleader>QH", function()
+--     opt.statusline = "[%n] %<%f %a%w%h%m%r%=%S %k%y %-14.(%l,%c%V%) %P "
+-- end)
 -- opt.statusline = "[%n] %<%f %a%w%h%m%r%=%S %k%y %-14.(%l,%c%V%) %P "
 -- opt.statusline =
 -- "%<%f %h%w%m%r %{% v:lua.require('vim._core.util').term_exitcode() %}%=%{% luaeval('(package.loaded[''vim.ui''] and vim.api.nvim_get_current_win() == tonumber(vim.g.actual_curwin or -1) and vim.ui.progress_status()) or '''' ')%}%{% &showcmdloc == 'statusline' ? '%-10.S ' : '' %}%{% exists('b:keymap_name') ? '<'..b:keymap_name..'> ' : '' %}%{% &busy > 0 ? '◐ ' : '' %}%{% luaeval('(package.loaded[''vim.diagnostic''] and next(vim.diagnostic.count()) a nd vim.diagnostic.status() .. '' '') or '''' ') %}%{% &ruler ? ( &rulerformat == '' ? '%-14.(%l,%c%V%) %P' : &rulerf ormat ) : '' %}"
+
+-- merge statusbar into the cmdline row (laststatus=0 above removes the separate
+-- statusline row) via 'ruler'/'rulerformat': normal cmdline input/output and
+-- messages keep the left side of the row, this renders on the right side.
+-- NOTE: a non-empty 'statusline' takes precedence over 'ruler'/'rulerformat',
+-- so this forces 'statusline' back to empty even though QD above sets it.
+-- opt.statusline = ""
+
+-- 'rulerformat' defaults to a 17-char-wide field; wrap in %90(...%) so the
+-- diagnostics/lsp/filetype content isn't silently truncated (shown as a
+-- leading "<") before the position/percentage at the end.
+local statusbar_ruler = table.concat({
+    [[%90(]],
+    [[%{% v:lua.require('vim._core.util').term_exitcode() %}]],
+    [[%{% luaeval('(package.loaded[''vim.ui''] and vim.api.nvim_get_current_win() == tonumber(vim.g.actual_curwin or -1) and vim.ui.progress_status()) or '''' ')%}]],
+    [[%{% exists('b:keymap_name') ? '<'..b:keymap_name..'> ' : '' %}]],
+    [[%{% &busy > 0 ? '◐ ' : '' %}]],
+    [[%{% luaeval('(package.loaded[''custom-utils.lsp_progress''] and require(''custom-utils.lsp_progress'').status()) or ''''')%}]],
+    -- [[ %<%t]],
+    [[%{% luaeval('(package.loaded[''vim.diagnostic''] and vim.diagnostic.status() ~= '''' and ('' '' .. vim.diagnostic.status())) or ''''') %}]],
+    [[ %Y ]],
+    [[ %-14.(%l,%c%V%) %P ]],
+    [[%)]],
+})
+opt.rulerformat = statusbar_ruler
 
 -- This isolates marks, history, recent files, etc per project instead of sharing them globally
 -- vim.opt.exrc = true

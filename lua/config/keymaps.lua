@@ -37,7 +37,23 @@ pcall(vim.keymap.del, { "n" }, "gH") -- disable select mode
 pcall(vim.keymap.del, { "n" }, "g<C-h>") -- disable select mode
 pcall(vim.keymap.del, { "n" }, "gs") -- disable sleep
 pcall(vim.keymap.del, { "n" }, "<C-t>") -- disable sleep
+-- vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+-- vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
+vim.keymap.set("n", "j", function()
+    if vim.v.count == 0 then
+        vim.cmd("normal! gj")
+    else
+        vim.cmd("normal! " .. vim.v.count .. "j")
+    end
+end, { silent = true })
 
+vim.keymap.set("n", "k", function()
+    if vim.v.count == 0 then
+        vim.cmd("normal! gk")
+    else
+        vim.cmd("normal! " .. vim.v.count .. "k")
+    end
+end, { silent = true })
 map("n", "gh", "<nop>")
 map("n", "gH", "<nop>")
 map("n", "g<C-h>", "<nop>")

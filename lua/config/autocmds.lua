@@ -150,11 +150,9 @@ require("custom-utils.lsp_progress").setup()
 -- Relative line numbers in visual/visual-line/visual-block modes only
 vim.api.nvim_create_autocmd("ModeChanged", {
     group = augroup("visual_relativenumber"),
-    pattern = { "*:[[vV\22]]", "[[vV\22]]:*" },
+    pattern = { "*:[vV\22]*", "[vV\22]*:*" },
     callback = function()
-        -- vim.wo.relativenumber = vim.fn.mode():match("^[vV\22]") ~= nil
-        -- vim.wo.relativenumber = string.find(vim.fn.mode(), '^[V\22]') ~= nil
-        vim.wo.relativenumber = string.find(vim.fn.mode(), "^[vV\22]") ~= nil
+        vim.wo.relativenumber = vim.v.event.new_mode:find("^[vV\22]") ~= nil
     end,
 })
 
