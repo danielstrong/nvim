@@ -23,20 +23,20 @@ require("vim._core.ui2").enable({
     enable = true,
     msg = {
         -- targets = "pager",
-        targets = {
-            default = "cmd",
-            progress = "msg",
-            list_cmd = "pager",
-            --echomsg = "pager",
-            --bufwrite = "pager",
-            --verbose = "pager",
-        },
+        -- targets = {
+        --     default = "cmd",
+        --     progress = "msg",
+        --     -- list_cmd = "pager",
+        --     --echomsg = "pager",
+        --     --bufwrite = "pager",
+        --     --verbose = "pager",
+        -- },
         cmd = {
-            height = 5, -- Maximum height while expanded
+            height = 1, -- Maximum height while expanded
         },
-        dialog = { -- Options related to dialog window.
-            height = 1, -- Maximum height.
-        },
+        -- dialog = { -- Options related to dialog window.
+        --     height = 1, -- Maximum height.
+        -- },
         msg = { -- Options related to msg window.
             height = 1, -- Maximum height.
             timeout = 4000, -- Time a message is visible in the message window.
