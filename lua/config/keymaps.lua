@@ -211,6 +211,7 @@ buffer_map("k", "<cmd>bprev<cr>", { desc = "Navigate buffer prev" })
 buffer_map("j", "<cmd>bnext<cr>", { desc = "Navigate buffer next" })
 buffer_map("h", "<cmd>tabprev<cr>", { desc = "Navigate tab to left" })
 buffer_map("l", "<cmd>tabnext<cr>", { desc = "Navigate tab to right" })
+buffer_map("s", cmd_echo("tab split", "Split Tab"), { desc = "split to tab" })
 
 local buffer_numbers = require("custom-utils.buffer_numbers")
 
