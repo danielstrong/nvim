@@ -180,16 +180,16 @@ buffer_numbers.update_clue_descs()
 -- Echo the current file's path to the cmdline whenever you land in a new
 -- buffer (jumplist jumps, gd, buffer switches, :e, etc.), since laststatus=0
 -- means the filename isn't otherwise visible anywhere.
-vim.api.nvim_create_autocmd("BufEnter", {
-    group = augroup("echo_filename"),
-    callback = function(args)
-        if vim.bo[args.buf].buftype ~= "" then
-            return
-        end
-        local name = vim.api.nvim_buf_get_name(args.buf)
-        if name == "" then
-            return
-        end
-        vim.api.nvim_echo({ { vim.fn.fnamemodify(name, ":~:.") } }, false, {})
-    end,
-})
+-- vim.api.nvim_create_autocmd("BufEnter", {
+--     group = augroup("echo_filename"),
+--     callback = function(args)
+--         if vim.bo[args.buf].buftype ~= "" then
+--             return
+--         end
+--         local name = vim.api.nvim_buf_get_name(args.buf)
+--         if name == "" then
+--             return
+--         end
+--         vim.api.nvim_echo({ { vim.fn.fnamemodify(name, ":~:.") } }, false, {})
+--     end,
+-- })

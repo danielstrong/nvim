@@ -158,6 +158,10 @@ return {
 
                 layouts = {
                     explorer_sidebar = {
+                        preset = "sidebar",
+                        preview = "main",
+                    },
+                    explorer_float_left = {
                         preset = "left",
                     },
                     explorer_float_center_vertical = {
@@ -287,7 +291,8 @@ return {
                 },
                 sources = {
                     explorer = {
-                        layout = "explorer_float_center",
+                        -- layout = "explorer_sidebar",
+                        -- layout = "explorer_float_left",
                         auto_close = true,
                         hidden = true,
                         ignored = true,
@@ -307,11 +312,25 @@ return {
                                     Snacks.notify.info("Select two entries for the diff")
                                 end,
                             },
+                            confirm_keep_open = {
+                                action = function(picker, item)
+                                    item = item or picker:current()
+                                    if item then
+                                        local path = Snacks.picker.util.path(item)
+                                        if path then
+                                            vim.cmd("edit " .. vim.fn.fnameescape(path))
+                                        end
+                                    end
+                                end,
+                            },
                         },
                         win = {
                             list = {
                                 keys = {
+                                    -- ["o"] = { { "confirm", "close" } },
                                     ["o"] = "confirm",
+                                    ["<CR>"] = "confirm",
+                                    -- ["<C-l>"] = "confirm_keep_open",
                                     ["<C-s>"] = "explorer_open", -- open with system application
                                     ["<2-LeftMouse>"] = false,
                                     ["<C-o>"] = { { "pick_win", "jump" }, mode = { "n", "i" } },
@@ -321,7 +340,7 @@ return {
                                     ["<c-y>"] = { "yank_relative_path", mode = { "n", "i" } },
                                     ["<c-z>"] = { "yank_absolute_path", mode = { "n", "i" } },
                                     ["<C-e>"] = { "focus_preview", mode = { "n", "i" } },
-                                    ["<C-l>"] = { "toggle_focus", mode = { "n", "i" } },
+                                    ["<C-w>"] = { "toggle_focus", mode = { "n", "i" } },
                                     ["<C-t>"] = "picker_grep",
                                     ["<localleader>y"] = "yank_relative_path",
                                     ["<localleader>Y"] = "yank_absolute_path",
@@ -564,7 +583,7 @@ return {
                             ["<localleader>Y"] = "yank_absolute_path",
                             ["<C-t>"] = { "picker_grep", mode = { "n", "i" } },
                             ["<C-e>"] = { "focus_preview", mode = { "n", "i" } },
-                            ["<C-l>"] = { "toggle_focus", mode = { "n", "i" } },
+                            ["<C-w>"] = { "toggle_focus", mode = { "n", "i" } },
                             ["<C-x>"] = {
                                 function(picker)
                                     vim.cmd("stopinsert")
@@ -579,7 +598,7 @@ return {
                             ["o"] = "confirm",
                             ["<2-LeftMouse>"] = false,
                             ["P"] = { "toggle_preview", mode = { "n", "i" } },
-                            ["<C-l>"] = { "toggle_focus", mode = { "n", "i" } },
+                            ["<C-w>"] = { "toggle_focus", mode = { "n", "i" } },
                             ["<C-e>"] = { "focus_preview", mode = { "n", "i" } },
                         },
                     },
@@ -636,7 +655,7 @@ return {
 
         keys = {
             {
-                "<localleader>wD",
+                "<localleader>fZ",
                 function()
                     -- Snacks.explorer.reveal({ cwd = LazyVim.root() })
                     Snacks.explorer({ cwd = LazyVim.root(), layout = "explorer_sidebar" })
@@ -644,12 +663,26 @@ return {
                 desc = "Explorer Snacks (root dir)",
             },
             {
-                "<localleader>wd",
+                "<localleader>fz",
                 function()
                     Snacks.explorer({ layout = "explorer_sidebar" })
                     -- Snacks.explorer()
                 end,
                 desc = "Explorer Snacks (cwd)",
+            },
+            {
+                "<localleader>fa",
+                function()
+                    Snacks.explorer({ layout = "explorer_float_center" })
+                end,
+                desc = "Explorer Snacks Float (cwd)",
+            },
+            {
+                "<localleader>fA",
+                function()
+                    Snacks.explorer({ cwd = LazyVim.root(), layout = "explorer_float_center" })
+                end,
+                desc = "Explorer Snacks Float (root dir)",
             },
             {
                 "<localleader>e",
@@ -658,25 +691,22 @@ return {
                     if explorer then
                         explorer:close()
                     else
-                        Snacks.explorer.reveal({ layout = "explorer_float_center" })
+                        Snacks.explorer({
+                            -- cwd = current_file_dir,
+                            -- layout = "explorer_float_center",
+                            layout = "explorer_sidebar",
+                            -- follow_file = true,
+                        })
+                        -- Snacks.explorer({ layout = "explorer_float_left" })
                     end
+
+                    -- Snacks.explorer({ layout = "explorer_sidebar" })
+                    -- Snacks.explorer()
                 end,
-                desc = "Explorer Snacks Float (cwd)",
+                desc = "Explorer Snacks Reveal",
             },
             {
                 "<localleader>E",
-                function()
-                    local explorer = Snacks.picker.get({ source = "explorer" })[1]
-                    if explorer then
-                        explorer:close()
-                    else
-                        Snacks.explorer.reveal({ cwd = LazyVim.root(), layout = "explorer_float_center" })
-                    end
-                end,
-                desc = "Explorer Snacks Float (root dir)",
-            },
-            {
-                "<localleader>wf",
                 function()
                     local explorer = Snacks.picker.get({ source = "explorer" })[1]
                     if explorer then
@@ -689,12 +719,13 @@ return {
                         if vim.fn.isdirectory(current_file_dir) == 1 then
                             Snacks.explorer({
                                 cwd = current_file_dir,
-                                layout = "explorer_float_center",
-                                follow_file = true,
+                                -- layout = "explorer_float_center",
+                                -- layout = "explorer_sidebar",
+                                -- follow_file = true,
                             })
                         else
                             -- Fallback default if you are on an empty/unnamed buffer
-                            Snacks.explorer({ layout = "explorer_float_center", follow_file = true })
+                            Snacks.explorer({ follow_file = true })
                         end
                         -- Snacks.explorer({ layout = "explorer_float_center", follow_file = true })
                     end
