@@ -170,4 +170,28 @@ return {
             }
         end,
     },
+    {
+        "custom/gitconflicts",
+        event = "LazyFile",
+        dev = true,
+        dependencies = {
+            {
+                -- dep because my config uses repeatable-move
+                "kiyoon/repeatable-move.nvim",
+                dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
+            },
+        },
+        keys = function()
+            local gc = require("gitconflicts")
+            local repeat_move = require("repeatable_move")
+            local repeatable_next_conflict, repeatable_prev_conflict = repeat_move.make_repeatable_move_pair(gc.next, gc.prev)
+
+            return {
+                { "]n", repeatable_next_conflict, mode = { "n", "x", "o" }, desc = "Next Conflict Marker (repo-wide)" },
+                { "[n", repeatable_prev_conflict, mode = { "n", "x", "o" }, desc = "Prev Conflict Marker (repo-wide)" },
+                { "]N", gc.last, mode = { "n", "x", "o" }, desc = "Last Conflict Marker (repo-wide)" },
+                { "[N", gc.first, mode = { "n", "x", "o" }, desc = "First Conflict Marker (repo-wide)" },
+            }
+        end,
+    },
 }

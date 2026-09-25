@@ -158,6 +158,49 @@ local function open_file_diff(...)
     vim.cmd("DiffviewOpen " .. table.concat({ ... }, " "))
 end
 
+local function act(name, arg)
+    return function()
+        local action = require("diffview.actions")[name]
+        if arg then
+            action = action(arg)
+        end
+        return action()
+    end
+end
+
+-- Edit `lhs` to rebind; `default` is diffview's built-in key, which gets disabled
+-- when it differs from `lhs`. `panel = true` also binds it in the file panel.
+local conflict_keymaps = {
+    -- { default = "[x", lhs = "[x", action = act("prev_conflict"), desc = "Jump to the previous conflict marker", panel = true },
+    -- { default = "]x", lhs = "]x", action = act("next_conflict"), desc = "Jump to the next conflict marker", panel = true },
+    { default = "<leader>co", lhs = "gho", action = act("conflict_choose", "ours"), desc = "Choose the OURS version of a conflict" },
+    { default = "<leader>ct", lhs = "ght", action = act("conflict_choose", "theirs"), desc = "Choose the THEIRS version of a conflict" },
+    { default = "<leader>cb", lhs = "ghb", action = act("conflict_choose", "base"), desc = "Choose the BASE version of a conflict" },
+    { default = "<leader>ca", lhs = "gha", action = act("conflict_choose", "all"), desc = "Choose all the versions of a conflict" },
+    { default = "dx", lhs = "ghx", action = act("conflict_choose", "none"), desc = "Delete the conflict region" },
+    { default = "<leader>cO", lhs = "ghO", action = act("conflict_choose_all", "ours"), desc = "Choose the OURS version of a conflict for the whole file", panel = true },
+    { default = "<leader>cT", lhs = "ghT", action = act("conflict_choose_all", "theirs"), desc = "Choose the THEIRS version of a conflict for the whole file", panel = true },
+    { default = "<leader>cB", lhs = "ghB", action = act("conflict_choose_all", "base"), desc = "Choose the BASE version of a conflict for the whole file", panel = true },
+    { default = "<leader>cA", lhs = "ghA", action = act("conflict_choose_all", "all"), desc = "Choose all the versions of a conflict for the whole file", panel = true },
+    { default = "dX", lhs = "ghX", action = act("conflict_choose_all", "none"), desc = "Delete the conflict region for the whole file", panel = true },
+    { default = "<leader>cso", lhs = "ghmo", action = act("conflict_choose_side", "ours"), desc = "Replace the MERGED buffer with the entire OURS side" },
+    { default = "<leader>cst", lhs = "ghmt", action = act("conflict_choose_side", "theirs"), desc = "Replace the MERGED buffer with the entire THEIRS side" },
+    { default = "<leader>csb", lhs = "ghmb", action = act("conflict_choose_side", "base"), desc = "Replace the MERGED buffer with the entire BASE side" },
+}
+
+local function build_conflict_keymaps(panel_only)
+    local maps = {}
+    for _, m in ipairs(conflict_keymaps) do
+        if not panel_only or m.panel then
+            if m.default ~= m.lhs then
+                table.insert(maps, { "n", m.default, false })
+            end
+            table.insert(maps, { "n", m.lhs, m.action, { desc = m.desc } })
+        end
+    end
+    return maps
+end
+
 return {
 
     {
@@ -304,13 +347,17 @@ return {
         },
         opts = {
             enhanced_diff_hl = true,
+            diffopt = { algorithm = "histogram" },
             use_icons = true,
+            clean_up_buffers = true,
             view = {
                 default = { layout = "diff1_inline" },
                 file_history = { layout = "diff1_inline" },
-                merge_tool = { layout = "diff3_horizontal" },
+                merge_tool = { layout = "diff3_mixed" },
                 cycle_layouts = {
-                    default = { "diff1_inline", "diff2_horizontal" },
+                    default = { "diff1_inline", "diff2_horizontal", "diff1_plain" },
+                    file_history = { "diff1_inline", "diff2_horizontal", "diff1_plain" },
+                    merge_tool = { "diff3_horizontal", "diff3_mixed", "diff4_mixed", "diff1_plain" },
                 },
             },
             file_panel = {
@@ -371,7 +418,10 @@ return {
                     },
                     { "n", "<localleader>e", toggle_panel_focus, { desc = "Toggle file panel focus" } },
                 },
-                file_panel = {
+                diff1 = build_conflict_keymaps(),
+                diff3 = build_conflict_keymaps(),
+                diff4 = build_conflict_keymaps(),
+                file_panel = vim.list_extend({
                     { "n", "<localleader>e", toggle_panel_focus, { desc = "Toggle file panel focus" } },
                     { "n", "f", scroll_diff(0.25), { desc = "Scroll the diff view down" } },
                     { "n", "b", scroll_diff(-0.25), { desc = "Scroll the diff view up" } },
@@ -386,7 +436,7 @@ return {
                         end,
                         { desc = "Flatten empty subdirectories in tree listing style" },
                     },
-                },
+                }, build_conflict_keymaps(true)),
                 file_history_panel = {
                     { "n", "<localleader>e", toggle_panel_focus, { desc = "Toggle file panel focus" } },
                     { "n", "f", scroll_diff(0.25), { desc = "Scroll the diff view down" } },

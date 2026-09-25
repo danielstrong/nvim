@@ -157,9 +157,28 @@ return {
                 -- layout = { preset = "vertical", layout = { width = 0.95, height = 0.95 } },
 
                 layouts = {
+                    -- https://github.com/folke/snacks.nvim/blob/main/docs/picker.md#sidebar
                     explorer_sidebar = {
                         preset = "sidebar",
-                        preview = "main",
+                        -- preview = "main",
+                        layout = {
+                            backdrop = false,
+                            width = 40,
+                            min_width = 40,
+                            height = 0,
+                            position = "left",
+                            border = "none",
+                            box = "vertical",
+                            {
+                                win = "input",
+                                height = 1,
+                                border = true,
+                                title = "{title} {live} {flags}",
+                                title_pos = "center",
+                            },
+                            { win = "list", border = "none" },
+                            { win = "preview", title = "{preview}", height = 0.4, border = "top" },
+                        },
                     },
                     explorer_float_left = {
                         preset = "left",
@@ -172,17 +191,18 @@ return {
                             height = 0.99,
                             min_height = 30,
                             box = "vertical",
-                            border = true,
+                            border = false,
                             title = "{title} {live} {flags}",
                             title_pos = "center",
-                            { win = "input", height = 1, border = "bottom" },
+                            { win = "input", height = 1, border = true },
                             { win = "list", border = "none" },
-                            { win = "preview", title = "{preview}", height = 0.4, border = "top" },
+                            { win = "preview", title = "{preview}", height = 0.4, border = false },
                         },
                     },
                     explorer_float_center_horizontal = {
                         layout = {
                             box = "horizontal",
+                            backdrop = true,
                             width = 0.99,
                             min_width = 120,
                             height = 0.99,
@@ -190,7 +210,7 @@ return {
                                 box = "vertical",
                                 border = "top", -- border = true
                                 title = "{title} {live} {flags}",
-                                { win = "input", height = 1, border = "none" }, -- border = "bottom"
+                                { win = "input", height = 1, border = "bottom" }, -- border = "bottom"
                                 { win = "list", border = "none" },
                             },
                             { win = "preview", title = "{preview}", border = false, width = 0.525 }, -- border = true
@@ -665,27 +685,41 @@ return {
             {
                 "<localleader>fz",
                 function()
-                    Snacks.explorer({ layout = "explorer_sidebar" })
+                    Snacks.explorer({ layout = "explorer_float_center" })
                     -- Snacks.explorer()
                 end,
                 desc = "Explorer Snacks (cwd)",
             },
             {
-                "<localleader>fa",
+                "<localleader>e",
                 function()
-                    Snacks.explorer({ layout = "explorer_float_center" })
+                    Snacks.explorer({ layout = "large_preview" })
                 end,
                 desc = "Explorer Snacks Float (cwd)",
             },
             {
-                "<localleader>fA",
+                "<localleader>E",
                 function()
-                    Snacks.explorer({ cwd = LazyVim.root(), layout = "explorer_float_center" })
+                    -- Get the full path of the parent directory of the current active file
+                    local current_file_dir = vim.fn.expand("%:p:h")
+
+                    -- If it's a valid directory, use it as the explorer root and follow the file
+                    if vim.fn.isdirectory(current_file_dir) == 1 then
+                        Snacks.explorer({
+                            cwd = current_file_dir,
+                            layout = "large_preview",
+                            -- layout = "explorer_sidebar",
+                            -- follow_file = true,
+                        })
+                    else
+                        -- Fallback default if you are on an empty/unnamed buffer
+                        Snacks.explorer({ follow_file = true, layout = "large_preview" })
+                    end
                 end,
                 desc = "Explorer Snacks Float (root dir)",
             },
             {
-                "<localleader>e",
+                "<localleader>fa",
                 function()
                     local explorer = Snacks.picker.get({ source = "explorer" })[1]
                     if explorer then
@@ -706,7 +740,7 @@ return {
                 desc = "Explorer Snacks Reveal",
             },
             {
-                "<localleader>E",
+                "<localleader>fA",
                 function()
                     local explorer = Snacks.picker.get({ source = "explorer" })[1]
                     if explorer then
