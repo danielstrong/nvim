@@ -332,6 +332,25 @@ return {
                                     Snacks.notify.info("Select two entries for the diff")
                                 end,
                             },
+                            diff_in_diffview = {
+                                action = function(picker)
+                                    picker:close()
+                                    local sel = picker:selected()
+                                    if #sel >= 2 then
+                                        local a, b = sel[1].file, sel[2].file
+                                        local diffview = require("diffview")
+                                        if vim.fn.isdirectory(a) == 1 and vim.fn.isdirectory(b) == 1 then
+                                            diffview.dir_diff({ a, b })
+                                        else
+                                            diffview.diff_files({ a, b })
+                                        end
+                                        Snacks.notify.info("Diffing " .. a .. " against " .. b)
+                                        return
+                                    end
+
+                                    Snacks.notify.info("Select two entries for the diff")
+                                end,
+                            },
                             confirm_keep_open = {
                                 action = function(picker, item)
                                     item = item or picker:current()
@@ -356,7 +375,8 @@ return {
                                     ["<C-o>"] = { { "pick_win", "jump" }, mode = { "n", "i" } },
                                     ["s"] = "edit_split",
                                     ["S"] = "edit_vsplit",
-                                    ["D"] = "diff",
+                                    [","] = "diff",
+                                    ["."] = "diff_in_diffview",
                                     ["<c-y>"] = { "yank_relative_path", mode = { "n", "i" } },
                                     ["<c-z>"] = { "yank_absolute_path", mode = { "n", "i" } },
                                     ["<C-e>"] = { "focus_preview", mode = { "n", "i" } },

@@ -227,12 +227,12 @@ return {
             },
             { "<localleader>oO", "<cmd>DiffviewOpen<cr>", desc = "Diffview open" },
             {
-                "<localleader>oe",
+                "<localleader>oE",
                 toggle_panel_focus,
                 mode = "n",
-                desc = "Toggle file panel focus",
+                desc = "Focus file panel",
             },
-            { "<localleader>oE", "<cmd>DiffviewToggleFiles<cr>", mode = "n", desc = "Toggle file panel" },
+            { "<localleader>oe", "<cmd>DiffviewToggleFiles<cr>", mode = "n", desc = "Toggle file panel" },
             { "<localleader>ox", "<cmd>DiffviewClose<cr>", desc = "Diffview close" },
 
             -- Toggle diff for the current file only
@@ -416,13 +416,15 @@ return {
                         end,
                         { desc = "Toggle inline / side-by-side diff" },
                     },
-                    { "n", "<localleader>e", toggle_panel_focus, { desc = "Toggle file panel focus" } },
+                    { "n", "<localleader>e", "<cmd>DiffviewToggleFiles<cr>", { desc = "Toggle file panel" } },
+                    { "n", "<localleader>E", toggle_panel_focus, { desc = "Focus file panel" } },
                 },
                 diff1 = build_conflict_keymaps(),
                 diff3 = build_conflict_keymaps(),
                 diff4 = build_conflict_keymaps(),
                 file_panel = vim.list_extend({
-                    { "n", "<localleader>e", toggle_panel_focus, { desc = "Toggle file panel focus" } },
+                    { "n", "<localleader>e", "<cmd>DiffviewToggleFiles<cr>", { desc = "Toggle file panel" } },
+                    { "n", "<localleader>E", toggle_panel_focus, { desc = "Focus file panel" } },
                     { "n", "f", scroll_diff(0.25), { desc = "Scroll the diff view down" } },
                     { "n", "b", scroll_diff(-0.25), { desc = "Scroll the diff view up" } },
                     { "n", "e", scroll_diff_lines(1), { desc = "Scroll the diff view down one line" } },
@@ -438,22 +440,14 @@ return {
                     },
                 }, build_conflict_keymaps(true)),
                 file_history_panel = {
-                    { "n", "<localleader>e", toggle_panel_focus, { desc = "Toggle file panel focus" } },
+                    { "n", "<localleader>e", "<cmd>DiffviewToggleFiles<cr>", { desc = "Toggle file panel" } },
+                    { "n", "<localleader>E", toggle_panel_focus, { desc = "Focus file panel" } },
                     { "n", "f", scroll_diff(0.25), { desc = "Scroll the diff view down" } },
                     { "n", "b", scroll_diff(-0.25), { desc = "Scroll the diff view up" } },
                     { "n", "e", scroll_diff_lines(1), { desc = "Scroll the diff view down one line" } },
                     { "n", "r", scroll_diff_lines(-1), { desc = "Scroll the diff view up one line" } },
                 },
             }, -- See :h diffview-config-keymaps
-            -- keymaps = {
-            --     view = {
-            --         -- Use localleader instead to avoid conflicts
-            --         { "n", "<localleader>e", require("diffview.actions").focus_files },
-            --         { "n", "<localleader>b", require("diffview.actions").toggle_files },
-            --         -- Or disable specific mappings
-            --         { "n", "<leader>e", false },
-            --     },
-            -- },
         },
     },
     {
