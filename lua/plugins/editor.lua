@@ -820,7 +820,7 @@ return {
             { "<localleader>fo", function() Snacks.picker.lsp_workspace_symbols() end, desc = "fuzzy workspace symbols", },
             { "<localleader>fq", function() Snacks.picker.qflist({ focus = "list" }) end, desc = "fuzzy quickfix", },
             { "<localleader>fr", function() Snacks.picker.recent() end, desc = "fuzzy recent files", },
-            { "<localleader>fs", function() Snacks.picker.grep({ args = { "--fixed-strings" }, }) end, desc = "fuzzy text search", },
+            { "<localleader>fs", function() Snacks.picker.grep({ args = { "--fixed-strings" }, filter = { transform = function(picker, filter) filter.search = picker.input.filter.search end }, }) end, desc = "fuzzy text search", },
             { "<localleader>fw", function() Snacks.picker.grep_word() end, desc = "fuzzy word search", },
             { "<localleader>f'", function() Snacks.picker.marks({ focus = "list" }) end, desc = "fuzzy marks", },
             {

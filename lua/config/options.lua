@@ -14,8 +14,8 @@ vim.g.lazyvim_mini_snippets_in_completion = false
 vim.g.deprecation_warnings = true
 vim.g.lazyvim_prettier_needs_config = true
 vim.g.lazyvim_eslint_auto_format = false
-vim.g.lazyvim_ruby_lsp = "ruby_lsp"
-vim.g.lazyvim_ruby_formatter = "rubocop"
+-- vim.g.lazyvim_ruby_lsp = "ruby_lsp"
+-- vim.g.lazyvim_ruby_formatter = "rubocop"
 -- vim.opt_local.spell = true
 --
 -- enable coreui2  see :help ui2
