@@ -8,3 +8,5 @@ foo.*
 data
 .claude/**
 CLAUDE.local.md
+CLAUDE.md
+AGENTS.md
