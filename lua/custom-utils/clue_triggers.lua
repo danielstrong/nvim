@@ -30,4 +30,48 @@ function M.ensure(bufnr)
     end)
 end
 
+-- Snacks.keymap applies LSP keymaps (gd, gr, ...) on a 100ms debounce, so wait longer than that
+local LSP_KEYMAP_DELAY_MS = 200
+local lsp_timers = {}
+
+local function ensure_after_lsp_keymaps(bufnr)
+    local timer = lsp_timers[bufnr]
+    if timer == nil then
+        timer = assert(vim.uv.new_timer())
+        lsp_timers[bufnr] = timer
+    end
+    timer:stop()
+    timer:start(LSP_KEYMAP_DELAY_MS, 0, function()
+        timer:close()
+        lsp_timers[bufnr] = nil
+        vim.schedule(function()
+            if vim.api.nvim_buf_is_valid(bufnr) then
+                M.ensure(bufnr)
+            end
+        end)
+    end)
+end
+
+function M.setup_lsp_ensure()
+    vim.api.nvim_create_autocmd("LspAttach", {
+        group = vim.api.nvim_create_augroup("clue_triggers_lsp", { clear = true }),
+        callback = function(ev)
+            ensure_after_lsp_keymaps(ev.buf)
+        end,
+    })
+
+    -- Snacks re-applies LSP keymaps when a server dynamically registers capabilities
+    local register_capability = vim.lsp.handlers["client/registerCapability"]
+    vim.lsp.handlers["client/registerCapability"] = function(err, res, ctx)
+        local ret = register_capability(err, res, ctx)
+        local client = vim.lsp.get_client_by_id(ctx.client_id)
+        if client then
+            for bufnr in pairs(client.attached_buffers) do
+                ensure_after_lsp_keymaps(bufnr)
+            end
+        end
+        return ret
+    end
+end
+
 return M

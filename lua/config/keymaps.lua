@@ -25,18 +25,13 @@ local function cmd_echo(command, text)
     end
 end
 
--- pcall(vim.keymap.del, { "n" }, "\\")
-pcall(vim.keymap.del, { "n" }, "grn") --disable default lsp reference jumps
-pcall(vim.keymap.del, { "n" }, "grx") --disable default lsp reference jumps
-pcall(vim.keymap.del, { "n" }, "grr") --disable default lsp reference jumps
-pcall(vim.keymap.del, { "n" }, "gri") --disable default lsp reference jumps
-pcall(vim.keymap.del, { "n" }, "grt") --disable default lsp reference jumps
-pcall(vim.keymap.del, { "n", "x" }, "gra") --disable default lsp reference jumps
-pcall(vim.keymap.del, { "n" }, "gh") -- disable select mode
-pcall(vim.keymap.del, { "n" }, "gH") -- disable select mode
-pcall(vim.keymap.del, { "n" }, "g<C-h>") -- disable select mode
-pcall(vim.keymap.del, { "n" }, "gs") -- disable sleep
-pcall(vim.keymap.del, { "n" }, "<C-t>") -- disable sleep
+-- remove bindings created by lazyvim
+pcall(vim.keymap.del, { "n" }, "grn") -- disable default lsp reference jumps
+pcall(vim.keymap.del, { "n" }, "grx") -- disable default lsp reference jumps
+pcall(vim.keymap.del, { "n" }, "grr") -- disable default lsp reference jumps
+pcall(vim.keymap.del, { "n" }, "gri") -- disable default lsp reference jumps
+pcall(vim.keymap.del, { "n" }, "grt") -- disable default lsp reference jumps
+pcall(vim.keymap.del, { "n", "x" }, "gra") -- disable default lsp reference jumps
 -- vim.keymap.set("n", "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 -- vim.keymap.set("n", "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set("n", "j", function()
@@ -54,11 +49,12 @@ vim.keymap.set("n", "k", function()
         vim.cmd("normal! " .. vim.v.count .. "k")
     end
 end, { silent = true })
-map("n", "gh", "<nop>")
-map("n", "gH", "<nop>")
-map("n", "g<C-h>", "<nop>")
-map("n", "gs", "<nop>")
-map("n", "<C-t>", "<nop>")
+-- remove built in neovim bindings
+-- map("n", "gh", "<nop>") -- disable select mode -- not disabling this because it conflicts with clue ensure
+map("n", "gH", "<nop>") -- disable select mode
+map("n", "g<C-h>", "<nop>") -- disable select mode
+map("n", "gs", "<nop>") -- disable sleep
+map("n", "<C-t>", "<nop>") -- disable sleep
 map("n", "=zj", "<cmd>%!jq .<CR>", { noremap = true, desc = "Format JSON with jq" })
 map("n", "=zg", "mggg=G'g", { noremap = true, desc = "Format File with =" })
 

@@ -1188,8 +1188,8 @@ return {
                 map("n", "ghr", gs.reset_hunk, "Reset Hunk")
                 map("x", "ghr", function() gs.reset_hunk({ vim.fn.line("."), vim.fn.line("v") }) end, "Reset Hunk (Visual)")
 
-                map("n", "<localleader>hR", gs.reset_buffer, "Reset Buffer")
-                map("n", "<localleader>hs", gs.stage_buffer, "Stage Buffer")
+                map("n", "ghfr", gs.reset_buffer, "Reset Buffer")
+                map("n", "ghfs", gs.stage_buffer, "Stage Buffer")
 
                 map("n", "ghd", gs.preview_hunk_inline, "Hunk Diff Preview Inline")
                 map("n", "ghh", gs.preview_hunk, "Hunk Diff Hover")
@@ -1619,14 +1619,10 @@ return {
         "nvim-mini/mini.clue",
         version = false,
         enabled = true,
-        -- config = function(_, opts)
-        --     local miniclue = require("mini.clue")
-        --     miniclue.setup(opts)
-        --     -- require("custom-utils.clue_triggers").setup_lsp_ensure()
-        --     vim.keymap.set("n", "<localleader>ne", function()
-        --         require("custom-utils.clue_triggers").ensure()
-        --     end)
-        -- end,
+        config = function(_, opts)
+            require("mini.clue").setup(opts)
+            require("custom-utils.clue_triggers").setup_lsp_ensure()
+        end,
         opts = function()
             local miniclue = require("mini.clue")
 
@@ -1694,6 +1690,7 @@ return {
                     { keys = "cr", desc = "+Replace word", mode = { "n" } },
                     { keys = "gc", desc = "+Comment", mode = { "n" } },
                     { keys = "gh", desc = "+Hunk", mode = { "n", "x" } },
+                    { keys = "ghf", desc = "+File", mode = { "n", "x" } },
                     { keys = "gs", desc = "+Surround", mode = { "n", "x" } },
                     { keys = "gm", desc = "+Modify Code", mode = { "n", "x" } },
                 },

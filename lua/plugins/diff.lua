@@ -351,12 +351,12 @@ return {
             use_icons = true,
             clean_up_buffers = true,
             view = {
-                default = { layout = "diff1_inline" },
-                file_history = { layout = "diff1_inline" },
+                default = { layout = "diff2_horizontal" },
+                file_history = { layout = "diff2_horizontal" },
                 merge_tool = { layout = "diff3_mixed" },
                 cycle_layouts = {
-                    default = { "diff1_inline", "diff2_horizontal", "diff1_plain" },
-                    file_history = { "diff1_inline", "diff2_horizontal", "diff1_plain" },
+                    default = { "diff2_horizontal", "diff1_inline", "diff1_plain" },
+                    file_history = { "diff2_horizontal", "diff1_inline", "diff1_plain" },
                     merge_tool = { "diff3_horizontal", "diff3_mixed", "diff4_mixed", "diff1_plain" },
                 },
             },
