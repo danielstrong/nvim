@@ -1,12 +1,24 @@
 -- Repo-wide git hunk navigation: jump to next/prev hunk across the whole
--- repository (staged + unstaged + untracked), crossing file boundaries.
+-- repository, crossing file boundaries. Also owns the global Gitsigns diff
+-- base (what the gutter, [h/]h and ]g/[g compare against).
 local M = {}
 
 M.wrap = true
--- When true, compare-branch hunks diff against the remote-tracking ref
--- (e.g. origin/main). When false, prefer the local branch of the same name
--- (e.g. main) if it exists, falling back to the remote-tracking ref.
+-- When true, default-branch bases use the remote-tracking ref (e.g.
+-- origin/main). When false, prefer the local branch of the same name (e.g.
+-- main) if it exists, falling back to the remote-tracking ref.
 M.prefer_remote_tracking = true
+
+M.prefix = "gha"
+
+---@class githunks.Base
+---@field kind string
+---@field ref? string passed to gitsigns.change_base; nil means the index
+---@field label? string shown in the ruler; nil when comparing against the index
+---@field detail? string shown next to the active entry in the clue popup
+
+---@type githunks.Base
+M.base = { kind = "index" }
 
 local function git(args, cwd)
     local res = vim.system(vim.list_extend({ "git" }, args), { cwd = cwd, text = true }):wait()
@@ -46,7 +58,8 @@ local function parse_diff(out, root, hunks)
     end
 end
 
-local function collect_hunks(unstaged_only)
+-- ref == nil diffs the working tree against the index (unstaged changes only).
+local function collect_hunks(ref)
     local root = repo_root()
     if not root then
         return nil
@@ -55,14 +68,12 @@ local function collect_hunks(unstaged_only)
     local hunks = {}
 
     local diff
-    if unstaged_only then
-        -- Working tree vs index: unstaged changes only.
+    if ref == nil then
         diff = git({ "--no-pager", "diff", "-U0" }, root)
     else
-        -- Tracked changes (staged + unstaged) vs HEAD. Fall back to plain diff
-        -- when there are no commits yet (HEAD is invalid).
-        diff = git({ "--no-pager", "diff", "-U0", "HEAD" }, root)
-        if not diff then
+        diff = git({ "--no-pager", "diff", "-U0", ref }, root)
+        -- HEAD is invalid in a repo with no commits yet.
+        if not diff and ref == "HEAD" then
             diff = git({ "--no-pager", "diff", "-U0" }, root)
         end
     end
@@ -122,78 +133,6 @@ function M.resolve_default_branch(root)
     end
 
     return nil
-end
-
-local function current_branch_display(root)
-    local name = git({ "rev-parse", "--abbrev-ref", "HEAD" }, root)
-    if name then
-        name = vim.trim(name)
-        if name ~= "HEAD" and name ~= "" then
-            return name
-        end
-    end
-    local sha = git({ "rev-parse", "--short", "HEAD" }, root)
-    return sha and vim.trim(sha) or "HEAD"
-end
-
--- Hunks between the merge-base of HEAD and the default branch, and the
--- current working tree (so uncommitted changes are included).
-local function collect_comparebranch_hunks()
-    local root = repo_root()
-    if not root then
-        vim.notify("Not a git repository", vim.log.levels.WARN)
-        return nil
-    end
-
-    local default_ref = M.resolve_default_branch(root)
-    if not default_ref then
-        vim.notify("Could not determine default branch", vim.log.levels.WARN)
-        return nil
-    end
-
-    local merge_base = git({ "merge-base", default_ref, "HEAD" }, root)
-    if not merge_base then
-        vim.notify("Could not determine default branch", vim.log.levels.WARN)
-        return nil
-    end
-    merge_base = vim.trim(merge_base)
-
-    local hunks = {}
-    parse_diff(git({ "--no-pager", "diff", "-U0", merge_base }, root), root, hunks)
-
-    local untracked = git({ "ls-files", "--others", "--exclude-standard" }, root)
-    for line in vim.gsplit(untracked or "", "\n", { plain = true }) do
-        if line ~= "" then
-            hunks[#hunks + 1] = { file = root .. "/" .. line, lnum = 1, endln = 1 }
-        end
-    end
-
-    table.sort(hunks, function(a, b)
-        if a.file ~= b.file then
-            return a.file < b.file
-        end
-        return a.lnum < b.lnum
-    end)
-
-    return hunks, default_ref, merge_base
-end
-
--- Keeps Gitsigns' diff base (used for its gutter signs) in sync with the
--- mode being navigated. Sentinel-based cache avoids re-diffing every
--- attached buffer on every hop when repeatedly navigating the same mode.
-local GITSIGNS_BASE_UNSET = {}
-local last_gitsigns_base = GITSIGNS_BASE_UNSET
-
-local function sync_gitsigns_base(base)
-    if last_gitsigns_base ~= GITSIGNS_BASE_UNSET and last_gitsigns_base == base then
-        return
-    end
-    local ok, gitsigns = pcall(require, "gitsigns")
-    if not ok then
-        return
-    end
-    gitsigns.change_base(base, true)
-    last_gitsigns_base = base
 end
 
 local function current_pos()
@@ -273,11 +212,8 @@ local function select_target(hunks, direction)
     return target, idx, forward
 end
 
-local function navigate(direction, unstaged_only)
-    local base_label = unstaged_only and "index" or "HEAD"
-    sync_gitsigns_base(nil)
-
-    local hunks = collect_hunks(unstaged_only)
+local function navigate(direction, ref, label)
+    local hunks = collect_hunks(ref)
     if hunks == nil then
         vim.notify("Not a git repository", vim.log.levels.WARN)
         return
@@ -292,82 +228,223 @@ local function navigate(direction, unstaged_only)
     if target then
         local line = forward and target.lnum or target.endln
         goto_hunk(target, line)
-        vim.notify(string.format("Hunk %d of %d", idx, #hunks, base_label), vim.log.levels.INFO)
+        local suffix = label and (" (vs " .. label .. ")") or ""
+        vim.notify(string.format("Hunk %d of %d%s", idx, #hunks, suffix), vim.log.levels.INFO)
     end
 end
 
-local function navigate_comparebranch(direction)
-    local hunks, default_ref, merge_base = collect_comparebranch_hunks()
-    if hunks == nil then
-        return
-    end
-    sync_gitsigns_base(merge_base)
-
-    if #hunks == 0 then
-        vim.notify(string.format("No hunks comparing %s to HEAD", default_ref), vim.log.levels.INFO)
-        return
-    end
-
-    local target, idx, forward = select_target(hunks, direction)
-
-    if target then
-        local line = forward and target.lnum or target.endln
-        goto_hunk(target, line)
-        local current_branch = current_branch_display(repo_root())
-        vim.notify(string.format("Hunk %d of %d (%s...%s)", idx, #hunks, default_ref, current_branch), vim.log.levels.INFO)
-    end
-end
-
+-- Always staged + unstaged vs HEAD, regardless of the global base.
 function M.next()
-    navigate("next")
+    navigate("next", "HEAD")
 end
 
 function M.prev()
-    navigate("prev")
+    navigate("prev", "HEAD")
 end
 
 function M.first()
-    navigate("first")
+    navigate("first", "HEAD")
 end
 
 function M.last()
-    navigate("last")
+    navigate("last", "HEAD")
 end
 
-function M.next_unstaged()
-    navigate("next", true)
+-- Follows the global base, i.e. a repo-wide ]h.
+function M.next_base()
+    navigate("next", M.base.ref, M.base.label)
 end
 
-function M.prev_unstaged()
-    navigate("prev", true)
+function M.prev_base()
+    navigate("prev", M.base.ref, M.base.label)
 end
 
-function M.first_unstaged()
-    navigate("first", true)
+function M.first_base()
+    navigate("first", M.base.ref, M.base.label)
 end
 
-function M.last_unstaged()
-    navigate("last", true)
+function M.last_base()
+    navigate("last", M.base.ref, M.base.label)
 end
 
-function M.next_comparebranch()
-    navigate_comparebranch("next")
+---------------------------------------------------------------------------
+-- Global diff base
+---------------------------------------------------------------------------
+
+-- nerd font "nf-dev-git_branch" (U+E725)
+M.icon = "\238\156\165"
+
+-- Ruler segment; empty when comparing against the index.
+function M.status()
+    if not M.base.label then
+        return ""
+    end
+    return " " .. M.icon .. " " .. M.base.label
 end
 
-function M.prev_comparebranch()
-    navigate_comparebranch("prev")
+local function short(sha)
+    return sha:sub(1, 7)
 end
 
-function M.first_comparebranch()
-    navigate_comparebranch("first")
+local entries -- defined below; referenced by refresh_descs
+
+local function refresh_descs()
+    local ok, miniclue = pcall(require, "mini.clue")
+    if not ok then
+        return
+    end
+    for _, e in ipairs(entries) do
+        local active = e.kind == M.base.kind
+        local desc = (active and "● " or "○ ") .. e.name
+        if active and M.base.detail then
+            desc = desc .. " (" .. M.base.detail .. ")"
+        end
+        pcall(miniclue.set_mapping_desc, "n", M.prefix .. e.lhs, desc)
+    end
 end
 
-function M.last_comparebranch()
-    navigate_comparebranch("last")
+---@param base githunks.Base
+local function apply(base)
+    M.base = base
+    local ok, gitsigns = pcall(require, "gitsigns")
+    if ok then
+        gitsigns.change_base(base.ref, true)
+    end
+    refresh_descs()
+    local shown = base.label or "Index"
+    if base.detail then
+        shown = shown .. " (" .. base.detail .. ")"
+    end
+    vim.notify("Hunk base: " .. shown, vim.log.levels.INFO, { title = "githunks" })
+    vim.cmd.redrawstatus()
 end
 
-function M.setup()
-    vim.notify("githunks setup being called..")
+local function require_root()
+    local root = repo_root()
+    if not root then
+        vim.notify("Not a git repository", vim.log.levels.WARN)
+    end
+    return root
 end
+
+local function merge_base(ref, root)
+    local out = git({ "merge-base", ref, "HEAD" }, root)
+    if not out then
+        vim.notify("Could not determine merge-base of " .. ref .. " and HEAD", vim.log.levels.WARN)
+        return nil
+    end
+    return vim.trim(out)
+end
+
+local function default_branch_or_warn(root)
+    local ref = M.resolve_default_branch(root)
+    if not ref then
+        vim.notify("Could not determine default branch", vim.log.levels.WARN)
+    end
+    return ref
+end
+
+local function set_merge_base(kind, ref, root)
+    local sha = merge_base(ref, root)
+    if sha then
+        apply({ kind = kind, ref = sha, label = "mb:" .. ref, detail = ref .. " @ " .. short(sha) })
+    end
+end
+
+-- `git branch --all` lists remote-tracking refs as `remotes/origin/x`.
+local function pick_branch(on_ref)
+    Snacks.picker.git_branches({
+        all = true,
+        confirm = function(picker, item)
+            picker:close()
+            local ref = item and (item.branch or item.commit)
+            if ref then
+                on_ref((ref:gsub("^remotes/", "")))
+            end
+        end,
+    })
+end
+
+function M.set_index()
+    apply({ kind = "index" })
+end
+
+function M.set_head()
+    apply({ kind = "head", ref = "HEAD", label = "HEAD" })
+end
+
+function M.set_head_n(n)
+    local ref = "HEAD~" .. n
+    apply({ kind = "head" .. n, ref = ref, label = ref })
+end
+
+function M.set_mb_default()
+    local root = require_root()
+    local ref = root and default_branch_or_warn(root)
+    if ref then
+        set_merge_base("mb_default", ref, root)
+    end
+end
+
+function M.set_tip_default()
+    local root = require_root()
+    local ref = root and default_branch_or_warn(root)
+    if ref then
+        apply({ kind = "tip_default", ref = ref, label = ref, detail = ref })
+    end
+end
+
+function M.pick_mb_branch()
+    local root = require_root()
+    if not root then
+        return
+    end
+    pick_branch(function(ref)
+        set_merge_base("mb_branch", ref, root)
+    end)
+end
+
+function M.pick_tip_branch()
+    if not require_root() then
+        return
+    end
+    pick_branch(function(ref)
+        apply({ kind = "tip_branch", ref = ref, label = ref, detail = ref })
+    end)
+end
+
+function M.pick_commit()
+    local root = require_root()
+    if not root then
+        return
+    end
+    Snacks.picker.git_log({
+        confirm = function(picker, item)
+            picker:close()
+            local commit = item and item.commit
+            if not commit then
+                return
+            end
+            local sha = vim.trim(git({ "rev-parse", commit }, root) or commit)
+            apply({ kind = "commit", ref = sha, label = short(sha), detail = short(sha) })
+        end,
+    })
+end
+
+-- lhs suffixes must match the gha* keys in lua/plugins/custom.lua
+entries = {
+    { lhs = "i", kind = "index", name = "Index" },
+    { lhs = "H", kind = "head", name = "HEAD" },
+    { lhs = "1", kind = "head1", name = "HEAD~1" },
+    { lhs = "2", kind = "head2", name = "HEAD~2" },
+    { lhs = "3", kind = "head3", name = "HEAD~3" },
+    { lhs = "4", kind = "head4", name = "HEAD~4" },
+    { lhs = "5", kind = "head5", name = "HEAD~5" },
+    { lhs = "m", kind = "mb_default", name = "Merge-base with default branch" },
+    { lhs = "M", kind = "tip_default", name = "Default branch tip" },
+    { lhs = "b", kind = "mb_branch", name = "Branch (merge-base)…" },
+    { lhs = "B", kind = "tip_branch", name = "Branch (tip)…" },
+    { lhs = "c", kind = "commit", name = "Commit…" },
+}
 
 return M

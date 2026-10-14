@@ -140,33 +140,31 @@ return {
         keys = function()
             local gh = require("githunks")
             local repeat_move = require("repeatable_move")
-            local repeatable_next_unstagedhunk, repeatable_prev_unstagedhunk = repeat_move.make_repeatable_move_pair(gh.next_unstaged, gh.prev_unstaged)
-            -- vim.keymap.set({ "n", "x", "o" }, "]g", repeatable_next_unstagedhunk, { desc = "Next Unstaged Hunk (repo-wide)" })
-            -- vim.keymap.set({ "n", "x", "o" }, "[g", repeatable_prev_unstagedhunk, { desc = "Prev Unstaged Hunk (repo-wide)" })
-            -- vim.keymap.set({ "n", "x", "o" }, "]G", gh.last_unstaged, { desc = "Last Unstaged Hunk (repo-wide)" })
-            -- vim.keymap.set({ "n", "x", "o" }, "[G", gh.first_unstaged, { desc = "First Unstaged Hunk (repo-wide)" })
-            --
+            local repeatable_next_basehunk, repeatable_prev_basehunk = repeat_move.make_repeatable_move_pair(gh.next_base, gh.prev_base)
             local repeatable_next_allhunk, repeatable_prev_allhunk = repeat_move.make_repeatable_move_pair(gh.next, gh.prev)
-            -- vim.keymap.set({ "n", "x", "o" }, "]y", repeatable_next_allhunk, { desc = "Next Hunk (repo-wide)" })
-            -- vim.keymap.set({ "n", "x", "o" }, "[y", repeatable_prev_allhunk, { desc = "Prev Hunk (repo-wide)" })
-            -- vim.keymap.set({ "n", "x", "o" }, "]Y", gh.last, { desc = "Last Hunk (repo-wide)" })
-            -- vim.keymap.set({ "n", "x", "o" }, "[Y", gh.first, { desc = "First Hunk (repo-wide)" })
-
-            local repeatable_next_comparebranch, repeatable_prev_comparebranch = repeat_move.make_repeatable_move_pair(gh.next_comparebranch, gh.prev_comparebranch)
 
             return {
-                { "]g", repeatable_next_unstagedhunk, mode = { "n", "x", "o" }, desc = "Next Unstaged Hunk (repo-wide)" },
-                { "[g", repeatable_prev_unstagedhunk, mode = { "n", "x", "o" }, desc = "Prev Unstaged Hunk (repo-wide)" },
-                { "]G", gh.last_unstaged, mode = { "n", "x", "o" }, desc = "Last Unstaged Hunk (repo-wide)" },
-                { "[G", gh.first_unstaged, mode = { "n", "x", "o" }, desc = "First Unstaged Hunk (repo-wide)" },
-                { "]y", repeatable_next_allhunk, mode = { "n", "x", "o" }, desc = "Next Hunk (repo-wide)" },
-                { "[y", repeatable_prev_allhunk, mode = { "n", "x", "o" }, desc = "Prev Hunk (repo-wide)" },
-                { "]Y", gh.last, mode = { "n", "x", "o" }, desc = "Last Hunk (repo-wide)" },
-                { "[Y", gh.first, mode = { "n", "x", "o" }, desc = "First Hunk (repo-wide)" },
-                { "]p", repeatable_next_comparebranch, mode = { "n", "x", "o" }, desc = "Next Hunk (compare branch)" },
-                { "[p", repeatable_prev_comparebranch, mode = { "n", "x", "o" }, desc = "Prev Hunk (compare branch)" },
-                { "]P", gh.last_comparebranch, mode = { "n", "x", "o" }, desc = "Last Hunk (compare branch)" },
-                { "[P", gh.first_comparebranch, mode = { "n", "x", "o" }, desc = "First Hunk (compare branch)" },
+                { "]g", repeatable_next_basehunk, mode = { "n", "x", "o" }, desc = "Next Hunk vs base (repo-wide)" },
+                { "[g", repeatable_prev_basehunk, mode = { "n", "x", "o" }, desc = "Prev Hunk vs base (repo-wide)" },
+                { "]G", gh.last_base, mode = { "n", "x", "o" }, desc = "Last Hunk vs base (repo-wide)" },
+                { "[G", gh.first_base, mode = { "n", "x", "o" }, desc = "First Hunk vs base (repo-wide)" },
+                { "]y", repeatable_next_allhunk, mode = { "n", "x", "o" }, desc = "Next Hunk vs HEAD (repo-wide)" },
+                { "[y", repeatable_prev_allhunk, mode = { "n", "x", "o" }, desc = "Prev Hunk vs HEAD (repo-wide)" },
+                { "]Y", gh.last, mode = { "n", "x", "o" }, desc = "Last Hunk vs HEAD (repo-wide)" },
+                { "[Y", gh.first, mode = { "n", "x", "o" }, desc = "First Hunk vs HEAD (repo-wide)" },
+                -- ●/○ mark the active base (Index at startup); githunks rewrites these on change
+                { "ghai", gh.set_index, desc = "● Index" },
+                { "ghaH", gh.set_head, desc = "○ HEAD" },
+                { "gha1", function() gh.set_head_n(1) end, desc = "○ HEAD~1" },
+                { "gha2", function() gh.set_head_n(2) end, desc = "○ HEAD~2" },
+                { "gha3", function() gh.set_head_n(3) end, desc = "○ HEAD~3" },
+                { "gha4", function() gh.set_head_n(4) end, desc = "○ HEAD~4" },
+                { "gha5", function() gh.set_head_n(5) end, desc = "○ HEAD~5" },
+                { "gham", gh.set_mb_default, desc = "○ Merge-base with default branch" },
+                { "ghaM", gh.set_tip_default, desc = "○ Default branch tip" },
+                { "ghab", gh.pick_mb_branch, desc = "○ Branch (merge-base)…" },
+                { "ghaB", gh.pick_tip_branch, desc = "○ Branch (tip)…" },
+                { "ghac", gh.pick_commit, desc = "○ Commit…" },
             }
         end,
     },

@@ -356,6 +356,7 @@ local statusbar_ruler = table.concat({
     [[%{% &busy > 0 ? '◐ ' : '' %}]],
     [[%{% luaeval('(package.loaded[''custom-utils.lsp_progress''] and require(''custom-utils.lsp_progress'').status()) or ''''')%}]],
     -- [[ %<%t]],
+    [[%{% luaeval('(package.loaded[''githunks''] and require(''githunks'').status()) or ''''') %}]],
     [[%{% luaeval('(package.loaded[''vim.diagnostic''] and vim.diagnostic.status() ~= '''' and ('' '' .. vim.diagnostic.status())) or ''''') %}]],
     [[ %Y ]],
     [[ %-14.(%l,%c%V%) %P ]],

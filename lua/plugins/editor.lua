@@ -1247,54 +1247,56 @@ return {
                     end,
                 })
 
-                local function close_gitsigns_diff()
-                    vim.cmd("diffoff!")
+                local function gitsigns_diff_win()
                     for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
                         local name = vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(win))
                         if name:match("^gitsigns://") then
-                            vim.api.nvim_win_close(win, true)
-                            break
+                            return win
                         end
                     end
                 end
 
-                local function gitsigns_diff_mode()
-                    for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-                        local name = vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(win))
-                        if name:match("^gitsigns://") then
-                            -- "~" diffs have the ref after the last colon, e.g. gitsigns://…:~1:filename
-                            return name:match("HEAD~") and "tilde" or "head"
-                        end
+                local function close_gitsigns_diff()
+                    vim.cmd("diffoff!")
+                    local win = gitsigns_diff_win()
+                    if win then
+                        vim.api.nvim_win_close(win, true)
                     end
-                    return nil
+                end
+
+                -- "base" (gf) or "last_commit" (gF), tagged on the diff window when opened
+                local function open_gitsigns_diff(kind)
+                    gs.diffthis(kind == "last_commit" and "~" or nil, nil, function()
+                        vim.schedule(function()
+                            local win = gitsigns_diff_win()
+                            if win then
+                                vim.w[win].gitsigns_diff_kind = kind
+                            end
+                        end)
+                    end)
+                end
+
+                local function toggle_gitsigns_diff(kind)
+                    local win = gitsigns_diff_win()
+                    if not win then
+                        open_gitsigns_diff(kind)
+                        return
+                    end
+                    local open_kind = vim.w[win].gitsigns_diff_kind
+                    close_gitsigns_diff()
+                    if open_kind ~= kind then
+                        vim.schedule(function()
+                            open_gitsigns_diff(kind)
+                        end)
+                    end
                 end
 
                 map("n", "<localleader>gf", function()
-                    local mode = gitsigns_diff_mode()
-                    if mode == "head" then
-                        close_gitsigns_diff()
-                    elseif mode == "tilde" then
-                        close_gitsigns_diff()
-                        vim.schedule(function()
-                            gs.diffthis()
-                        end)
-                    else
-                        gs.diffthis()
-                    end
-                end, "Diff This (against staged)")
+                    toggle_gitsigns_diff("base")
+                end, "Diff This (against current hunk base)")
 
                 map("n", "<localleader>gF", function()
-                    local mode = gitsigns_diff_mode()
-                    if mode == "tilde" then
-                        close_gitsigns_diff()
-                    elseif mode == "head" then
-                        close_gitsigns_diff()
-                        vim.schedule(function()
-                            gs.diffthis("~")
-                        end)
-                    else
-                        gs.diffthis("~")
-                    end
+                    toggle_gitsigns_diff("last_commit")
                 end, "Diff This (against last commit)")
 
                 map({ "x", "o" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
@@ -1690,6 +1692,7 @@ return {
                     { keys = "cr", desc = "+Replace word", mode = { "n" } },
                     { keys = "gc", desc = "+Comment", mode = { "n" } },
                     { keys = "gh", desc = "+Hunk", mode = { "n", "x" } },
+                    { keys = "gha", desc = "+Change Base", mode = { "n" } },
                     { keys = "ghf", desc = "+File", mode = { "n", "x" } },
                     { keys = "gs", desc = "+Surround", mode = { "n", "x" } },
                     { keys = "gm", desc = "+Modify Code", mode = { "n", "x" } },
