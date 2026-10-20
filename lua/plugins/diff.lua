@@ -466,10 +466,12 @@ return {
                 snacks = true,
             },
             diff_viewer = "diffview",
+            treesitter_diff_highlight = true,
+            word_diff_highlight = false,
         },
         keys = {
             {
-                "<localleader>ou",
+                "<localleader>gt",
                 function()
                     local neogit = require("neogit")
                     if require("neogit.buffers.status").is_open() then

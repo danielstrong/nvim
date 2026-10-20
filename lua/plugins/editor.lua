@@ -802,7 +802,7 @@ return {
             -- +------------------------------------+---------------------------------------+-----------------------------------------------+
             -- stylua: ignore start
             { "<localleader>fB", function() Snacks.picker.git_grep() end, desc = "fuzzy get_grep", },
-            { "<localleader>fD", function() Snacks.picker.git_status() end, desc = "fuzzy git status", },
+            { "<localleader>fD", function() Snacks.picker.git_diff() end, desc = "fuzzy git diff", },
             { "<localleader>fE", function() require("custom-utils.snacks_search").files_with_filter_prompt() end, desc = "fuzzy files with include/exclude filters", },
             { "<localleader>fL", function() Snacks.picker.lines() end, desc = "fuzzy lines grep search", },
             { "<localleader>fO", function() Snacks.picker.lsp_symbols() end, desc = "fuzzy symbols", },
@@ -811,7 +811,7 @@ return {
             { "<localleader>fR", function() Snacks.picker.git_files() end, desc = "fuzzy git files", },
             { "<localleader>fS", function() require("custom-utils.snacks_search").grep_with_filter_prompt() end, desc = "fuzzy text search with include/exclude filters", },
             { "<localleader>fb", function() Snacks.picker.buffers() end, desc = "fuzzy buffers", },
-            { "<localleader>fd", function() Snacks.picker.git_diff() end, desc = "fuzzy git diff", },
+            { "<localleader>fd", function() Snacks.picker.git_status() end, desc = "fuzzy git status", },
             { "<localleader>fe", function() Snacks.picker.files() end, desc = "fuzzy files", },
             { "<localleader>ff", function() Snacks.picker.resume() end, desc = "fuzzy resume", },
             { "<localleader>fg", function() Snacks.picker.grep() end, desc = "fuzzy grep search", },
@@ -879,6 +879,7 @@ return {
             { "<localleader>gc", function() Snacks.picker.git_log({ focus = "list"}) end, desc = "fuzzy git log", },
             { "<localleader>gC", function() Snacks.picker.git_log_file({ focus = "list"}) end, desc = "fuzzy git log file", },
             { "<localleader>gd", function() Snacks.picker.git_status({ focus = "list"}) end, desc = "fuzzy git status", },
+            { "<localleader>gD", function() Snacks.picker.git_diff({ focus = "list"}) end, desc = "fuzzy git diff", },
             { "<localleader>gn", function() Snacks.picker.git_branches({ focus = "list"}) end, desc = "fuzzy git branch", },
             { "<localleader>gr", function() Snacks.picker.git_stash({ focus = "list"}) end, desc = "fuzzy git stash", },
             { "<localleader>gi", function() Snacks.picker.gh_issue() end, desc = "fuzzy git issue (open)", },

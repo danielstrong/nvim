@@ -200,6 +200,11 @@ return {
                         MiniClueNextKey = "Function",
                         MiniClueNextKeyWithPostkeys = "Function",
                         MiniClueSeparator = "Comment",
+                        -- match gitsigns hunk previews; neogit skips groups that are already set
+                        NeogitDiffAdd = "DiffAdd",
+                        NeogitDiffAddHighlight = "DiffAdd",
+                        NeogitDiffDelete = "DiffDelete",
+                        NeogitDiffDeleteHighlight = "DiffDelete",
                     }
                     for group, target in pairs(links) do
                         vim.api.nvim_set_hl(0, group, { link = target })
